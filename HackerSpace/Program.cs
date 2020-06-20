@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using HackerSpace.Utilities;
 
 namespace HackerSpace
 {
@@ -15,6 +16,8 @@ namespace HackerSpace
     {
         public static void Main(string[] args)
         {
+            //See https://stackoverflow.com/questions/43577178/how-to-access-sqlite-db-from-iis-hosted-wcf-service/43598678
+            //CurrentDirectoryHelpers.SetCurrentDirectory();
             CreateHostBuilder(args).Build().Run();
         }
 
