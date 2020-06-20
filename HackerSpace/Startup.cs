@@ -33,19 +33,9 @@ namespace HackerSpace
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
-
-
-            //Add Sqlite using info from https://executecommands.com/crud-in-blazor-using-sqlite-entity-framework/
-            //Ensure db file is in application director see https://github.com/aspnet/Microsoft.Data.Sqlite/issues/132
-
-
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite($"Data Source = {WebHostEnvironment.WebRootPath}/data/HackerSpaceDB.db"));
-
-            //options.UseSqlite($"Data Source={_appEnv.ApplicationBasePath}/data.db");
-            //C:\Users\rob82_000\Dropbox\repos\HackerSpace\HackerSpace\wwwroot\data\HackerSpaceDB.db
-
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection").Replace("|DataDirectory|",WebHostEnvironment.WebRootPath)));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
@@ -89,3 +79,10 @@ namespace HackerSpace
         }
     }
 }
+
+//Add Sqlite using info from https://executecommands.com/crud-in-blazor-using-sqlite-entity-framework/
+//Ensure db file is in application director see https://github.com/aspnet/Microsoft.Data.Sqlite/issues/132
+//var pathString = configuration.GetValue<string>("UploadPaths:Pictures");
+//Configuration.GetConnectionString("DefaultConnection")
+//var path = Path.Combine(_hostingEnvironment.WebRootPath, pathString, picture.Name);
+//return Content(path);

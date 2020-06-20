@@ -12,5 +12,7 @@ namespace HackerSpace.Data
             : base(options)
         {
         }
+
+        public DbSet<Badge> Badges { get; set; }
     }
 }
