@@ -1,0 +1,25 @@
+﻿@page "/EmailTest"
+@using EmailService
+@inject IEmailSenderService _emailSender
+
+<h3>EmailTest</h3>
+
+<p>Email count: @EmailNum</p>
+
+<button @onclick="OnClick">Send Email</button>
+@code {
+
+    public int EmailNum { get; set; } = 0;
+
+
+
+    private void OnClick()
+    {
+        var message = new Message(new string[] { "rgarner011235@gmail.com" }, "Test email",
+            "This is the content from our email.");
+
+        _emailSender.SendEmailAsync(message);
+
+        EmailNum++;
+    }
+}
