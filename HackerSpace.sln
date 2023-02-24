@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30128.36
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpace", "HackerSpace\HackerSpace.csproj", "{5AEF7667-47C2-4D1B-A89A-96F39B3CC616}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{894E73A7-613C-4569-8D9E-2FE0AC898ABF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService", "EmailService\EmailService.csproj", "{894E73A7-613C-4569-8D9E-2FE0AC898ABF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpaceWasm.Server", "HackerSpaceWasm\Server\HackerSpaceWasm.Server.csproj", "{9E017964-7613-4111-A485-293DF3AED7F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpaceWasm.Client", "HackerSpaceWasm\Client\HackerSpaceWasm.Client.csproj", "{CC1F39A9-9124-4603-B03B-3493DA6AA141}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpaceWasm.Shared", "HackerSpaceWasm\Shared\HackerSpaceWasm.Shared.csproj", "{639048A6-F78B-43D8-92FB-393818DBEBE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{894E73A7-613C-4569-8D9E-2FE0AC898ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{894E73A7-613C-4569-8D9E-2FE0AC898ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{894E73A7-613C-4569-8D9E-2FE0AC898ABF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E017964-7613-4111-A485-293DF3AED7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E017964-7613-4111-A485-293DF3AED7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E017964-7613-4111-A485-293DF3AED7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E017964-7613-4111-A485-293DF3AED7F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC1F39A9-9124-4603-B03B-3493DA6AA141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC1F39A9-9124-4603-B03B-3493DA6AA141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC1F39A9-9124-4603-B03B-3493DA6AA141}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC1F39A9-9124-4603-B03B-3493DA6AA141}.Release|Any CPU.Build.0 = Release|Any CPU
+		{639048A6-F78B-43D8-92FB-393818DBEBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{639048A6-F78B-43D8-92FB-393818DBEBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{639048A6-F78B-43D8-92FB-393818DBEBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{639048A6-F78B-43D8-92FB-393818DBEBE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
