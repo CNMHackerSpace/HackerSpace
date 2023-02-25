@@ -26,5 +26,35 @@ namespace HackerSpaceWasm.Server.Controllers
             _logger.Log(LogLevel.Information, "GetBadges executed.");
             return await _badgesRepo.GetBadgesAsync();
         }
+
+        [HttpGet]
+        [Route("{Id:int}")]
+        public async Task<Badge?> GetBadge(int id)
+        {
+            _logger.Log(LogLevel.Information, "GetBadges executed.");
+            return await _badgesRepo.GetBadgeAsync(id);
+        }
+
+        [HttpPost]
+        public async Task<Badge?> AddBadge(Badge badge)
+        {
+            _logger.Log(LogLevel.Information, "AddBadge Executed.");
+            return await _badgesRepo.AddBadgeAsync(badge);
+        }
+
+        [HttpPut]
+        public async void UpdateBadge(Badge badge)
+        {
+            _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
+            await _badgesRepo.UpdateBadgeAsync(badge);
+        }
+
+        [HttpDelete]
+        [Route("{Id:int}")]
+        public async void DeleteBadge(int id)
+        {
+            _logger.Log(LogLevel.Information, "DeleteBadge Executed.");
+            await _badgesRepo.DeleteBadgeAsync(id);
+        }
     }
 }

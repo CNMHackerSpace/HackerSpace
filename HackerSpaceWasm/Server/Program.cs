@@ -27,7 +27,7 @@ namespace HackerSpaceWasm
             options.UseSqlite("Hackerspace.db"));
 
             //Add data services
-            builder.Services.AddTransient<IBadgesRepo, BadgesRepoMock>();
+            builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();
             //End Add Data Services
 
             builder.Services.AddControllersWithViews();

@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpaceWasm.Client", "H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpaceWasm.Shared", "HackerSpaceWasm\Shared\HackerSpaceWasm.Shared.csproj", "{639048A6-F78B-43D8-92FB-393818DBEBE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTests", "DataTests\DataTests.csproj", "{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
