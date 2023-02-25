@@ -10,9 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Data\Data.csproj" />
     <ProjectReference Include="..\Client\HackerSpaceWasm.Client.csproj" />
     <ProjectReference Include="..\Shared\HackerSpaceWasm.Shared.csproj" />
   </ItemGroup>

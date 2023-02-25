@@ -1,7 +1,16 @@
+using Data.Interfaces;
+using Data.Mocks;
+using HackerSpace.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Web;
+using System.Configuration;
+using System.Runtime.CompilerServices;
 
 namespace HackerSpaceWasm
 {
@@ -14,6 +23,12 @@ namespace HackerSpaceWasm
             // Add services to the container.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite("Hackerspace.db"));
+
+            //Add data services
+            builder.Services.AddTransient<IBadgesRepo, BadgesRepoMock>();
+            //End Add Data Services
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
