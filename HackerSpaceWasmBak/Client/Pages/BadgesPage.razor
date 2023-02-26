@@ -1,0 +1,20 @@
+﻿@page "/Badges"
+@using Data.Models;
+@inject IHttpClientFactory HttpClientFactory
+
+<h3>BadgesPage</h3>
+
+@foreach(Badge badge in _badges)
+{
+    <p>@badge.Title</p>
+}
+@code {
+    private List<Badge> _badges = new List<Badge>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        HttpClient httpClient = HttpClientFactory.CreateClient("BlazorApp.PublicServerAPI");
+        await base.OnInitializedAsync();
+        _badges = await httpClient.GetFromJsonAsync<List<Badge>>("/api/Badges")??new List<Badge>();
+    }
+}
