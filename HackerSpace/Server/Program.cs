@@ -5,6 +5,7 @@ using HackerSpace.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace HackerSpace
 {
@@ -19,6 +20,8 @@ namespace HackerSpace
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -38,6 +41,7 @@ namespace HackerSpace
 
             var app = builder.Build();
 
+            app.UseDeveloperExceptionPage();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -61,6 +65,11 @@ namespace HackerSpace
             app.UseIdentityServer();
             app.UseAuthorization();
 
+            using (var scope = app.Services.CreateAsyncScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.EnsureCreated();
+            }
 
             app.MapRazorPages();
             app.MapControllers();
