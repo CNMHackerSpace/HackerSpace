@@ -1,0 +1,30 @@
+﻿@page "/Badges"
+@using Data.Models;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+@inject IHttpClientFactory HttpClientFactory
+@inject HttpClient Http
+<h3>BadgesPage</h3>
+
+@foreach(Badge badge in _badges)
+{
+    <p>@badge.Title</p>
+}
+@code {
+    private List<Badge> _badges = new List<Badge>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            _badges = await Http.GetFromJsonAsync<List<Badge>>("api/Badges") ?? new List<Badge>();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        //HttpClient httpClient = HttpClientFactory.CreateClient();
+        //await base.OnInitializedAsync();
+        //_badges = await httpClient.GetFromJsonAsync<List<Badge>>("/api/Badges")??new List<Badge>();
+    }
+}

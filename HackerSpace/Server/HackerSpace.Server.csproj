@@ -25,4 +25,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Repositories\" />
+  </ItemGroup>
+
 </Project>

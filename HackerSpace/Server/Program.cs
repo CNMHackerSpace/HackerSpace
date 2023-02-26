@@ -1,3 +1,5 @@
+using Data.Interfaces;
+using Data.Mocks;
 using HackerSpace.Server.Data;
 using HackerSpace.Server.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -23,6 +25,10 @@ namespace HackerSpace
 
             builder.Services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+
+            //Add data services
+            builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();
+            //End Add Data Services
 
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt();

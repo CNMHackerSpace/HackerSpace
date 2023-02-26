@@ -5,10 +5,6 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService", "EmailService\EmailService.csproj", "{894E73A7-613C-4569-8D9E-2FE0AC898ABF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTests", "DataTests\DataTests.csproj", "{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpace.Server", "HackerSpace\Server\HackerSpace.Server.csproj", "{F815E470-3A4B-437E-AE14-356705140460}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpace.Client", "HackerSpace\Client\HackerSpace.Client.csproj", "{CAD55BB5-8973-46B0-9CFC-D5784A93FBCE}"
@@ -25,14 +21,6 @@ Global
 		{894E73A7-613C-4569-8D9E-2FE0AC898ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{894E73A7-613C-4569-8D9E-2FE0AC898ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{894E73A7-613C-4569-8D9E-2FE0AC898ABF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EFCC7E3D-3B9A-4231-AFB2-61EE68146BC5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD1D2253-3B0B-41EF-BCD5-91FB0D991E8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F815E470-3A4B-437E-AE14-356705140460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F815E470-3A4B-437E-AE14-356705140460}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F815E470-3A4B-437E-AE14-356705140460}.Release|Any CPU.ActiveCfg = Release|Any CPU
