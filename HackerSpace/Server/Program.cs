@@ -26,7 +26,20 @@ namespace HackerSpace
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddIdentityServer()
+            builder.Services.AddIdentityServer(options =>
+            {
+                // set path where to store keys
+                //options.KeyManagement.KeyPath = "/home/shared/keys";
+
+                // new key every 30 days
+                options.KeyManagement.RotationInterval = TimeSpan.FromDays(30);
+
+                // announce new key 2 days in advance in discovery
+                options.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
+
+                // keep old key for 7 days in discovery for validation of tokens
+                options.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);
+            })
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             //Add data services
@@ -70,6 +83,8 @@ namespace HackerSpace
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.EnsureCreated();
             }
+
+            
 
             app.MapRazorPages();
             app.MapControllers();
