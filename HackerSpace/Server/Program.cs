@@ -1,6 +1,7 @@
 using Data.Interfaces;
 using Data.Mocks;
 using HackerSpace.Server.Data;
+using HackerSpace.Server.Data.Repositories;
 using HackerSpace.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -43,7 +44,7 @@ namespace HackerSpace
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             //Add data services
-            builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();
+            builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
             //End Add Data Services
 
             builder.Services.AddAuthentication()
