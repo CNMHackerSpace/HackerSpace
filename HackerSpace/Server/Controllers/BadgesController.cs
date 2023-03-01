@@ -1,5 +1,5 @@
 ﻿using Data.Interfaces;
-using Data.Models;
+using Hackerspace.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HackerSpaceWasm.Server.Controllers

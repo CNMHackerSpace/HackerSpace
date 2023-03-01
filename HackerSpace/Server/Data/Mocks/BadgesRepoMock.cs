@@ -1,5 +1,5 @@
 ﻿using Data.Interfaces;
-using Data.Models;
+using Hackerspace.Shared.Models;
 
 namespace Data.Mocks
 {

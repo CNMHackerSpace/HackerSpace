@@ -1,4 +1,4 @@
-﻿namespace Data.Models
+﻿namespace Hackerspace.Shared.Models
 {
     public class Badge
     {

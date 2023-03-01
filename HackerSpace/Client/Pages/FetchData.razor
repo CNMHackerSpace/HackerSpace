@@ -1,7 +1,6 @@
-﻿@page "/fetchdata"
+﻿@*@page "/fetchdata"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using HackerSpace.Shared
 @attribute [Authorize]
 @inject HttpClient Http
 
@@ -55,3 +54,4 @@ else
         }
     }
 }
+*@
