@@ -15,6 +15,6 @@ namespace HackerSpace.Server.Data
         {
         }
 
-        DbSet<Badge> Badges { get; set; }
+        public DbSet<Badge> Badges { get; set; }
     }
 }
