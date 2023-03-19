@@ -44,7 +44,8 @@ namespace HackerSpace
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             //Add data services
-            builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
+            //builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
+            builder.Services.AddTransient<IBadgesRepo, BadgesRepoMock>();
             //End Add Data Services
 
             builder.Services.AddAuthentication()
