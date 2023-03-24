@@ -1,12 +1,12 @@
 ﻿@page "/Badges"
-@using Data.Models;
+@using HackerSpaceWasm.Shared.Models;
 @inject IHttpClientFactory HttpClientFactory
 
-<h3>BadgesPage</h3>
+<h3>Badges</h3>
 
 @foreach(Badge badge in _badges)
 {
-    <p>@badge.Title</p>
+    <p><a href="/Badge/@badge.Id"><img src="images/@badge.FileName" height="50"/>   @badge.Title</a></p>
 }
 @code {
     private List<Badge> _badges = new List<Badge>();

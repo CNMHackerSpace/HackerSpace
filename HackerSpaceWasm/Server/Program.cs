@@ -1,16 +1,10 @@
-using Data.Interfaces;
-using Data.Mocks;
-using HackerSpace.Data;
-using Microsoft.AspNetCore.Authentication;
+using HackerSpaceWasm.Server.Data;
+using HackerSpaceWasm.Server.Data.Interfaces;
+using HackerSpaceWasm.Server.Data.Mocks;
+using HackerSpaceWasm.Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Web;
-using System.Configuration;
-using System.Runtime.CompilerServices;
 
 namespace HackerSpaceWasm
 {
@@ -24,7 +18,7 @@ namespace HackerSpaceWasm
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite("Hackerspace.db"));
+            options.UseSqlite("Data Source=Hackerspace.db"));
 
             //Add data services
             builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();

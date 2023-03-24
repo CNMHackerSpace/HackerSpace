@@ -1,4 +1,4 @@
-﻿namespace Data.Models
+﻿namespace HackerSpaceWasm.Shared.Models
 {
     public class Badge
     {

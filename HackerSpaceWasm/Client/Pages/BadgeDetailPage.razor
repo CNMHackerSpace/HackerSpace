@@ -1,0 +1,21 @@
+﻿@page "/Badge/{Id:int}"
+@using HackerSpaceWasm.Shared.Models;
+@inject IHttpClientFactory HttpClientFactory
+<H3>@_badge.Title</H3>
+
+<p><img src="images/@_badge.FileName" height="50" /> </p>
+
+<p>@_badge.Description</p>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Badge _badge;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        HttpClient httpClient = HttpClientFactory.CreateClient("BlazorApp.PublicServerAPI");
+        _badge = await httpClient.GetFromJsonAsync<Badge>($"/api/Badges/{Id}") ?? new Badge();
+    }
+}

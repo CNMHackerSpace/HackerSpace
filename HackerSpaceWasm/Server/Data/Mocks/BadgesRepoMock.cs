@@ -1,7 +1,7 @@
-﻿using Data.Interfaces;
-using Data.Models;
+﻿using HackerSpaceWasm.Server.Data.Interfaces;
+using HackerSpaceWasm.Shared.Models;
 
-namespace Data.Mocks
+namespace HackerSpaceWasm.Server.Data.Mocks
 {
     public class BadgesRepoMock : IBadgesRepo
     {

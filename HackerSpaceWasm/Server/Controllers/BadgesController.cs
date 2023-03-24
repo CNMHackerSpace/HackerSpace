@@ -1,5 +1,5 @@
-﻿using Data.Interfaces;
-using Data.Models;
+﻿using HackerSpaceWasm.Server.Data.Interfaces;
+using HackerSpaceWasm.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 

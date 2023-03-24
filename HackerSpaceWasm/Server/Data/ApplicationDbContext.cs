@@ -1,8 +1,8 @@
-﻿using Data.Models;
+﻿using HackerSpaceWasm.Shared.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Data
+namespace HackerSpaceWasm.Server.Data
 {
     public class ApplicationDbContext : DbContext
     {
