@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService", "EmailService\EmailService.csproj", "{894E73A7-613C-4569-8D9E-2FE0AC898ABF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpaceWasm.Server", "HackerSpaceWasm\Server\HackerSpaceWasm.Server.csproj", "{9E017964-7613-4111-A485-293DF3AED7F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{9E017964-7613-4111-A485-293DF3AED7F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpaceWasm.Client", "HackerSpaceWasm\Client\HackerSpaceWasm.Client.csproj", "{CC1F39A9-9124-4603-B03B-3493DA6AA141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{CC1F39A9-9124-4603-B03B-3493DA6AA141}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpaceWasm.Shared", "HackerSpaceWasm\Shared\HackerSpaceWasm.Shared.csproj", "{639048A6-F78B-43D8-92FB-393818DBEBE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{639048A6-F78B-43D8-92FB-393818DBEBE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
