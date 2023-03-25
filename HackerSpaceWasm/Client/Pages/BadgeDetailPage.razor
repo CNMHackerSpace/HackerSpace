@@ -1,11 +1,20 @@
 ﻿@page "/Badge/{Id:int}"
 @using HackerSpaceWasm.Shared.Models;
 @inject IHttpClientFactory HttpClientFactory
-<h3>@_badge.Title</h3>
 
-<p><img src="images/@_badge.FileName" height="50" /> </p>
+@if (_badge == null)
+{
+    <p>...loading badge information &nbsp; <img src="/images/Spur_gears_animation_blue_small.gif" height="30"/></p>
+}
+else
+{
+    <h3>@_badge.Title</h3>
+    <p><img src="images/@_badge.FileName" height="100" /> </p>
 
-<p>@_badge.Description</p>
+    <p>@_badge.Description</p>
+}
+
+
 
 @code {
     [Parameter]
