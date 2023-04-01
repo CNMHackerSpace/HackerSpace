@@ -20,17 +20,24 @@ namespace Server.Data.Mocks
             .ToList();
         }
 
-        public async Task<Badge?> GetBadgeAsync(int id)
-        {
-            return await Task.FromResult(_badges.Where(item => item.Id == id).FirstOrDefault());
-        }
-
-        public async Task<IEnumerable<Badge>> GetBadgesAsync()
+        public async Task<IEnumerable<Badge>> GetAllAsync()
         {
             return await Task.FromResult(_badges); 
         }
 
-        public Task UpdateBadgeAsync(Badge badge)
+        public async Task<Badge?> GetByIdAsync(int id)
+        {
+            return await Task.FromResult(_badges.Where(item => item.Id == id).FirstOrDefault());
+        }
+
+        public Task<Badge?> AddAsync(Badge badge)
+        {
+            badge.Id = ++_count;
+            _badges.Add(badge);
+            return Task.FromResult((Badge?)badge);
+        }
+
+        public Task UpdateAsync(Badge badge)
         {
             Badge? currentBadge = _badges.Where(item => item.Id == badge.Id).FirstOrDefault();
             if (currentBadge != null)
@@ -41,14 +48,7 @@ namespace Server.Data.Mocks
             return Task.CompletedTask;
         }
 
-        public Task<Badge?> AddBadgeAsync(Badge badge)
-        {
-            badge.Id = ++_count;
-            _badges.Add(badge);
-            return Task.FromResult((Badge?)badge);
-        }
-
-        public Task DeleteBadgeAsync(int id)
+        public Task DeleteAsync(int id)
         {
             Badge? badge = _badges.Where(item => item.Id == id).FirstOrDefault();
             if (badge != null)

@@ -25,7 +25,7 @@ namespace Server.Controllers
         public async Task<IEnumerable<Badge>> GetBadges()
         {
             _logger.Log(LogLevel.Information, "GetBadges executed.");
-            return await _badgesRepo.GetBadgesAsync();
+            return await _badgesRepo.GetAllAsync();
         }
 
         [HttpGet]
@@ -33,7 +33,7 @@ namespace Server.Controllers
         public async Task<Badge?> GetBadge(int id)
         {
             _logger.Log(LogLevel.Information, "GetBadges executed.");
-            return await _badgesRepo.GetBadgeAsync(id);
+            return await _badgesRepo.GetByIdAsync(id);
         }
 
         [Authorize]
@@ -42,7 +42,7 @@ namespace Server.Controllers
         public async Task<Badge?> AddBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "AddBadge Executed.");
-            return await _badgesRepo.AddBadgeAsync(badge);
+            return await _badgesRepo.AddAsync(badge);
         }
 
         [Authorize]
@@ -51,7 +51,7 @@ namespace Server.Controllers
         public async void UpdateBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
-            await _badgesRepo.UpdateBadgeAsync(badge);
+            await _badgesRepo.UpdateAsync(badge);
         }
 
         [Authorize]
@@ -61,7 +61,7 @@ namespace Server.Controllers
         public async void DeleteBadge(int id)
         {
             _logger.Log(LogLevel.Information, "DeleteBadge Executed.");
-            await _badgesRepo.DeleteBadgeAsync(id);
+            await _badgesRepo.DeleteAsync(id);
         }
     }
 }

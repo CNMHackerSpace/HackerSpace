@@ -4,10 +4,10 @@ namespace Server.Data.Interfaces
 {
     public interface IBadgesRepo
     {
-        public Task<IEnumerable<Badge>> GetBadgesAsync();
-        public Task<Badge?> GetBadgeAsync(int id);
-        public Task<Badge?> AddBadgeAsync(Badge badge);
-        public Task UpdateBadgeAsync(Badge badge);
-        public Task DeleteBadgeAsync(int id);
+        public Task<IEnumerable<Badge>> GetAllAsync();
+        public Task<Badge?> GetByIdAsync(int id);
+        public Task<Badge?> AddAsync(Badge badge);
+        public Task UpdateAsync(Badge badge);
+        public Task DeleteAsync(int id);
     }
 }
