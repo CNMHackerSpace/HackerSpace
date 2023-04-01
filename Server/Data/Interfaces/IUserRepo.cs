@@ -9,5 +9,6 @@ namespace Server.Data.Interfaces
         public Task<User?> AddAsync(User badge);
         public Task UpdateAsync(User badge);
         public Task DeleteAsync(int id);
+        public Task<User?> GetByUidAsync(string uid);
     }
 }

@@ -1,23 +1,29 @@
 ﻿@page "/UserProfile"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Shared.Models;
 @attribute [Authorize]
 @inject HttpClient Http
 
 <PageTitle>User Profile</PageTitle>
 <h3>User Profile</h3>
+@if(user != null)
+{
+    <p>Name: @user.Name</p>
+    <p>Name: @user.Email</p>
+}
 
-<p>No profile elements to edit yet.</p>
-
-
+<p>@status</p>
 @code {
-    string userId = "Obtaining user information.";
+    string status = "Obtaining user information.";
+    User user = new User();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            userId = await Http.GetStringAsync("/api/User");
+            user = await Http.GetFromJsonAsync<User>("/api/User");
+            status = "User information obtained.";
         }
         catch (AccessTokenNotAvailableException exception)
         {

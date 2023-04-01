@@ -4,6 +4,7 @@ using Microsoft.Identity.Web;
 using Server.Data;
 using Server.Data.Interfaces;
 using Server.Data.Mocks;
+using System.Configuration;
 
 namespace Server
 {
@@ -16,11 +17,24 @@ namespace Server
             // Add services to the container.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+
+            // Adds Microsoft Identity platform (Azure AD B2C) support to protect this Api
+            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //        .AddMicrosoftIdentityWebApi(options =>
+            //        {
+            //            builder.Configuration.Bind("AzureAdB2C", options);
+
+            //            options.TokenValidationParameters.NameClaimType = "Name";
+            //            options.TokenValidationParameters.NameClaimType = "Email";
+            //        },
+            //options => { builder.Configuration.Bind("AzureAdB2C", options); });
+            // End of the Microsoft Identity platform block  
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Hackerspace.db"));
             
             //Add data services
             builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();
+            builder.Services.AddTransient<IUserRepo, UserRepoMock>();
             //End Add Data Services
 
             builder.Services.AddControllersWithViews();
@@ -54,7 +68,7 @@ namespace Server
 
             app.UseRouting();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapRazorPages();

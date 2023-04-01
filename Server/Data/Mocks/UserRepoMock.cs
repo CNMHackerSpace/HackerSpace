@@ -57,5 +57,11 @@ namespace Server.Data.Mocks
             }
             return Task.CompletedTask;
         }
+
+        public async Task<User?> GetByUidAsync(string uid)
+        {
+            var result = await Task.FromResult(_users.Where(item => item.UID == uid).FirstOrDefault());
+            return result;
+        }
     }
 }
