@@ -1,11 +1,9 @@
-using Server.Data;
-using Server.Data.Interfaces;
-using Server.Data.Mocks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+using Server.Data;
+using Server.Data.Interfaces;
+using Server.Data.Mocks;
 
 namespace Server
 {
@@ -17,7 +15,7 @@ namespace Server
 
             // Add services to the container.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Hackerspace.db"));
             
@@ -49,7 +47,7 @@ namespace Server
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapRazorPages();

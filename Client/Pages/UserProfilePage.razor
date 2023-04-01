@@ -1,0 +1,27 @@
+﻿@page "/UserProfile"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@attribute [Authorize]
+@inject HttpClient Http
+
+<PageTitle>User Profile</PageTitle>
+<h3>User Profile</h3>
+
+<p>UserID: @userId</p>
+
+
+@code {
+    string userId = "Obtain user information.";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            userId = await Http.GetStringAsync("/api/User");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}
