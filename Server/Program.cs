@@ -4,6 +4,8 @@ using Server.Data.Mocks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Server
 {
@@ -18,7 +20,7 @@ namespace Server
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Hackerspace.db"));
-
+            
             //Add data services
             builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();
             //End Add Data Services
@@ -47,8 +49,8 @@ namespace Server
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapRazorPages();
             app.MapControllers();
