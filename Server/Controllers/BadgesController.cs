@@ -2,12 +2,13 @@
 using Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
     public class BadgesController : ControllerBase
     {
         private readonly ILogger<BadgesController> _logger;
@@ -35,22 +36,28 @@ namespace Server.Controllers
             return await _badgesRepo.GetBadgeAsync(id);
         }
 
+        [Authorize]
         [HttpPost]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
         public async Task<Badge?> AddBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "AddBadge Executed.");
             return await _badgesRepo.AddBadgeAsync(badge);
         }
 
+        [Authorize]
         [HttpPut]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
         public async void UpdateBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
             await _badgesRepo.UpdateBadgeAsync(badge);
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{Id:int}")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
         public async void DeleteBadge(int id)
         {
             _logger.Log(LogLevel.Information, "DeleteBadge Executed.");

@@ -1,7 +1,7 @@
 ﻿@page "/Badges"
 @using Shared.Models;
 @inject IHttpClientFactory HttpClientFactory
-
+@inject PublicClient publicClient
 <h3>Badges</h3>
 
 @foreach(Badge badge in _badges)
@@ -13,8 +13,9 @@
 
     protected async override Task OnInitializedAsync()
     {
-        HttpClient httpClient = HttpClientFactory.CreateClient("BlazorApp.PublicServerAPI");
         await base.OnInitializedAsync();
-        _badges = await httpClient.GetFromJsonAsync<List<Badge>>("/api/Badges")??new List<Badge>();
+        //HttpClient httpClient = HttpClientFactory.CreateClient("BlazorApp.PublicServerAPI");
+        //_badges = await httpClient.GetFromJsonAsync<List<Badge>>("/api/Badges") ?? new List<Badge>();
+        _badges = await publicClient.Client.GetFromJsonAsync<List<Badge>>("/api/Badges") ?? new List<Badge>();
     }
 }
