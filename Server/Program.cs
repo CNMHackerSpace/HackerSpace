@@ -35,7 +35,7 @@ namespace Server
             
             //Add data services
             builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
-            builder.Services.AddTransient<IUserRepo, UserRepoMock>();
+            builder.Services.AddTransient<IUserRepo, UserRepo>();
             //End Add Data Services
 
             builder.Services.AddControllersWithViews();

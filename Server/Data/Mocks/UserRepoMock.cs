@@ -34,14 +34,14 @@ namespace Server.Data.Mocks
             return await Task.FromResult(_users.Where(item => item.Id == id).FirstOrDefault());
         }
 
-        public Task UpdateAsync(UserProfile badge)
+        public Task UpdateAsync(UserProfile userProfile)
         {
-            UserProfile? currentUser = _users.Where(item => item.Id == badge.Id).FirstOrDefault();
+            UserProfile? currentUser = _users.Where(item => item.Id == userProfile.Id).FirstOrDefault();
             if (currentUser != null)
             {
-                badge.UID = currentUser.UID;
-                badge.Name = currentUser.Name;
-                badge.Email = currentUser.Email;   
+                userProfile.UID = currentUser.UID;
+                userProfile.Name = currentUser.Name;
+                userProfile.Email = currentUser.Email;   
             }
             return Task.CompletedTask;
         }
@@ -55,10 +55,10 @@ namespace Server.Data.Mocks
 
         public Task DeleteAsync(int id)
         {
-            UserProfile? badge = _users.Where(item => item.Id == id).FirstOrDefault();
-            if (badge != null)
+            UserProfile? userProfile = _users.Where(item => item.Id == id).FirstOrDefault();
+            if (userProfile != null)
             {
-                _users.Remove(badge);
+                _users.Remove(userProfile);
             }
             return Task.CompletedTask;
         }

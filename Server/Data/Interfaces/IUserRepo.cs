@@ -6,8 +6,8 @@ namespace Server.Data.Interfaces
     {
         public Task<IEnumerable<UserProfile>> GetAllAsync();
         public Task<UserProfile?> GetByIdAsync(int id);
-        public Task AddAsync(UserProfile badge);
-        public Task UpdateAsync(UserProfile badge);
+        public Task AddAsync(UserProfile userProfile);
+        public Task UpdateAsync(UserProfile userProfile);
         public Task DeleteAsync(int id);
         public Task<UserProfile?> GetByUidAsync(string uid);
     }
