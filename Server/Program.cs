@@ -4,6 +4,7 @@ using Microsoft.Identity.Web;
 using Server.Data;
 using Server.Data.Interfaces;
 using Server.Data.Mocks;
+using Server.Data.Repositories;
 using System.Configuration;
 
 namespace Server
@@ -33,7 +34,7 @@ namespace Server
             options.UseSqlite("Data Source=Hackerspace.db"));
             
             //Add data services
-            builder.Services.AddSingleton<IBadgesRepo, BadgesRepoMock>();
+            builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
             builder.Services.AddTransient<IUserRepo, UserRepoMock>();
             //End Add Data Services
 

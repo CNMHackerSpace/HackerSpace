@@ -4,10 +4,21 @@
 @inject PublicClient publicClient
 <h3>Badges</h3>
 
-@foreach(Badge badge in _badges)
+@if(_badges.Count == 0)
 {
-    <p><a href="/Badge/@badge.Id"><img src="images/@badge.FileName" height="50"/>   @badge.Title</a></p>
+    <p>No badges in database at this time.</p>
 }
+else
+{
+@foreach(Badge badge in _badges)
+    {
+        <p><a href="/Badge/@badge.Id"><img src="images/@badge.FileName" height="50"/>   @badge.Title</a></p>
+    }
+}
+<AuthorizeView Roles="Admin, BadgeCreator">
+    <Authorized>Badge creation buttons</Authorized>
+    <NotAuthorized>Not badge creator</NotAuthorized>
+</AuthorizeView>
 @code {
     private List<Badge> _badges = new List<Badge>();
 

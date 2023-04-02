@@ -6,7 +6,7 @@ namespace Server.Data.Interfaces
     {
         public Task<IEnumerable<Badge>> GetAllAsync();
         public Task<Badge?> GetByIdAsync(int id);
-        public Task<Badge?> AddAsync(Badge badge);
+        public Task AddAsync(Badge badge);
         public Task UpdateAsync(Badge badge);
         public Task DeleteAsync(int id);
     }

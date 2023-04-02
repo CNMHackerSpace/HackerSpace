@@ -30,11 +30,11 @@ namespace Server.Data.Mocks
             return await Task.FromResult(_badges.Where(item => item.Id == id).FirstOrDefault());
         }
 
-        public Task<Badge?> AddAsync(Badge badge)
+        public Task AddAsync(Badge badge)
         {
             badge.Id = ++_count;
             _badges.Add(badge);
-            return Task.FromResult((Badge?)badge);
+            return Task.CompletedTask;
         }
 
         public Task UpdateAsync(Badge badge)

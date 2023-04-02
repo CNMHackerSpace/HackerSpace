@@ -39,10 +39,10 @@ namespace Server.Controllers
         [Authorize]
         [HttpPost]
         [RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
-        public async Task<Badge?> AddBadge(Badge badge)
+        public async Task AddBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "AddBadge Executed.");
-            return await _badgesRepo.AddAsync(badge);
+            await _badgesRepo.AddAsync(badge);
         }
 
         [Authorize]
