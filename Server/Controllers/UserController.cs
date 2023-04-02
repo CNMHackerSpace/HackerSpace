@@ -26,22 +26,28 @@ namespace Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAsync()
+        public async Task<IActionResult> GetAsync()
         {
-            User? user;
+            UserProfile? user;
             //From https://stackoverflow.com/questions/46112258/how-do-i-get-current-user-in-net-core-web-api-from-jwt-token
             string? uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             //bool? isAuthenticated = User.Identity?.IsAuthenticated;
             if (uid != null)
             {
-                user = new User();// _userRepo.GetByUidAsync(uid) ?? new User(); 
-                user.Name = "Rob";
-                user.Email = "rgarner011235@gmail.com";
-                user.UID = "0cc9593b-4d4a-4a5c-a508-71313e9b11b0";
+                user = await _userRepo.GetByUidAsync(uid);
+                if (user == null)
+                {
+                    //New user create a new database entry
+                    user = new UserProfile();
+                    user.UID = uid;
+                    user.Name = "";
+                    user.Email = "";
+                    await _userRepo.AddAsync(user);
+                }                
             }
             else
             {
-                user = new User();
+                return NotFound();
             }
 
             return Ok(user);

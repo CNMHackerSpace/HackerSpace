@@ -5,7 +5,7 @@
 namespace Server.Migrations
 {
     /// <inheritdoc />
-    public partial class User : Migration
+    public partial class AddUserTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

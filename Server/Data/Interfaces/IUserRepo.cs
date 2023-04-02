@@ -4,11 +4,11 @@ namespace Server.Data.Interfaces
 {
     public interface IUserRepo
     {
-        public Task<IEnumerable<User>> GetAllAsync();
-        public Task<User?> GetByIdAsync(int id);
-        public Task<User?> AddAsync(User badge);
-        public Task UpdateAsync(User badge);
+        public Task<IEnumerable<UserProfile>> GetAllAsync();
+        public Task<UserProfile?> GetByIdAsync(int id);
+        public Task AddAsync(UserProfile badge);
+        public Task UpdateAsync(UserProfile badge);
         public Task DeleteAsync(int id);
-        public Task<User?> GetByUidAsync(string uid);
+        public Task<UserProfile?> GetByUidAsync(string uid);
     }
 }

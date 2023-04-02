@@ -11,7 +11,7 @@ namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230401163018_User")]
-    partial class User
+    partial class AddUserTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -5,11 +5,11 @@ namespace Server.Data.Mocks
 {
     public class UserRepoMock : IUserRepo
     {
-        private List<User> _users;
+        private List<UserProfile> _users;
         private int _count = 0;
         public UserRepoMock() 
         {
-            _users = Enumerable.Range(1, 5).Select(index => new User
+            _users = Enumerable.Range(1, 5).Select(index => new UserProfile
             {
                 Id = ++_count,
                 UID = Guid.NewGuid().ToString(),
@@ -17,21 +17,26 @@ namespace Server.Data.Mocks
                 Email = $"Person{_count}@aserver.net"
             })
             .ToList();
+            UserProfile user = new UserProfile();
+            user.Name = "Rob";
+            user.Email = "rgarner011235@gmail.com";
+            user.UID = "0cc9593b-4d4a-4a5c-a508-71313e9b11b0";
+            _users.Add(user);
         }
         
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<UserProfile>> GetAllAsync()
         {
             return await Task.FromResult(_users); 
         }
         
-        public async Task<User?> GetByIdAsync(int id)
+        public async Task<UserProfile?> GetByIdAsync(int id)
         {
             return await Task.FromResult(_users.Where(item => item.Id == id).FirstOrDefault());
         }
 
-        public Task UpdateAsync(User badge)
+        public Task UpdateAsync(UserProfile badge)
         {
-            User? currentUser = _users.Where(item => item.Id == badge.Id).FirstOrDefault();
+            UserProfile? currentUser = _users.Where(item => item.Id == badge.Id).FirstOrDefault();
             if (currentUser != null)
             {
                 badge.UID = currentUser.UID;
@@ -41,16 +46,16 @@ namespace Server.Data.Mocks
             return Task.CompletedTask;
         }
 
-        public Task<User?> AddAsync(User badge)
+        public Task AddAsync(UserProfile userProfile)
         {
-            badge.Id = ++_count;
-            _users.Add(badge);
-            return Task.FromResult((User?)badge);
+            userProfile.Id = ++_count;
+            _users.Add(userProfile);
+            return Task.FromResult((UserProfile?)userProfile);
         }
 
         public Task DeleteAsync(int id)
         {
-            User? badge = _users.Where(item => item.Id == id).FirstOrDefault();
+            UserProfile? badge = _users.Where(item => item.Id == id).FirstOrDefault();
             if (badge != null)
             {
                 _users.Remove(badge);
@@ -58,7 +63,7 @@ namespace Server.Data.Mocks
             return Task.CompletedTask;
         }
 
-        public async Task<User?> GetByUidAsync(string uid)
+        public async Task<UserProfile?> GetByUidAsync(string uid)
         {
             var result = await Task.FromResult(_users.Where(item => item.UID == uid).FirstOrDefault());
             return result;

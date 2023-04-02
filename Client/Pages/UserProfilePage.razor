@@ -10,19 +10,19 @@
 @if(user != null)
 {
     <p>Name: @user.Name</p>
-    <p>Name: @user.Email</p>
+    <p>Email: @user.Email</p>
 }
 
 <p>@status</p>
 @code {
     string status = "Obtaining user information.";
-    User user = new User();
+    UserProfile user = new UserProfile();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            user = await Http.GetFromJsonAsync<User>("/api/User");
+            user = await Http.GetFromJsonAsync<UserProfile>("/api/User");
             status = "User information obtained.";
         }
         catch (AccessTokenNotAvailableException exception)
