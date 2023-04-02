@@ -16,26 +16,19 @@ namespace Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            //Authentication Services
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+            //End Authentication Services
 
-            // Adds Microsoft Identity platform (Azure AD B2C) support to protect this Api
-            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //        .AddMicrosoftIdentityWebApi(options =>
-            //        {
-            //            builder.Configuration.Bind("AzureAdB2C", options);
-
-            //            options.TokenValidationParameters.NameClaimType = "Name";
-            //            options.TokenValidationParameters.NameClaimType = "Email";
-            //        },
-            //options => { builder.Configuration.Bind("AzureAdB2C", options); });
-            // End of the Microsoft Identity platform block  
+            //Add data services
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Hackerspace.db"));
-            
-            //Add data services
+
             builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
             builder.Services.AddTransient<IUserRepo, UserRepo>();
+            builder.Services.AddTransient<IUserRolesRepo, UserRoleRepoMock>();
             //End Add Data Services
 
             builder.Services.AddControllersWithViews();
@@ -43,12 +36,13 @@ namespace Server
 
             var app = builder.Build();
 
-            //Update the database from migrations
+            //Migrate and seed the database
             using (var scope = app.Services.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                db.Database.Migrate();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
             }
+            //End migrate and seed database
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

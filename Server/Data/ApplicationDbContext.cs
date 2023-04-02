@@ -1,6 +1,5 @@
-﻿using Shared.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace Server.Data
 {
@@ -13,5 +12,6 @@ namespace Server.Data
 
         public DbSet<Badge> Badges { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
     }
 }

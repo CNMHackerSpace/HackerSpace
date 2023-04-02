@@ -1,6 +1,6 @@
 ﻿namespace Shared.Models
 {
-    public enum Roles
+    public enum Role
     {
         Admin, 
         BadgeCreator
