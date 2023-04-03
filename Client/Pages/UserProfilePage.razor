@@ -12,17 +12,28 @@
     <p>Name: @user.Name</p>
     <p>Email: @user.Email</p>
 }
+@if(roles != null)
+{
+    <ul>
+        @foreach(var role in roles)
+        {
+            <li>@role.Role</li>
+        }
+    </ul>
+}
 
 <p>@status</p>
 @code {
     string status = "Obtaining user information.";
     UserProfile? user;
+    IEnumerable<UserRole>? roles;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             user = await Http.GetFromJsonAsync<UserProfile>("/api/User");
+            roles = await Http.GetFromJsonAsync<IEnumerable<UserRole>>("/api/Roles");
             status = "User information obtained.";
         }
         catch (AccessTokenNotAvailableException exception)

@@ -3,10 +3,10 @@ using Shared.Models;
 
 namespace Server.Data.Mocks
 {
-    public class UserRoleRepoMock : IUserRolesRepo
+    public class UserRolesRepoMock : IUserRolesRepo
     {
         List<UserRole> _usserRoles;
-        public UserRoleRepoMock()
+        public UserRolesRepoMock()
         {
             _usserRoles = new List<UserRole>
             {
