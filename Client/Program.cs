@@ -20,10 +20,10 @@ namespace Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("HackerSpace.ServerAPI"));
             builder.Services.AddMsalAuthentication(options =>
-{
-    builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add("https://HackerSpace01.onmicrosoft.com/b6464a32-5dba-4bf5-8b67-da148fae9f52/api_access");
-});
+            {
+                builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://HackerSpace01.onmicrosoft.com/b6464a32-5dba-4bf5-8b67-da148fae9f52/api_access");
+            });
 
             await builder.Build().RunAsync();
         }

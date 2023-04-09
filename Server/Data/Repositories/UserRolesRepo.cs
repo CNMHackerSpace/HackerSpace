@@ -29,9 +29,9 @@ namespace Server.Data.Repositories
             return await _dbContext.UserRoles.ToListAsync();
         }
 
-        public async Task<IEnumerable<UserRole>> GetAllByUidAsync(string uid)
+        public async Task<IEnumerable<Role>> GetAllByUidAsync(string uid)
         {
-            var roles = await Task.FromResult(_dbContext.UserRoles.Where(ur => ur.uid == uid).ToList());
+            var roles = await _dbContext.UserRoles.Where(ur => ur.uid == uid).Select(ur=>ur.Role).ToListAsync();
             return roles;
         }
 

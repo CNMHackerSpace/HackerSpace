@@ -9,10 +9,10 @@ using System.Security.Claims;
 
 namespace Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
+    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
     public class RolesController : ControllerBase
     {
         private readonly ILogger<BadgesController> _logger;
@@ -28,7 +28,7 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            IEnumerable<UserRole> userRoles;
+            IEnumerable<Role> userRoles;
             string? uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (uid != null)
             {
@@ -40,6 +40,23 @@ namespace Server.Controllers
             }
 
             return Ok(userRoles);
+        }
+
+        [HttpGet]
+        [Route("GetUser/{uid}")]
+        public async Task<IActionResult> GetUsersRolesAsync(string uid)
+        {
+            List<Role> userRoles;
+            if (uid != null)
+            {
+                userRoles = (await _userRolesRepo.GetAllByUidAsync(uid)).ToList();
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return Ok(userRoles[0].ToString());
         }
     }
 }

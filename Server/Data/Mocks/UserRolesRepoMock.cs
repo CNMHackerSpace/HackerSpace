@@ -35,9 +35,9 @@ namespace Server.Data.Mocks
             return await Task.FromResult(_usserRoles);
         }
 
-        public async Task<IEnumerable<UserRole>> GetAllByUidAsync(string uid)
+        public async Task<IEnumerable<Role>> GetAllByUidAsync(string uid)
         {
-            return await Task.FromResult(_usserRoles.Where(ur=>ur.uid == uid));
+            return await Task.FromResult(_usserRoles.Where(ur=>ur.uid == uid).Select(ur=>ur.Role));
         }
 
         public async Task UpdateAsync(UserRole userProfile)
