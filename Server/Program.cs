@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using Server.Data;
 using Server.Data.Interfaces;
@@ -19,8 +20,16 @@ namespace Server
             // Add services to the container.
 
             //Authentication Services
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = builder.Configuration["Auth0:Authority"];
+                options.Audience = builder.Configuration["Auth0:ApiIdentifier"];
+                options.RequireHttpsMetadata = false;
+            });
             //End Authentication Services
 
             //Add data services
@@ -60,7 +69,7 @@ namespace Server
             app.UseHttpsRedirection();
 
             app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles(); 
+            app.UseStaticFiles();
 
             app.UseRouting();
 
