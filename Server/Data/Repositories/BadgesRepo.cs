@@ -39,6 +39,7 @@ namespace Server.Data.Repositories
             var currentBadge = _dbContext.Badges.FirstOrDefault(item => item.Id == badge.Id);
             currentBadge.Title = badge.Title;
             currentBadge.Description = badge.Description;
+            currentBadge.TurnInInstructions = badge.TurnInInstructions;
             currentBadge.Title = badge.Title;
             currentBadge.FileName = badge.FileName;
             await _dbContext.SaveChangesAsync();

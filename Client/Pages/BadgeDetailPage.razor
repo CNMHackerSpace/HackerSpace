@@ -1,7 +1,7 @@
 ﻿@page "/Badge/{Id:int}"
 @using Shared.Models
-@inject IHttpClientFactory HttpClientFactory
-@inject PublicClient publicClient
+@inject HttpClient http
+@inject NavigationManager navManager
 
 @if (_badge == null)
 {
@@ -9,10 +9,31 @@
 }
 else
 {
-    <h3>@_badge.Title</h3>
-    <p><img src="images/@_badge.FileName" height="100" /> </p>
-
-    <p>@_badge.Description</p>
+    <AuthorizeView Roles = "admin, badgecreator">
+        <Authorized>
+            <div class="mb-3">
+              <label for="titleInput" class="form-label">Title</label>
+              <input type="text" class="form-control" id="titleInput" @bind = "_badge.Title" placeholder="Title">
+            </div>
+            <div class="mb-3">
+              <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
+                <Markdown class="form-control" id="descriptionInput" Value="@_badge.Description" ValueChanged="@OnDescriptionMarkdownValueChanged" />
+            </div>
+            <div class="mb-3">
+                <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
+                <Markdown class="form-control" id="turnInInstructionsInput" Value="@_badge.TurnInInstructions" ValueChanged="@OnDescriptionMarkdownValueChanged" />
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="button" @onclick="OnSaveChangesClickedAsync">Save Changes</button>
+                <button class="btn btn-danger" type="button">Discard Changes</button>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <h3>@_badge.Title</h3>
+            <p><img src="images/@_badge.FileName" height="100" /> </p>
+            <p>@_badge.Description</p>
+        </NotAuthorized>
+    </AuthorizeView>
 }
 
 
@@ -21,13 +42,43 @@ else
     [Parameter]
     public int Id { get; set; }
     private Badge _badge;
+    //string descMarkdownHtml;
 
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        //HttpClient httpClient = HttpClientFactory.CreateClient("BlazorApp.PublicServerAPI");
-        //_badge = await httpClient.GetFromJsonAsync<Badge>($"/api/Badges/{Id}") ?? new Badge();
+        if (Id == 0)
+        {
+            _badge = new Badge();
+        }
+        else
+        {
+            _badge = await http.GetFromJsonAsync<Badge>($"/api/Badges/{Id}") ?? new Badge();
+        }
+    }
 
-        _badge = await publicClient.Client.GetFromJsonAsync<Badge>($"/api/Badges/{Id}") ?? new Badge();
+    protected Task OnDescriptionMarkdownValueChanged( string value )
+    {
+        _badge.Description = value;
+        return Task.CompletedTask;
+    }
+
+    protected Task OnTurnInInstructionsMarkdownValueChanged(string value)
+    {
+        _badge.TurnInInstructions = value;
+        return Task.CompletedTask;
+    }
+
+    protected async Task OnSaveChangesClickedAsync()
+    {
+        if (_badge.Id == 0)
+        {
+            await http.PostAsJsonAsync<Badge>($"/api/Badges/",_badge);
+        }
+        else
+        {
+            await http.PutAsJsonAsync<Badge>($"/api/Badges/", _badge);
+        }
+        navManager.NavigateTo("/badges");
     }
 }

@@ -8,18 +8,15 @@ using System.Security.Claims;
 
 namespace Server.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes")]
-    public class BadgesController : ControllerBase
+ public class BadgesController : ControllerBase
     {
         private readonly ILogger<BadgesController> _logger;
         private readonly IBadgesRepo _badgesRepo;
         private readonly IUserRolesRepo _userRolesRepo;
         public BadgesController(ILogger<BadgesController> logger, IBadgesRepo badgesRepo, IUserRolesRepo userRolesRepo)
         {
-            _logger.Log(LogLevel.Information, $"BadgesController");
             _logger = logger;
             _badgesRepo = badgesRepo;
             _userRolesRepo = userRolesRepo; 
@@ -61,25 +58,6 @@ namespace Server.Controllers
         {
             _logger.Log(LogLevel.Information, "DeleteBadge Executed.");
             await _badgesRepo.DeleteAsync(id);
-        }
-
-        [HttpGet]
-        [Route("ViewModel")]
-        public async Task<BadgesViewModel> BadgesViewModelAsync(int id)
-        {
-            _logger.Log(LogLevel.Information, "BadgesViewModel Executed.");
-            BadgesViewModel vm = new BadgesViewModel();
-            string? uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (uid != null)
-            {
-                vm.Roles = await _userRolesRepo.GetAllByUidAsync(uid);
-            }
-            else
-            {
-                vm.Roles = new List<Role>();
-            }
-            vm.Badges = await _badgesRepo.GetAllAsync();
-            return vm;
         }
     }
 }

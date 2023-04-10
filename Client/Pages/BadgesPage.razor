@@ -1,49 +1,35 @@
 ﻿@page "/Badges"
 @using Shared.Models;
-@using Shared.ViewModels;
 @using System.Security.Claims
-
-@inject IHttpClientFactory HttpClientFactory
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient http
+@inject NavigationManager navManager
 <h3>Badges</h3>
 
-@if(_badgesVM.Badges.Count() == 0)
+@if(_badges.Count() == 0)
 {
     <p>No badges in database at this time.</p>
 }
 else
 {
-@foreach(Badge badge in _badgesVM.Badges)
+    @foreach(Badge badge in _badges)
     {
         <p><a href="/Badge/@badge.Id"><img src="images/@badge.FileName" height="50"/>   @badge.Title</a></p>
     }
 }
-<AuthorizeView>
-    <Authorized>Badge creation buttons</Authorized>
-    <NotAuthorized>Not badge creator</NotAuthorized>
+<AuthorizeView Roles="admin, badgecreator">
+    <Authorized><button class="btn btn-primary" type="button" @onclick="OnAddBadgeClicked">Add Badge</button></Authorized>
 </AuthorizeView>
 @code {
-    private BadgesViewModel _badgesVM = new BadgesViewModel();
+    private List<Badge> _badges = new List<Badge>();
 
     protected async override Task OnInitializedAsync()
     {
-
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var claims = user.Claims.ToList();
-        string? sub = claims.Find(c => c.Type == "sub")?.Value;
-        string? email = claims.Find(c => c.Type == "emails")?.Value;
-        //string? isadmin = claims.Find(c => c.Type == "isadmin")?.Value;
-
         await base.OnInitializedAsync();
-        if (user.Identity?.IsAuthenticated==true)
-        {
-            var http = HttpClientFactory.CreateClient();
-            _badgesVM = await http.GetFromJsonAsync<BadgesViewModel>(@"https://localhost:7018/api/Badges/ViewModel/") ?? new BadgesViewModel();
-            if(_badgesVM == null)
-            {
-                _badgesVM = new BadgesViewModel();
-            }
-        }
+        _badges = await http.GetFromJsonAsync<List<Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Badge>();
+    }
+
+    protected void OnAddBadgeClicked()
+    {
+        navManager.NavigateTo("/Badge/0");
     }
 }
