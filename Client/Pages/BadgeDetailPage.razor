@@ -2,37 +2,29 @@
 @using Shared.Models
 @inject HttpClient http
 @inject NavigationManager navManager
+@inject IJSRuntime JS
 
 @if (_badge == null)
 {
-    <p>...loading badge information &nbsp; <img src="/images/Spur_gears_animation_blue_small.gif" height="30"/></p>
+    <p>...loading badge information &nbsp; <img src="/images/Spur_gears_animation_blue_small.gif" height="30" /></p>
 }
 else
 {
-    <AuthorizeView Roles = "admin, badgecreator">
+    <AuthorizeView Roles="admin, badgecreator">
         <Authorized>
             <div class="mb-3">
-              <label for="titleInput" class="form-label">Title</label>
-              <input type="text" class="form-control" id="titleInput" @bind = "_badge.Title" placeholder="Title">
-            </div>
-@*            <div class="mb-3">
-                <label for="trailImage" class="font-weight-bold text-secondary">
-                    Image
-                </label>
-                <InputFile OnChange="LoadTrailImage" class="form-control-file"
-                           id="trailImage" accept=".png,.jpg,.jpeg" />
-            </div>*@
-            <div class="mb-3">
                 <div class="custom-file">
-                    <InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
-                    <label class="custom-file-label" for="inputFile">Choose file</label>
+                    <img src="images/@_badge.FileName" height="50" />
                 </div>
-                <div class="input-group-append">
-                    <button class="btn btn-success" @onclick="Upload" disabled="@isDisabled">Upload</button>
-                </div>
+                <button class="btn btn-primary" @onclick="ShowModal">Change Image</button>
+                <p>@testMessage</p>
             </div>
             <div class="mb-3">
-              <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
+                <label for="titleInput" class="form-label">Title</label>
+                <input type="text" class="form-control" id="titleInput" @bind="_badge.Title" placeholder="Title">
+            </div>           
+            <div class="mb-3">
+                <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
                 <Markdown class="form-control" id="descriptionInput" Value="@_badge.Description" ValueChanged="@OnDescriptionMarkdownValueChanged" />
             </div>
             <div class="mb-3">
@@ -45,12 +37,7 @@ else
             </div>
         </Authorized>
         <NotAuthorized>
-            <h3>@_badge.Title</h3>
-            <p><img src="images/@_badge.FileName" height="100" /> </p>
-            <h2>Description</h2>
-            <p>@((MarkupString)Markdig.Markdown.ToHtml(_badge.Description))</p>
-            <h2>Turn in instructions</h2>
-            <p>@((MarkupString)Markdig.Markdown.ToHtml(_badge.TurnInInstructions))</p>
+            <BadgeComponent Badge="_badge" />
         </NotAuthorized>
     </AuthorizeView>
 }
@@ -60,7 +47,12 @@ else
 @code {
     [Parameter]
     public int Id { get; set; }
-    private Badge _badge;
+    private Badge _badge = new Badge();
+    bool showImage = true;
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    ImageFile imageFile = new ImageFile();
+    bool isDisabled = false;
+    string testMessage = "";
 
     protected async override Task OnParametersSetAsync()
     {
@@ -75,7 +67,7 @@ else
         }
     }
 
-    protected Task OnDescriptionMarkdownValueChanged( string value )
+    protected Task OnDescriptionMarkdownValueChanged(string value)
     {
         _badge.Description = value;
         return Task.CompletedTask;
@@ -91,7 +83,7 @@ else
     {
         if (_badge.Id == 0)
         {
-            await http.PostAsJsonAsync<Badge>($"/api/Badges/",_badge);
+            await http.PostAsJsonAsync<Badge>($"/api/Badges/", _badge);
         }
         else
         {
@@ -99,42 +91,20 @@ else
         }
         navManager.NavigateTo("/badges");
     }
-
-    private IBrowserFile? _trailImage;  
-
-    private void LoadTrailImage(InputFileChangeEventArgs e)
-    { 
-         _trailImage = e.File;
-    }
-
-    ImageFile imageFile = new ImageFile();
-    bool isDisabled = false;
-
-    async Task OnChange(InputFileChangeEventArgs e)
+  
+    private async Task ShowModal()
     {
-        var files = e.GetMultipleFiles(); // get the files selected by the users
-        foreach (var file in files)
+        var modal = Modal.Show<ImageFileSelector>("Change Image");
+        var result = await modal.Result;
+
+        if (result.Cancelled)
         {
-            var resizedFile = await file.RequestImageFileAsync(file.ContentType, 640, 480); // resize the image file
-            var buf = new byte[resizedFile.Size]; // allocate a buffer to fill with the file's data
-            using (var stream = resizedFile.OpenReadStream())
-            {
-                await stream.ReadAsync(buf); // copy the stream to the buffer
-            }
-            imageFile = new ImageFile { base64data = Convert.ToBase64String(buf), contentType = file.ContentType, fileName = file.Name }; // convert to a base64 string!!
+            testMessage = "Modal was cancelled";
+        }
+        else if (result.Confirmed)
+        {
+            testMessage = "Modal was closed";
         }
     }
 
-    async Task Upload()
-    {
-        isDisabled = true;
-        using (var msg = await http.PostAsJsonAsync<ImageFile>("/api/upload", imageFile, System.Threading.CancellationToken.None))
-        {
-            isDisabled = false;
-            if (msg.IsSuccessStatusCode)
-            {
-                imageFile = new ImageFile();
-            }
-        }
-    }
 }

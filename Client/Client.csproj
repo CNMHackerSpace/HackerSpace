@@ -10,6 +10,8 @@
 
     <!--<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.4" />-->
 
+	  <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+
 	  <PackageReference Include="Blazorise.Bootstrap" Version="1.2.2" />
 
 	  <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.2" />

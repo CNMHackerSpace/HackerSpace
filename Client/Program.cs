@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Blazored.Modal;
 
 namespace Client
 {
@@ -41,6 +42,10 @@ namespace Client
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
             //End Blazorise
+
+            //For BlazorModal
+            builder.Services.AddBlazoredModal();
+            //End BlazorModal
 
             await builder.Build().RunAsync();
         }
