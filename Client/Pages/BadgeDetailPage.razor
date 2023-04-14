@@ -8,33 +8,31 @@
 
 @if (_badge == null)
 {
-    <p>...loading badge information &nbsp; 
-        <img src="/images/Spur_gears_animation_blue_small.gif" height="30" /></p>
+    <p>
+        ...loading badge information &nbsp;
+        <img src="/images/Spur_gears_animation_blue_small.gif" height="30" />
+    </p>
 }
 else
 {
     <AuthorizeView Roles="admin, badgecreator">
         <Authorized>
             <div class="mb-3">
-                <div class="custom-file">
-                    <img src="UploadedImages/@_badge.FileName" height="50" />
-                    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnBadgeImageChanged"/>
-                    <Span>@errorMessage</Span>
-                </div>
-                
-                <p>@testMessage</p>
+                <img src="UploadedImages/@_badge.FileName" height="50" />
+                <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnBadgeImageChanged" />
+                <Span>@errorMessage</Span>
             </div>
             <div class="mb-3">
                 <label for="titleInput" class="form-label">Title</label>
                 <input type="text" class="form-control" id="titleInput" @bind="_badge.Title" placeholder="Title">
-            </div>           
+            </div>
             <div class="mb-3">
                 <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
-                <Markdown @ref="DescriptionMarkdown" class="form-control" id="descriptionInput" @Value="descriptionMarkdown"  @*ValueChanged="@OnDescriptionMarkdownValueChanged" *@ />
+                <Markdown @ref="DescriptionMarkdown" class="form-control" id="descriptionInput" @Value="descriptionMarkdown" @*ValueChanged="@OnDescriptionMarkdownValueChanged" *@ />
             </div>
             <div class="mb-3">
                 <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
-                <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged"*@ />
+                <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged" *@ />
             </div>
             <div class="mb-3">
                 <button class="btn btn-primary" type="button" @onclick="OnSaveChangesClickedAsync">Save Changes</button>
@@ -52,7 +50,7 @@ else
 @code {
     [Parameter]
     public int Id { get; set; }
-    private Shared.Models.Badge _badge = new ();
+    private Shared.Models.Badge _badge = new();
     bool showImage = true;
     //[CascadingParameter] public IModalService Modal { get; set; } = default!;
     bool isDisabled = false;
@@ -83,29 +81,17 @@ else
             }
             descriptionMarkdownText = _badge.Description;
             turnInInstructionsMarkdownText = _badge.TurnInInstructions;
-            if(DescriptionMarkdown!= null)
+            if (DescriptionMarkdown != null)
             {
                 await DescriptionMarkdown.SetValueAsync(descriptionMarkdownText);
             }
-            if(TurnInInstructionsMarkdown!=null)
+            if (TurnInInstructionsMarkdown != null)
             {
                 await TurnInInstructionsMarkdown.SetValueAsync(turnInInstructionsMarkdownText);
             }
             StateHasChanged();
         }
     }
-
-    //protected Task OnDescriptionMarkdownValueChanged(string value)
-    //{
-    //    _badge.Description = value;
-    //    return Task.CompletedTask;
-    //}
-
-    //protected Task OnTurnInInstructionsMarkdownValueChanged(string value)
-    //{
-    //    _badge.TurnInInstructions = value;
-    //    return Task.CompletedTask;
-    //}
 
     protected async Task OnSaveChangesClickedAsync()
     {
@@ -123,7 +109,7 @@ else
     }
 
     protected async Task OnCancelChangesClickedAsync()
-    {        
+    {
         navManager.NavigateTo("/badges");
         await Task.CompletedTask;
     }
@@ -132,7 +118,7 @@ else
     {
         var file = e.Files[0];
         long maxFileSize = 1024 * 1024;
-        if(file.Size>maxFileSize)
+        if (file.Size > maxFileSize)
         {
             errorMessage = "File too large";
             return;
@@ -150,10 +136,10 @@ else
 
         var response = await Http.PostAsync("api/Filesave", content);
 
-        uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>()??new List<UploadResult>();
+        uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
         if (uploadResults.Count > 0)
         {
-            _badge.FileName = uploadResults[0].StoredFileName??"";
+            _badge.FileName = uploadResults[0].StoredFileName ?? "";
         }
     }
 }

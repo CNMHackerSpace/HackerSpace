@@ -17,7 +17,7 @@
                 <FilePicker Upload="OnFileUpload" ShowMode="FilePickerShowMode.List" />
                 <img style="max-width:100px;max-height:100px" @ref="previewImageElem" />
 
-       
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @onclick="OnSubmitClick">Submit</button>
@@ -37,9 +37,9 @@
 
     [Parameter] public string? Message { get; set; }
 
-    async Task OnSubmitClick() 
+    async Task OnSubmitClick()
     {
-        await BlazoredModal.CloseAsync(ModalResult.Ok(true)); 
+        await BlazoredModal.CloseAsync(ModalResult.Ok(true));
     }
 
     async Task OnCancelClick()
