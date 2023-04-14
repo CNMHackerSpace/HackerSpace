@@ -1,7 +1,7 @@
 ﻿@using Shared.Models;
 
 <h3>@Badge.Title</h3>
-<p><img src="images/@Badge.FileName" height="100" /> </p>
+<p> <img src="UploadedImages/@Badge.FileName" height="100" /></p>
 <h2>Description</h2>
 <p>@((MarkupString)Markdig.Markdown.ToHtml(Badge.Description))</p>
 <h2>Turn in instructions</h2>

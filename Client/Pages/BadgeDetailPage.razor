@@ -18,7 +18,7 @@ else
             <div class="mb-3">
                 <div class="custom-file">
                     <img src="UploadedImages/@_badge.FileName" height="50" />
-                    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnChanged"/>
+                    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnBadgeImageChanged"/>
                     <Span>@errorMessage</Span>
                 </div>
                 
@@ -30,15 +30,15 @@ else
             </div>           
             <div class="mb-3">
                 <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
-                <Markdown class="form-control" id="descriptionInput" Value="@_badge.Description" ValueChanged="@OnDescriptionMarkdownValueChanged" />
+                <Markdown @ref="DescriptionMarkdown" class="form-control" id="descriptionInput" @Value="descriptionMarkdown"  @*ValueChanged="@OnDescriptionMarkdownValueChanged" *@ />
             </div>
             <div class="mb-3">
                 <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
-                <Markdown class="form-control" id="turnInInstructionsInput" Value="@_badge.TurnInInstructions" ValueChanged="@OnDescriptionMarkdownValueChanged" />
+                <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged"*@ />
             </div>
             <div class="mb-3">
                 <button class="btn btn-primary" type="button" @onclick="OnSaveChangesClickedAsync">Save Changes</button>
-                <button class="btn btn-danger" type="button">Discard Changes</button>
+                <button class="btn btn-danger" type="button" @onclick="OnCancelChangesClickedAsync">Discard Changes</button>
             </div>
         </Authorized>
         <NotAuthorized>
@@ -59,34 +59,58 @@ else
     string testMessage = "";
     private IList<UploadResult> uploadResults = new List<UploadResult>();
     private string errorMessage = "";
+    Blazorise.Markdown.Markdown? DescriptionMarkdown { get; set; }
+    string descriptionMarkdownText = "";
+    Blazorise.Markdown.Markdown? TurnInInstructionsMarkdown { get; set; }
+    string turnInInstructionsMarkdownText = "";
 
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
         if (Id == 0)
         {
-            _badge = new ();
+            _badge = null;
         }
         else
         {
-            _badge = await Http.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new ();
+            if (Id == -1)
+            {
+                _badge = new();
+            }
+            else
+            {
+                _badge = await Http.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
+            }
+            descriptionMarkdownText = _badge.Description;
+            turnInInstructionsMarkdownText = _badge.TurnInInstructions;
+            if(DescriptionMarkdown!= null)
+            {
+                await DescriptionMarkdown.SetValueAsync(descriptionMarkdownText);
+            }
+            if(TurnInInstructionsMarkdown!=null)
+            {
+                await TurnInInstructionsMarkdown.SetValueAsync(turnInInstructionsMarkdownText);
+            }
+            StateHasChanged();
         }
     }
 
-    protected Task OnDescriptionMarkdownValueChanged(string value)
-    {
-        _badge.Description = value;
-        return Task.CompletedTask;
-    }
+    //protected Task OnDescriptionMarkdownValueChanged(string value)
+    //{
+    //    _badge.Description = value;
+    //    return Task.CompletedTask;
+    //}
 
-    protected Task OnTurnInInstructionsMarkdownValueChanged(string value)
-    {
-        _badge.TurnInInstructions = value;
-        return Task.CompletedTask;
-    }
+    //protected Task OnTurnInInstructionsMarkdownValueChanged(string value)
+    //{
+    //    _badge.TurnInInstructions = value;
+    //    return Task.CompletedTask;
+    //}
 
     protected async Task OnSaveChangesClickedAsync()
     {
+        _badge.Description = await DescriptionMarkdown.GetValueAsync();
+        _badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
         if (_badge.Id == 0)
         {
             await Http.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
@@ -98,8 +122,13 @@ else
         navManager.NavigateTo("/badges");
     }
 
+    protected async Task OnCancelChangesClickedAsync()
+    {        
+        navManager.NavigateTo("/badges");
+        await Task.CompletedTask;
+    }
 
-    private async Task OnChanged(FileChangedEventArgs e)
+    private async Task OnBadgeImageChanged(FileChangedEventArgs e)
     {
         var file = e.Files[0];
         long maxFileSize = 1024 * 1024;
@@ -127,11 +156,4 @@ else
             _badge.FileName = uploadResults[0].StoredFileName??"";
         }
     }
-    Task OnStarted(FileChangedEventArgs e)
-    {
-        var file = e.Files[0];
-
-        return Task.CompletedTask;
-    }
-
 }

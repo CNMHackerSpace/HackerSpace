@@ -5,7 +5,14 @@
 @inject NavigationManager navManager
 <h3>Badges</h3>
 
-@if(_badges.Count() == 0)
+@if(_badges == null)
+{
+    <p>
+        ...Loading badges &nbsp;
+        <img src="/images/Spur_gears_animation_blue_small.gif" height="30" />
+    </p>
+}
+else if(_badges.Count() == 0)
 {
     <p>No badges in database at this time.</p>
 }
@@ -24,7 +31,7 @@ else
     <Authorized><button class="btn btn-primary" type="button" @onclick="OnAddBadgeClicked">Add Badge</button></Authorized>
 </AuthorizeView>
 @code {
-    private List<Shared.Models.Badge> _badges = new List<Shared.Models.Badge>();
+    private List<Shared.Models.Badge>? _badges;
 
     protected async override Task OnInitializedAsync()
     {
@@ -34,6 +41,6 @@ else
 
     protected void OnAddBadgeClicked()
     {
-        navManager.NavigateTo("/Badge/0");
+        navManager.NavigateTo("/Badge/-1");
     }
 }
