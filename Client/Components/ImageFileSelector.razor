@@ -1,4 +1,8 @@
-﻿@*Uses Blazored modal: https://github.com/Blazored/Modal*@
+﻿@using Blazorise
+@using Shared.Models;
+@*Uses Blazored modal: https://github.com/Blazored/Modal*@
+@inject IJSRuntime JS
+@inject HttpClient Http
 
 <div class="modal fade show d-block" tabindex="-1" role="dialog">
     <div class="modal-backdrop fade show" @onclick="OnCancelClick"></div>
@@ -9,7 +13,11 @@
                 <h5 class="modal-title">Modal title</h5>
             </div>
             <div class="modal-body">
-                <p>@Message</p>
+
+                <FilePicker Upload="OnFileUpload" ShowMode="FilePickerShowMode.List" />
+                <img style="max-width:100px;max-height:100px" @ref="previewImageElem" />
+
+       
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @onclick="OnSubmitClick">Submit</button>
@@ -18,45 +26,44 @@
         </div>
     </div>
 </div>
-
 @code {
+    private InputFile? inputFile;
+    private ElementReference previewImageElem;
+
+    private async Task ShowPreview() => await JS.InvokeVoidAsync(
+    "previewImage", inputFile!.Element, previewImageElem);
+
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
     [Parameter] public string? Message { get; set; }
 
-    async Task OnSubmitClick() => await BlazoredModal.CloseAsync(ModalResult.Ok(true));
-    async Task OnCancelClick() => await BlazoredModal.CancelAsync();
+    async Task OnSubmitClick() 
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Ok(true)); 
+    }
+
+    async Task OnCancelClick()
+    {
+        await BlazoredModal.CancelAsync();
+    }
 
 
-    //private InputFile? inputFile;
-    //private ElementReference previewImageElem;
-    //async Task OnChange(InputFileChangeEventArgs e)
-    //{
-    //    await JS.InvokeVoidAsync("previewImage", inputFile!.Element, previewImageElem);
-    //    StateHasChanged();
-    //    //var file = e.File; // get the files selected by the users
-
-    //    //var resizedFile = await file.RequestImageFileAsync(file.ContentType, 640, 480); // resize the image file
-    //    //var buf = new byte[resizedFile.Size]; // allocate a buffer to fill with the file's data
-    //    //using (var stream = resizedFile.OpenReadStream())
-    //    //{
-    //    //    await stream.ReadAsync(buf); // copy the stream to the buffer
-    //    //}
-    //    //imageFile = new ImageFile { base64data = Convert.ToBase64String(buf), contentType = file.ContentType, fileName = file.Name }; // convert to a base64 string!!
-
-    //}
-
-    //async Task Upload()
-    //{
-    //    isDisabled = true;
-    //    using (var response = await http.PostAsJsonAsync<ImageFile>("/api/upload", imageFile, System.Threading.CancellationToken.None))
-    //    {
-    //        isDisabled = false;
-    //        if (response.IsSuccessStatusCode)
-    //        {
-    //            _badge.FileName = response.Content.ReadAsStringAsync().Result;
-    //            imageFile = new ImageFile();
-    //        }
-    //    }
-    //}
+    async Task OnFileUpload(FileUploadEventArgs e)
+    {
+        try
+        {
+            using (MemoryStream result = new MemoryStream())
+            {
+                await e.File.OpenReadStream(long.MaxValue).CopyToAsync(result);
+            }
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc.Message);
+        }
+        finally
+        {
+            this.StateHasChanged();
+        }
+    }
 }

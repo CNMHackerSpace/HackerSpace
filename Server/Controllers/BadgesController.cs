@@ -14,13 +14,10 @@ namespace Server.Controllers
     {
         private readonly ILogger<BadgesController> _logger;
         private readonly IBadgesRepo _badgesRepo;
-        private readonly IUserRolesRepo _userRolesRepo;
-        public BadgesController(ILogger<BadgesController> logger, IBadgesRepo badgesRepo, IUserRolesRepo userRolesRepo)
+        public BadgesController(ILogger<BadgesController> logger, IBadgesRepo badgesRepo)
         {
             _logger = logger;
-            _badgesRepo = badgesRepo;
-            _userRolesRepo = userRolesRepo; 
-        }
+            _badgesRepo = badgesRepo;        }
 
         [HttpGet]
         public async Task<IEnumerable<Badge>> GetBadges()

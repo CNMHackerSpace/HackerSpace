@@ -1,12 +1,15 @@
 ﻿@page "/Badge/{Id:int}"
+
 @using Shared.Models
-@inject HttpClient http
+@using System.Net.Http.Headers;
+@inject HttpClient Http
 @inject NavigationManager navManager
 @inject IJSRuntime JS
 
 @if (_badge == null)
 {
-    <p>...loading badge information &nbsp; <img src="/images/Spur_gears_animation_blue_small.gif" height="30" /></p>
+    <p>...loading badge information &nbsp; 
+        <img src="/images/Spur_gears_animation_blue_small.gif" height="30" /></p>
 }
 else
 {
@@ -14,9 +17,11 @@ else
         <Authorized>
             <div class="mb-3">
                 <div class="custom-file">
-                    <img src="images/@_badge.FileName" height="50" />
+                    <img src="UploadedImages/@_badge.FileName" height="50" />
+                    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnChanged"/>
+                    <Span>@errorMessage</Span>
                 </div>
-                <button class="btn btn-primary" @onclick="ShowModal">Change Image</button>
+                
                 <p>@testMessage</p>
             </div>
             <div class="mb-3">
@@ -47,23 +52,24 @@ else
 @code {
     [Parameter]
     public int Id { get; set; }
-    private Badge _badge = new Badge();
+    private Shared.Models.Badge _badge = new ();
     bool showImage = true;
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
-    ImageFile imageFile = new ImageFile();
+    //[CascadingParameter] public IModalService Modal { get; set; } = default!;
     bool isDisabled = false;
     string testMessage = "";
+    private IList<UploadResult> uploadResults = new List<UploadResult>();
+    private string errorMessage = "";
 
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
         if (Id == 0)
         {
-            _badge = new Badge();
+            _badge = new ();
         }
         else
         {
-            _badge = await http.GetFromJsonAsync<Badge>($"/api/Badges/{Id}") ?? new Badge();
+            _badge = await Http.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new ();
         }
     }
 
@@ -83,28 +89,49 @@ else
     {
         if (_badge.Id == 0)
         {
-            await http.PostAsJsonAsync<Badge>($"/api/Badges/", _badge);
+            await Http.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
         }
         else
         {
-            await http.PutAsJsonAsync<Badge>($"/api/Badges/", _badge);
+            await Http.PutAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
         }
         navManager.NavigateTo("/badges");
     }
-  
-    private async Task ShowModal()
-    {
-        var modal = Modal.Show<ImageFileSelector>("Change Image");
-        var result = await modal.Result;
 
-        if (result.Cancelled)
+
+    private async Task OnChanged(FileChangedEventArgs e)
+    {
+        var file = e.Files[0];
+        long maxFileSize = 1024 * 1024;
+        if(file.Size>maxFileSize)
         {
-            testMessage = "Modal was cancelled";
+            errorMessage = "File too large";
+            return;
         }
-        else if (result.Confirmed)
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+
+        fileContent.Headers.ContentType =
+            new MediaTypeHeaderValue(file.Type);
+
+        content.Add(
+            content: fileContent,
+            name: "\"files\"",
+            fileName: file.Name);
+
+        var response = await Http.PostAsync("api/Filesave", content);
+
+        uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>()??new List<UploadResult>();
+        if (uploadResults.Count > 0)
         {
-            testMessage = "Modal was closed";
+            _badge.FileName = uploadResults[0].StoredFileName??"";
         }
+    }
+    Task OnStarted(FileChangedEventArgs e)
+    {
+        var file = e.Files[0];
+
+        return Task.CompletedTask;
     }
 
 }

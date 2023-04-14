@@ -11,21 +11,25 @@
 }
 else
 {
-    @foreach(Badge badge in _badges)
+    @foreach(Shared.Models.Badge badge in _badges)
     {
-        <p><a href="/Badge/@badge.Id"><img src="images/@badge.FileName" height="50"/>   @badge.Title</a></p>
+        <p>
+            <a href="/Badge/@badge.Id">
+            <img src="UploadedImages/@badge.FileName" height="50" />
+            @badge.Title</a>
+        </p>
     }
 }
 <AuthorizeView Roles="admin, badgecreator">
     <Authorized><button class="btn btn-primary" type="button" @onclick="OnAddBadgeClicked">Add Badge</button></Authorized>
 </AuthorizeView>
 @code {
-    private List<Badge> _badges = new List<Badge>();
+    private List<Shared.Models.Badge> _badges = new List<Shared.Models.Badge>();
 
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _badges = await http.GetFromJsonAsync<List<Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Badge>();
+        _badges = await http.GetFromJsonAsync<List<Shared.Models.Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Shared.Models.Badge>();
     }
 
     protected void OnAddBadgeClicked()
