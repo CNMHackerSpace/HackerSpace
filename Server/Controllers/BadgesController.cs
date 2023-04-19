@@ -34,7 +34,7 @@ namespace Server.Controllers
             return await _badgesRepo.GetByIdAsync(id);
         }
 
-        
+        [Authorize]
         [HttpPost]
         public async Task AddBadge(Badge badge)
         {
@@ -42,6 +42,7 @@ namespace Server.Controllers
             await _badgesRepo.AddAsync(badge);
         }
 
+        [Authorize]
         [HttpPut]
         public async void UpdateBadge(Badge badge)
         {
@@ -49,6 +50,7 @@ namespace Server.Controllers
             await _badgesRepo.UpdateAsync(badge);
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{Id:int}")]
         public async void DeleteBadge(int id)

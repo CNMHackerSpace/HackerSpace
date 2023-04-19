@@ -1,15 +1,10 @@
 using Blazorise;
-using Client.Auth0;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
-
-using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
-using Blazored.Modal;
+using Client.Auth0;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication; //Autho0
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace Client
 {
@@ -21,17 +16,22 @@ namespace Client
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddHttpClient("AnonymousAPI", client => {
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
 
-            //Supply HttpClient to access unprotected endpoints when not logged in. See https://chrissainty.com/avoiding-accesstokennotavailableexception-when-using-blazor-webassembly-hosted-template-with-individual-user-accounts/
-            //builder.Services.AddHttpClient<PublicClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-            //End public api endpoint
+            builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
+              .CreateClient("ServerAPI"));
 
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("Auth0", options.ProviderOptions);
                 options.ProviderOptions.ResponseType = "code";
-            }).AddAccountClaimsPrincipalFactory<CustomUserFactory<RemoteUserAccount>> (); ;
+                options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
+            }).AddAccountClaimsPrincipalFactory<CustomUserFactory<RemoteUserAccount>>();
 
             //For Blazorise see https://blazorise.com/docs/start
             builder.Services
@@ -42,10 +42,6 @@ namespace Client
                 .AddBootstrap5Providers()
                 .AddFontAwesomeIcons();
             //End Blazorise
-
-            //For BlazorModal
-            builder.Services.AddBlazoredModal();
-            //End BlazorModal
 
             await builder.Build().RunAsync();
         }

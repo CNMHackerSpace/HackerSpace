@@ -2,7 +2,7 @@
 
 @using Shared.Models
 @using System.Net.Http.Headers;
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager navManager
 @inject IJSRuntime JS
 
@@ -52,7 +52,6 @@ else
     public int Id { get; set; }
     private Shared.Models.Badge _badge = new();
     bool showImage = true;
-    //[CascadingParameter] public IModalService Modal { get; set; } = default!;
     bool isDisabled = false;
     string testMessage = "";
     private IList<UploadResult> uploadResults = new List<UploadResult>();
@@ -64,6 +63,8 @@ else
 
     protected async override Task OnParametersSetAsync()
     {
+        var http = HttpClientFactory.CreateClient("AnonymousAPI");
+
         await base.OnParametersSetAsync();
         if (Id == 0)
         {
@@ -77,7 +78,7 @@ else
             }
             else
             {
-                _badge = await Http.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
+                _badge = await http.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
             }
             descriptionMarkdownText = _badge.Description;
             turnInInstructionsMarkdownText = _badge.TurnInInstructions;
@@ -95,17 +96,26 @@ else
 
     protected async Task OnSaveChangesClickedAsync()
     {
-        _badge.Description = await DescriptionMarkdown.GetValueAsync();
-        _badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
-        if (_badge.Id == 0)
+        try
         {
-            await Http.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
+            var http = HttpClientFactory.CreateClient("ServerAPI");
+
+            _badge.Description = await DescriptionMarkdown.GetValueAsync();
+            _badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
+            if (_badge.Id == 0)
+            {
+                var result = await http.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
+            }
+            else
+            {
+                var result = await http.PutAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
+            }
+            navManager.NavigateTo("/badges");
         }
-        else
+        catch (AccessTokenNotAvailableException exception)
         {
-            await Http.PutAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
+            exception.Redirect();
         }
-        navManager.NavigateTo("/badges");
     }
 
     protected async Task OnCancelChangesClickedAsync()
@@ -116,30 +126,39 @@ else
 
     private async Task OnBadgeImageChanged(FileChangedEventArgs e)
     {
-        var file = e.Files[0];
-        long maxFileSize = 1024 * 1024;
-        if (file.Size > maxFileSize)
+        try
         {
-            errorMessage = "File too large";
-            return;
+            var http = HttpClientFactory.CreateClient("ServerAPI");
+
+            var file = e.Files[0];
+            long maxFileSize = 1024 * 1024;
+            if (file.Size > maxFileSize)
+            {
+                errorMessage = "File too large";
+                return;
+            }
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+
+            fileContent.Headers.ContentType =
+                new MediaTypeHeaderValue(file.Type);
+
+            content.Add(
+                content: fileContent,
+                name: "\"files\"",
+                fileName: file.Name);
+
+            var response = await http.PostAsync("api/Filesave", content);
+
+            uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
+            if (uploadResults.Count > 0)
+            {
+                _badge.FileName = uploadResults[0].StoredFileName ?? "";
+            }
         }
-        using var content = new MultipartFormDataContent();
-        var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-
-        fileContent.Headers.ContentType =
-            new MediaTypeHeaderValue(file.Type);
-
-        content.Add(
-            content: fileContent,
-            name: "\"files\"",
-            fileName: file.Name);
-
-        var response = await Http.PostAsync("api/Filesave", content);
-
-        uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
-        if (uploadResults.Count > 0)
+        catch (AccessTokenNotAvailableException exception)
         {
-            _badge.FileName = uploadResults[0].StoredFileName ?? "";
+            exception.Redirect();
         }
     }
 }

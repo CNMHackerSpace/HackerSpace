@@ -1,7 +1,7 @@
 ﻿@page "/Badges"
 @using Shared.Models;
 @using System.Security.Claims
-@inject HttpClient http
+@inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager navManager
 <h3>Badges</h3>
 
@@ -35,6 +35,7 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        var http = HttpClientFactory.CreateClient("AnonymousAPI");
         await base.OnInitializedAsync();
         _badges = await http.GetFromJsonAsync<List<Shared.Models.Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Shared.Models.Badge>();
     }

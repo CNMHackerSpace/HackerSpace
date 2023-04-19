@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer; //For Auth0
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -19,18 +19,27 @@ namespace Server
 
             // Add services to the container.
 
-            //Authentication Services
-            builder.Services.AddAuthentication(options =>
+            //For Auth0
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,c =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.Authority = builder.Configuration["Auth0:Authority"];
-                options.Audience = builder.Configuration["Auth0:ApiIdentifier"];
-                options.RequireHttpsMetadata = false;
+                c.Authority = builder.Configuration["Auth0:Authority"];
+                c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidAudience = builder.Configuration["Auth0:Audience"],
+                    ValidIssuer = builder.Configuration["Auth0:Domain"]
+                };
             });
-            //End Authentication Services
+
+            //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer(options =>
+            //{
+            //    options.Authority = builder.Configuration["Auth0:Authority"];
+            //    options.Audience = builder.Configuration["Auth0:ApiIdentifier"];
+            //    options.RequireHttpsMetadata = false;
+            //});
+            //End Auth0
 
             //Add data services
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -72,9 +81,10 @@ namespace Server
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            //For Auth0
             app.UseAuthentication();
             app.UseAuthorization();
+            //End Auth0
 
             app.MapRazorPages();
             app.MapControllers();
