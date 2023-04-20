@@ -32,7 +32,7 @@ namespace Server
             });
 
             //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationSchem;
             //}).AddJwtBearer(options =>
             //{
             //    options.Authority = builder.Configuration["Auth0:Authority"];

@@ -1,10 +1,7 @@
-﻿using Server.Data.Interfaces;
-using Shared.Models;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web.Resource;
-using Microsoft.AspNetCore.Authorization;
-using Shared.ViewModels;
-using System.Security.Claims;
+using Server.Data.Interfaces;
+using Shared.Models;
 
 namespace Server.Controllers
 {
@@ -34,7 +31,6 @@ namespace Server.Controllers
             return await _badgesRepo.GetByIdAsync(id);
         }
 
-        [Authorize]
         [HttpPost]
         public async Task AddBadge(Badge badge)
         {
@@ -42,7 +38,6 @@ namespace Server.Controllers
             await _badgesRepo.AddAsync(badge);
         }
 
-        [Authorize]
         [HttpPut]
         public async void UpdateBadge(Badge badge)
         {
