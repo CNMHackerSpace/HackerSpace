@@ -98,7 +98,7 @@ else
     {
         try
         {
-            var http = HttpClientFactory.CreateClient("ServerAPI");
+            var http = HttpClientFactory.CreateClient("SecureAPIClient");
 
             _badge.Description = await DescriptionMarkdown.GetValueAsync();
             _badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
@@ -128,7 +128,7 @@ else
     {
         try
         {
-            var http = HttpClientFactory.CreateClient("ServerAPI");
+            var http = HttpClientFactory.CreateClient("SecureAPIClient");
 
             var file = e.Files[0];
             long maxFileSize = 1024 * 1024;

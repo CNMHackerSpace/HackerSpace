@@ -31,6 +31,7 @@ namespace Server.Controllers
             return await _badgesRepo.GetByIdAsync(id);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task AddBadge(Badge badge)
         {
@@ -38,7 +39,7 @@ namespace Server.Controllers
             await _badgesRepo.AddAsync(badge);
         }
 
-        [HttpPut]
+        [Authorize]      [HttpPut]
         public async void UpdateBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");

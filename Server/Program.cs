@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer; //For Auth0
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
-using Microsoft.Identity.Web;
 using Server.Data;
 using Server.Data.Interfaces;
-using Server.Data.Mocks;
 using Server.Data.Repositories;
-using System.Configuration;
 
 namespace Server
 {
@@ -20,26 +15,18 @@ namespace Server
             // Add services to the container.
 
             //For Auth0
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,c =>
+            builder.Services.AddAuthentication(options =>      {
+                options.DefaultAuthenticateScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+                            options.DefaultChallengeScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+                        }).AddJwtBearer(options =>                         
             {
-                c.Authority = builder.Configuration["Auth0:Authority"];
-                c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidAudience = builder.Configuration["Auth0:Audience"],
-                    ValidIssuer = builder.Configuration["Auth0:Domain"]
-                };
+                            options.Authority = builder
+                .Configuration["Auth0:Authority"];           
+                options.Audience = builder                     
+                .Configuration["Auth0:ApiIdentifier"];       
             });
-
-            //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationSchem;
-            //}).AddJwtBearer(options =>
-            //{
-            //    options.Authority = builder.Configuration["Auth0:Authority"];
-            //    options.Audience = builder.Configuration["Auth0:ApiIdentifier"];
-            //    options.RequireHttpsMetadata = false;
-            //});
-            //End Auth0
 
             //Add data services
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
