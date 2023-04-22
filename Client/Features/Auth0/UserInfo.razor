@@ -1,0 +1,11 @@
+﻿@page "/userinfo"
+<h3>User Roles</h3>
+<AuthorizeView Roles="admin">
+    <p>Admin</p>
+</AuthorizeView>
+<AuthorizeView Roles="badgecreator">
+    <p>Badge Creator</p>
+</AuthorizeView>
+@code {
+
+}
