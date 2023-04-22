@@ -40,7 +40,7 @@ else
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _badges = await http.Anonymous.GetFromJsonAsync<List<Shared.Models.Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Shared.Models.Badge>();
+        _badges = await http.Anonymous.GetFromJsonAsync<List<Shared.Models.Badge>>(@"/api/Badges/") ?? new List<Shared.Models.Badge>();
     }
 
     protected void OnAddBadgeClicked()

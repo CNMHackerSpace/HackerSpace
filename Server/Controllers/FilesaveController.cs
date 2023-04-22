@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using System.Data;
 using System.Net;
 [ApiController]
 [Route("api/[controller]")]
@@ -18,6 +17,7 @@ public class FilesaveController : ControllerBase
       }
 
     [HttpPost]
+    [Authorize(Roles = "admin, badgecreator")]
     public async Task<ActionResult<IList<UploadResult>>> PostFile(
         [FromForm] IEnumerable<IFormFile> files)
     {
