@@ -1,7 +1,7 @@
 ﻿@page "/Badges"
 @using Shared.Models;
 @using System.Security.Claims
-@inject IHttpClientFactory HttpClientFactory
+@inject CustomHttpClient http
 @inject NavigationManager navManager
 <h3>Badges</h3>
 
@@ -24,6 +24,10 @@ else
             <a href="/Badge/@badge.Id">
             <img src="UploadedImages/@badge.FileName" height="50" />
             @badge.Title</a>
+
+            <AuthorizeView Roles="admin">
+                <Authorized><button class="btn btn-danger" type="button" @onclick="(()=>OnDeleteBadgeClickedAsync(badge))">Delete Badge</button></Authorized>
+            </AuthorizeView>
         </p>
     }
 }
@@ -35,13 +39,17 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        var http = HttpClientFactory.CreateClient("AnonymousAPI");
         await base.OnInitializedAsync();
-        _badges = await http.GetFromJsonAsync<List<Shared.Models.Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Shared.Models.Badge>();
+        _badges = await http.Anonymous.GetFromJsonAsync<List<Shared.Models.Badge>>(@"https://localhost:7018/api/Badges/") ?? new List<Shared.Models.Badge>();
     }
 
     protected void OnAddBadgeClicked()
     {
         navManager.NavigateTo("/Badge/-1");
+    }
+    protected async Task OnDeleteBadgeClickedAsync(Shared.Models.Badge badge)
+    {
+        var result = await http.Secure.DeleteAsync($"/api/Badges/{badge.Id}");
+        _badges?.Remove(badge);
     }
 }

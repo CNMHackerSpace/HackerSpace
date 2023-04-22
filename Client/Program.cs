@@ -2,6 +2,7 @@ using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Client.Auth0;
+using Client.Features.Auth0;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication; //Autho0
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -25,8 +26,8 @@ namespace Client
             builder.Services.AddHttpClient("SecureAPIClient", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-            //builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-            //  .CreateClient("SecureAPIClient"));
+            builder.Services.AddTransient<CustomHttpClient>();
+
             builder.Services.AddScoped(sp => new HttpClient
             { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

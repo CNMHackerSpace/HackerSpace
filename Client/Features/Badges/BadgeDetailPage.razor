@@ -2,7 +2,7 @@
 
 @using Shared.Models
 @using System.Net.Http.Headers;
-@inject IHttpClientFactory HttpClientFactory
+@inject CustomHttpClient http
 @inject NavigationManager navManager
 @inject IJSRuntime JS
 
@@ -63,8 +63,6 @@ else
 
     protected async override Task OnParametersSetAsync()
     {
-        var http = HttpClientFactory.CreateClient("AnonymousAPI");
-
         await base.OnParametersSetAsync();
         if (Id == 0)
         {
@@ -78,7 +76,7 @@ else
             }
             else
             {
-                _badge = await http.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
+                _badge = await http.Anonymous.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
             }
             descriptionMarkdownText = _badge.Description;
             turnInInstructionsMarkdownText = _badge.TurnInInstructions;
@@ -98,17 +96,15 @@ else
     {
         try
         {
-            var http = HttpClientFactory.CreateClient("SecureAPIClient");
-
             _badge.Description = await DescriptionMarkdown.GetValueAsync();
             _badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
             if (_badge.Id == 0)
             {
-                var result = await http.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
+                var result = await http.Secure.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
             }
             else
             {
-                var result = await http.PutAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
+                var result = await http.Secure.PutAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", _badge);
             }
             navManager.NavigateTo("/badges");
         }
@@ -128,7 +124,7 @@ else
     {
         try
         {
-            var http = HttpClientFactory.CreateClient("SecureAPIClient");
+            
 
             var file = e.Files[0];
             long maxFileSize = 1024 * 1024;
@@ -148,7 +144,7 @@ else
                 name: "\"files\"",
                 fileName: file.Name);
 
-            var response = await http.PostAsync("api/Filesave", content);
+            var response = await http.Secure.PostAsync("api/Filesave", content);
 
             uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
             if (uploadResults.Count > 0)
