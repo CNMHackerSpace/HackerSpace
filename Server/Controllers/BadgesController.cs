@@ -31,7 +31,7 @@ namespace Server.Controllers
             return await _badgesRepo.GetByIdAsync(id);
         }
 
-        [Authorize]
+        [Authorize(Roles ="admin, badgecreator")]
         [HttpPost]
         public async Task AddBadge(Badge badge)
         {
@@ -39,14 +39,14 @@ namespace Server.Controllers
             await _badgesRepo.AddAsync(badge);
         }
 
-        [Authorize]      [HttpPut]
+        [Authorize(Roles = "admin, badgecreator")]      [HttpPut]
         public async void UpdateBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
             await _badgesRepo.UpdateAsync(badge);
         }
 
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpDelete]
         [Route("{Id:int}")]
         public async void DeleteBadge(int id)
