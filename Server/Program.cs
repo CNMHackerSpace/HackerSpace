@@ -31,10 +31,7 @@ namespace Server
             //Add data services
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Hackerspace.db"));
-
             builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
-            //builder.Services.AddTransient<IUserRepo, UserRepo>();
-            //builder.Services.AddTransient<IUserRolesRepo, UserRolesRepo>();
             //End Add Data Services
 
             builder.Services.AddControllersWithViews();
