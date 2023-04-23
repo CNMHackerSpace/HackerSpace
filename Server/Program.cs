@@ -28,6 +28,17 @@ namespace Server
                 .Configuration["Auth0:ApiIdentifier"];       
             });
 
+            //For access to Auth0 managment API
+            builder.Services.AddAuth0AuthenticationClient(config =>
+            {
+                config.Domain = builder.Configuration["Auth0:Authority"];
+                config.ClientId = builder.Configuration["Auth0:ClientId"];
+                config.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
+            });
+
+            builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
+            //End access to Auth0 management API
+
             //Add data services
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite("Data Source=Hackerspace.db"));
