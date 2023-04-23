@@ -11,7 +11,5 @@ namespace Server.Data
         }
 
         public DbSet<Badge> Badges { get; set; }
-        public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
     }
 }
