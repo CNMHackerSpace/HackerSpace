@@ -21,6 +21,17 @@
     <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
     <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged" *@ />
 </div>
+
+<Dropdown Display="Display.InlineBlock">
+    <DropdownToggle Color="Color.Primary">Menu</DropdownToggle>
+    <DropdownMenu MaxMenuHeight="100px">
+        <DropdownItem Value="1">Action 1</DropdownItem>
+        <DropdownItem Value="2">Action 2</DropdownItem>
+        <DropdownItem Value="3">Action 3</DropdownItem>
+    </DropdownMenu>
+</Dropdown>
+<button class="btn btn-primary" type="button">Add Evaluator</button>
+
 <div class="mb-3">
     <button class="btn btn-primary" type="button" @onclick="OnSaveChangesClickedAsync">Save Changes</button>
     <button class="btn btn-danger" type="button" @onclick="OnCancelChangesClickedAsync">Discard Changes</button>
