@@ -38,6 +38,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        users = await http.Secure.GetFromJsonAsync<UserDto.Index[]>("/api/user");
+        users = await http.Secure.GetFromJsonAsync<UserDto.Index[]>("api/Users");
     }
 }

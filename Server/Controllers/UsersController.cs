@@ -11,11 +11,11 @@ namespace Server.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "admin")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IManagementApiClient _managementApiClient;
 
-        public UserController(IManagementApiClient managementApiClient)
+        public UsersController(IManagementApiClient managementApiClient)
         {
             _managementApiClient = managementApiClient;
         }
