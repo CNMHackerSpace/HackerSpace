@@ -22,16 +22,9 @@
     <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged" *@ />
 </div>
 
-<Dropdown Display="Display.InlineBlock">
-    <DropdownToggle Color="Color.Primary">Menu</DropdownToggle>
-    <DropdownMenu MaxMenuHeight="100px">
-        <DropdownItem Value="1">Action 1</DropdownItem>
-        <DropdownItem Value="2">Action 2</DropdownItem>
-        <DropdownItem Value="3">Action 3</DropdownItem>
-    </DropdownMenu>
-</Dropdown>
-<button class="btn btn-primary" type="button">Add Evaluator</button>
-
+<div class="mb-3">
+    <EvaluatorSelectorComponent/>
+</div>
 <div class="mb-3">
     <button class="btn btn-primary" type="button" @onclick="OnSaveChangesClickedAsync">Save Changes</button>
     <button class="btn btn-danger" type="button" @onclick="OnCancelChangesClickedAsync">Discard Changes</button>
@@ -45,7 +38,7 @@
     private Blazorise.Markdown.Markdown? DescriptionMarkdown { get; set; }
     private string turnInInstructionsMarkdownText = "";
     private Blazorise.Markdown.Markdown? TurnInInstructionsMarkdown { get; set; }
-
+   
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
