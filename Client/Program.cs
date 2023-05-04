@@ -32,14 +32,14 @@ namespace Client
             builder.Services.AddScoped(sp => new HttpClient
             { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            //For auth0
+            //For Auth0
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("Auth0", options.ProviderOptions);
                 options.ProviderOptions.ResponseType = "code";
                 options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
             }).AddAccountClaimsPrincipalFactory<CustomUserFactory<RemoteUserAccount>>();
-            //End auth0
+            //End Auth0
 
             //For Blazorise see https://blazorise.com/docs/start
             builder.Services
