@@ -27,6 +27,7 @@ namespace Server
                 options.Audience = builder                     
                 .Configuration["Auth0:ApiIdentifier"];       
             });
+            //End Auth0
 
             //Add data services
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -68,6 +69,7 @@ namespace Server
             app.UseStaticFiles();
 
             app.UseRouting();
+
             //For Auth0
             app.UseAuthentication();
             app.UseAuthorization();

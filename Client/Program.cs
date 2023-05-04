@@ -17,7 +17,7 @@ namespace Client
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            //builder.Services.AddHttpClient();
+            //Add anonimous and secure clients so we can access both secured and anonimous endpoints
             builder.Services.AddHttpClient("AnonymousAPI", client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
@@ -27,16 +27,19 @@ namespace Client
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             builder.Services.AddTransient<CustomHttpClient>();
+            //End add anonimous and secure clients
 
             builder.Services.AddScoped(sp => new HttpClient
             { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+            //For auth0
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("Auth0", options.ProviderOptions);
                 options.ProviderOptions.ResponseType = "code";
                 options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
             }).AddAccountClaimsPrincipalFactory<CustomUserFactory<RemoteUserAccount>>();
+            //End auth0
 
             //For Blazorise see https://blazorise.com/docs/start
             builder.Services
