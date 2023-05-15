@@ -23,40 +23,24 @@ else
             <BadgeComponent Badge="Badge" />
         </NotAuthorized>
     </AuthorizeView>
-
-@*    <p>
-        @((MarkupString)messageToUser)
-    </p>*@
 }
-
-
 
 @code {
     [Parameter]
     public int Id { get; set; }
     private Shared.Models.Badge? Badge { get; set; } = new();
-    //bool showImage = true;
-    //bool isDisabled = false;
-    //string testMessage = "";
-    
 
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
+
         if (Id == 0)
         {
-            Badge = null;
+            Badge = new();
         }
         else
         {
-            if (Id == -1)
-            {
-                Badge = new();
-            }
-            else
-            {
-                Badge = await http.Anonymous.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
-            }
+            Badge = await http.Anonymous.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
         }
     }
 }

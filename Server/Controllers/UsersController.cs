@@ -26,6 +26,7 @@ namespace Server.Controllers
             var users = await _managementApiClient.Users.GetAllAsync(new GetUsersRequest(), new PaginationInfo());
             return users.Select(x => new UserDto.Index
             {
+                UserId = x.UserId,
                 Email = x.Email,
                 FirstName = x.FirstName,
                 LastName = x.LastName,

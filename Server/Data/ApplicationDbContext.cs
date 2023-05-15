@@ -11,5 +11,6 @@ namespace Server.Data
         }
 
         public DbSet<Badge> Badges { get; set; }
+        public DbSet<Evaluator> Evaluators { get; set; }
     }
 }

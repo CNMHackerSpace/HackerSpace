@@ -7,14 +7,15 @@ namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
- public class BadgesController : ControllerBase
+    public class BadgesController : ControllerBase
     {
         private readonly ILogger<BadgesController> _logger;
         private readonly IBadgesRepo _badgesRepo;
         public BadgesController(ILogger<BadgesController> logger, IBadgesRepo badgesRepo)
         {
             _logger = logger;
-            _badgesRepo = badgesRepo;        }
+            _badgesRepo = badgesRepo;
+        }
 
         [HttpGet]
         public async Task<IEnumerable<Badge>> GetBadges()
@@ -31,7 +32,7 @@ namespace Server.Controllers
             return await _badgesRepo.GetByIdAsync(id);
         }
 
-        [Authorize(Roles ="admin, badgecreator")]
+        [Authorize(Roles = "admin, badgecreator")]
         [HttpPost]
         public async Task AddBadge(Badge badge)
         {
@@ -39,7 +40,8 @@ namespace Server.Controllers
             await _badgesRepo.AddAsync(badge);
         }
 
-        [Authorize(Roles = "admin, badgecreator")]      [HttpPut]
+        [Authorize(Roles = "admin, badgecreator")]
+        [HttpPut]
         public async void UpdateBadge(Badge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
@@ -56,3 +58,5 @@ namespace Server.Controllers
         }
     }
 }
+
+
