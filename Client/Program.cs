@@ -1,11 +1,13 @@
-using Blazorise;
-using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
 using Client.Auth0;
 using Client.Features.Auth0;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication; //Autho0
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+//For Blazorise
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
+//End Bllazorise
 
 namespace Client
 {
@@ -40,12 +42,12 @@ namespace Client
 
             //For Blazorise see https://blazorise.com/docs/start
             builder.Services
-                .AddBlazorise(options =>
-                {
-                    options.Immediate = true;
-                })
-                .AddBootstrap5Providers()
-                .AddFontAwesomeIcons();
+            .AddBlazorise(options =>
+            {
+                options.Immediate = true;
+            })
+            .AddBootstrapProviders()
+            .AddFontAwesomeIcons();
             //End Blazorise
 
             await builder.Build().RunAsync();
