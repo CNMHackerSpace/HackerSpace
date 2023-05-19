@@ -27,6 +27,7 @@ namespace Server
                 options.Audience = builder                     
                 .Configuration["Auth0:ApiIdentifier"];       
             });
+            //End Auth0
 
             //For access to Auth0 managment API
             builder.Services.AddAuth0AuthenticationClient(config =>
@@ -76,6 +77,7 @@ namespace Server
             app.UseStaticFiles();
 
             app.UseRouting();
+
             //For Auth0
             app.UseAuthentication();
             app.UseAuthorization();
