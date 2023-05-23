@@ -34,7 +34,7 @@ namespace Server.Controllers
 
         [Authorize(Roles = "admin, badgecreator")]
         [HttpPost]
-        public async Task AddBadge(Badge badge)
+        public async Task AddBadge([FromBody] Badge badge)
         {
             _logger.Log(LogLevel.Information, "AddBadge Executed.");
             await _badgesRepo.AddAsync(badge);
@@ -42,7 +42,7 @@ namespace Server.Controllers
 
         [Authorize(Roles = "admin, badgecreator")]
         [HttpPut]
-        public async void UpdateBadge(Badge badge)
+        public async void UpdateBadge([FromBody] Badge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
             await _badgesRepo.UpdateAsync(badge);
