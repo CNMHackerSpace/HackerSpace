@@ -8,7 +8,7 @@
 
 <div class="mb-3">
     <img src="UploadedImages/@Badge.FileName" height="50" />
-    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnBadgeImageChanged" />
+@*    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnBadgeImageChanged" />*@
 </div>
 <div class="mb-3">
     <label for="titleInput" class="form-label">Title</label>
@@ -16,11 +16,11 @@
 </div>
 <div class="mb-3">
     <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
-    <Markdown @ref="DescriptionMarkdown" class="form-control" id="descriptionInput" @Value="descriptionMarkdown" @*ValueChanged="@OnDescriptionMarkdownValueChanged" *@ />
+    <textarea class="form-control" @bind="Badge.Description"></textarea>
 </div>
 <div class="mb-3">
     <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
-    <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged" *@ />
+    <textarea class="form-control" @bind="Badge.TurnInInstructions"></textarea>
 </div>
 
 <div class="mb-3">
@@ -35,40 +35,18 @@
     [Parameter]
     public Shared.Models.Badge Badge { get; set; } = new Shared.Models.Badge();
     private IList<UploadResult> uploadResults = new List<UploadResult>();
-    private string descriptionMarkdownText = "";
-    private Blazorise.Markdown.Markdown? DescriptionMarkdown { get; set; }
-    private string turnInInstructionsMarkdownText = "";
-    private Blazorise.Markdown.Markdown? TurnInInstructionsMarkdown { get; set; }
     private List<string> evaluators = new List<string>();
 
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        descriptionMarkdownText = Badge.Description;
-        turnInInstructionsMarkdownText = Badge.TurnInInstructions;
-        if (DescriptionMarkdown != null)
-        {
-            await DescriptionMarkdown.SetValueAsync(descriptionMarkdownText);
-        }
-        if (TurnInInstructionsMarkdown != null)
-        {
-            await TurnInInstructionsMarkdown.SetValueAsync(turnInInstructionsMarkdownText);
-        }
-        StateHasChanged();
+        
     }
 
     protected async Task OnSaveChangesClickedAsync()
     {
         try
         {
-            if (DescriptionMarkdown != null)
-            {
-                Badge.Description = await DescriptionMarkdown.GetValueAsync();
-            }
-            if (TurnInInstructionsMarkdown != null)
-            {
-                Badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
-            }
             if (Badge.Id == 0)
             {
                 var result = await http.Secure.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", Badge);
@@ -118,45 +96,45 @@
         await Task.CompletedTask;
     }
 
-    private async Task OnBadgeImageChanged(FileChangedEventArgs e)
-    {
-        try
-        {
-            //messageToUser += $"<p>Number of files: {e.Files.Count()}</p>";
-            var file = e.Files[0];
-            long maxFileSize = 1024 * 1024;
-            if (file.Size > maxFileSize)
-            {
-                //messageToUser += "<p>File too large</p>";
-                return;
-            }
-            using var content = new MultipartFormDataContent();
-            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+    //private async Task OnBadgeImageChanged(FileChangedEventArgs e)
+    //{
+    //    try
+    //    {
+    //        //messageToUser += $"<p>Number of files: {e.Files.Count()}</p>";
+    //        var file = e.Files[0];
+    //        long maxFileSize = 1024 * 1024;
+    //        if (file.Size > maxFileSize)
+    //        {
+    //            //messageToUser += "<p>File too large</p>";
+    //            return;
+    //        }
+    //        using var content = new MultipartFormDataContent();
+    //        var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
 
-            fileContent.Headers.ContentType =
-                new MediaTypeHeaderValue(file.Type);
+    //        fileContent.Headers.ContentType =
+    //            new MediaTypeHeaderValue(file.Type);
 
-            content.Add(
-                content: fileContent,
-                name: "\"files\"",
-                fileName: file.Name);
+    //        content.Add(
+    //            content: fileContent,
+    //            name: "\"files\"",
+    //            fileName: file.Name);
 
-            var response = await http.Secure.PostAsync("/api/Filesave", content);
+    //        var response = await http.Secure.PostAsync("/api/Filesave", content);
 
-            uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
-            if (uploadResults.Count > 0)
-            {
-                Badge.FileName = uploadResults[0].StoredFileName ?? "";
-                logger.Log(LogLevel.Information,$"File uploaded: {Badge.FileName}");
-            }
-            else
-            {
-                logger.Log(LogLevel.Information,$"File upload problem: </p><p>UploadResults.Count: {uploadResults.Count}");
-            }
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-    }
+    //        uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
+    //        if (uploadResults.Count > 0)
+    //        {
+    //            Badge.FileName = uploadResults[0].StoredFileName ?? "";
+    //            logger.Log(LogLevel.Information,$"File uploaded: {Badge.FileName}");
+    //        }
+    //        else
+    //        {
+    //            logger.Log(LogLevel.Information,$"File upload problem: </p><p>UploadResults.Count: {uploadResults.Count}");
+    //        }
+    //    }
+    //    catch (AccessTokenNotAvailableException exception)
+    //    {
+    //        exception.Redirect();
+    //    }
+    //}
 }

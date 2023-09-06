@@ -6,10 +6,10 @@ namespace Server.Data.Repositories
 {
     public class BadgesRepo : IBadgesRepo
     {
-        ApplicationDbContext _dbContext;
+        readonly ApplicationDbContext _dbContext;
         public BadgesRepo(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;            
+            _dbContext = dbContext;
         }
         public async Task AddAsync(Badge badge)
         {
@@ -20,8 +20,11 @@ namespace Server.Data.Repositories
         public async Task DeleteAsync(int id)
         {
             var item = _dbContext.Badges.FirstOrDefault(item => item.Id == id);
-            _dbContext.Remove(item);
-            await _dbContext.SaveChangesAsync();
+            if (item != null)
+            {
+                _dbContext.Badges.Remove(item);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<IEnumerable<Badge>> GetAllAsync()
@@ -37,12 +40,15 @@ namespace Server.Data.Repositories
         public async Task UpdateAsync(Badge badge)
         {
             var currentBadge = _dbContext.Badges.FirstOrDefault(item => item.Id == badge.Id);
-            currentBadge.Title = badge.Title;
-            currentBadge.Description = badge.Description;
-            currentBadge.TurnInInstructions = badge.TurnInInstructions;
-            currentBadge.Title = badge.Title;
-            currentBadge.FileName = badge.FileName;
-            await _dbContext.SaveChangesAsync();
+            if (currentBadge != null)
+            {
+                currentBadge.Title = badge.Title;
+                currentBadge.Description = badge.Description;
+                currentBadge.TurnInInstructions = badge.TurnInInstructions;
+                currentBadge.Title = badge.Title;
+                currentBadge.FileName = badge.FileName;
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

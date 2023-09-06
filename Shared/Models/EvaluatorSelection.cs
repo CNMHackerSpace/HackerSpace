@@ -2,7 +2,7 @@
 {
     public class EvaluatorSelection
     {
-        public UserDto.Index Dto { get; set; }
-        public bool Selected { get; set; }
+        public UserDto.Index? Dto { get; set; }
+        public bool Selected { get; set; } = false;
     }
 }

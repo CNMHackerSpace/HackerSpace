@@ -1,0 +1,16 @@
+﻿@page "/Evaluators"
+@inject CustomHttpClient http
+
+<h3>EvaluatorsPage</h3>
+
+
+@code {
+    private IEnumerable<Evaluator> evaluators;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var result = await http.Secure.GetAsync("api/Evaluators");
+        evaluators = await http.Secure.GetFromJsonAsync<IEnumerable<Evaluator>>("api/Evaluators");
+    }
+}

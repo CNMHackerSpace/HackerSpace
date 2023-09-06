@@ -1,0 +1,91 @@
+﻿@*From https://stackoverflow.com/questions/59256798/how-to-use-bootstrap-modal-in-blazor-client-app*@
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Evaluator Selections</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">                
+
+                <h3>Select Evaluators</h3>
+                @if (EvaluatorSelections is null)
+                {
+                    <p>Loading...</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Email</th>
+                                <th scope="col">Firstname</th>
+                                <th scope="col">Lastname</th>
+                                <th scope="col">Blocked</th>
+                                <th scope="col">Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in EvaluatorSelections)
+                            {
+                                if (user != null)
+                                {
+                                    <tr>
+                                        <th scope="row">@user?.Dto?.Email</th>
+                                        <td>@user?.Dto?.FirstName</td>
+                                        <td>@user?.Dto?.LastName</td>
+                                        <td>@user?.Dto?.Blocked</td>
+                                        <td> <InputCheckbox @bind=user.Selected/> </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    [Parameter]
+    public List<EvaluatorSelection> EvaluatorSelections { get; set; } = new List<EvaluatorSelection>();
+
+}

@@ -5,5 +5,6 @@ namespace Server.Data.Interfaces
     public interface IEvaluatorsRepo
     {
         public Task AddEvaluatorsForBadgeAsync(int badgeId, IEnumerable<string> evaluators);
+        public Task<IEnumerable<Evaluator>> GetAllAsync();
     }
 }

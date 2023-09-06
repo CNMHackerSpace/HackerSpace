@@ -17,7 +17,13 @@ else
 {
     <AuthorizeView Roles="admin, badgecreator">
         <Authorized>
-            <BadgeEditComponent Badge="Badge" />
+            <button type="button" class="btn btn-primary btn-sm" @onclick="ToggleEditMode">@(ShowAsUser ? "Switch to Edit Mode" : "Show as user")</button>
+            <span hidden="@(!ShowAsUser)">
+                <BadgeComponent Badge="Badge" />
+            </span>
+            <span hidden="@ShowAsUser">
+                <BadgeEditComponent Badge="Badge" />
+            </span>
         </Authorized>
         <NotAuthorized>
             <BadgeComponent Badge="Badge" />
@@ -28,7 +34,10 @@ else
 @code {
     [Parameter]
     public int Id { get; set; }
-    private Shared.Models.Badge? Badge { get; set; } = new();
+    [Parameter]
+    public bool ShowAsUser { get; set; } = true;
+
+    private Shared.Models.Badge? Badge { get; set; } 
 
     protected async override Task OnParametersSetAsync()
     {
@@ -43,4 +52,21 @@ else
             Badge = await http.Anonymous.GetFromJsonAsync<Shared.Models.Badge>($"/api/Badges/{Id}") ?? new();
         }
     }
+    private void ToggleEditMode()
+    {
+        ShowAsUser = !ShowAsUser;
+        StateHasChanged();
+    }
+
+    //private void OnSwitchToEditModeButtonClick()
+    //{
+    //    ShowAsUser = false;
+    //    StateHasChanged();
+    //}
+
+    //private void OnShowAsUserModeButtonClick()
+    //{
+    //    ShowAsUser = true;
+    //    StateHasChanged();
+    //}
 }

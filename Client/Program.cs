@@ -3,11 +3,6 @@ using Client.Features.Auth0;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication; //Autho0
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-//For Blazorise
-using Blazorise;
-using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
-//End Bllazorise
 
 namespace Client
 {
@@ -43,15 +38,15 @@ namespace Client
             }).AddAccountClaimsPrincipalFactory<CustomUserFactory<RemoteUserAccount>>();
             //End Auth0
 
-            //For Blazorise see https://blazorise.com/docs/start
-            builder.Services
-            .AddBlazorise(options =>
-            {
-                options.Immediate = true;
-            })
-            .AddBootstrapProviders()
-            .AddFontAwesomeIcons();
-            //End Blazorise
+            ////For Blazorise see https://blazorise.com/docs/start
+            //builder.Services
+            //.AddBlazorise(options =>
+            //{
+            //    options.Immediate = true;
+            //})
+            //.AddBootstrapProviders()
+            //.AddFontAwesomeIcons();
+            ////End Blazorise
 
             await builder.Build().RunAsync();
         }

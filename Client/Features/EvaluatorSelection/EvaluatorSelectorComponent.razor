@@ -1,51 +1,8 @@
 ﻿@inject CustomHttpClient http
 @inject ILogger<EvaluatorSelectorComponent> logger
 
-<Modal @ref="modalRef">
-    <ModalContent Centered Size="ModalSize.Large">
-        <ModalHeader>
-            <ModalTitle>Select Evaluators</ModalTitle>
-            <CloseButton />
-        </ModalHeader>
-        <ModalBody>
-            @if (EvaluatorSelections is null)
-            {
-                <p>Loading...</p>
-            }
-            else
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Email</th>
-                            <th scope="col">Firstname</th>
-                            <th scope="col">Lastname</th>
-                            <th scope="col">Blocked</th>
-                            <th scope="col">Select</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in EvaluatorSelections)
-                        {
-                            <tr>
-                                <th scope="row">@user.Dto.Email</th>
-                                <td>@user.Dto.FirstName</td>
-                                <td>@user.Dto.LastName</td>
-                                <td>@user.Dto.Blocked</td>
-                                <td><Check TValue="bool" @bind-Checked="user.Selected">Check me out</Check></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Secondary" Clicked="@OnCancelClick">Cancel</Button>
-            <Button Color="Color.Primary" Clicked="@OnSaveClick">Save Changes</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-<button class="btn btn-primary" type="button" @onclick="ShowModal">Edit Evaluators List</button>
+<EvaluatorModal @ref="Modal"></EvaluatorModal>
+<button class="btn btn-primary" type="button" @onclick="()=>Modal?.Open()">Edit Evaluators List</button>
 
 @code {
     [Parameter]
@@ -53,7 +10,7 @@
     [Parameter]
     public List<string> Evaluators { get; set; } = new List<string>();
 
-    private Modal? modalRef;
+    private EvaluatorModal? Modal;
 
     private List<EvaluatorSelection> EvaluatorSelections = new List<EvaluatorSelection>();
 
@@ -65,38 +22,41 @@
         {
             foreach (var user in users)
             {
-                EvaluatorSelection selection = new EvaluatorSelection
+                if(user.UserId!=null)
+                {
+                    EvaluatorSelection selection = new EvaluatorSelection
                     {
                         Dto = user,
                         Selected = Evaluators?.Contains(user.UserId) ?? false
                     };
-                EvaluatorSelections.Add(selection);
+                    EvaluatorSelections.Add(selection);
+                }                
             }
         }
 
         StateHasChanged();
     }
 
-    private async Task ShowModal()
+    private void ShowModal()
     {
-        if (modalRef != null) await modalRef.Show();
+        //if (modalRef != null) await modalRef.Show();
     }
 
-    private async Task OnSaveClick()
+    private void OnSaveClick()
     {
         Evaluators.Clear();
-        foreach (var evaluator in EvaluatorSelections.Where(e => e.Selected))
+        foreach (var evaluator in EvaluatorSelections.Where(e => e.Selected == true))
         {
-            Evaluators?.Add(evaluator.Dto.UserId);
+            Evaluators?.Add(evaluator?.Dto?.UserId??"");
         }
         
 
-        if (modalRef != null) await modalRef.Hide();
+        //if (modalRef != null) await modalRef.Hide();
     }
 
-    private async Task OnCancelClick()
+    private void OnCancelClick()
     {
-        if (modalRef != null) await modalRef.Hide();
+        //if (modalRef != null) await modalRef.Hide();
     }
 }
 

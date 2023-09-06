@@ -11,83 +11,98 @@ namespace Server
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            //For Auth0
-            builder.Services.AddAuthentication(options =>      {
-                options.DefaultAuthenticateScheme =
-                JwtBearerDefaults.AuthenticationScheme;
-                            options.DefaultChallengeScheme =
-                JwtBearerDefaults.AuthenticationScheme;
-                        }).AddJwtBearer(options =>                         
+            if (builder != null)
             {
-                            options.Authority = builder
-                .Configuration["Auth0:Authority"];           
-                options.Audience = builder                     
-                .Configuration["Auth0:ApiIdentifier"];       
-            });
-            //End Auth0
+                // Add services to the container.
 
-            //For access to Auth0 managment API
-            builder.Services.AddAuth0AuthenticationClient(config =>
-            {
-                config.Domain = builder.Configuration["Auth0:Authority"];
-                config.ClientId = builder.Configuration["Auth0:ClientId"];
-                config.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
-            });
+                //For Auth0
+                builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme =
+        JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
+                {
+                    options.Authority = builder
+                .Configuration["Auth0:Authority"];
+                    options.Audience = builder
+                    .Configuration["Auth0:ApiIdentifier"];
+                });
+                
 
-            builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
-            //End access to Auth0 management API
+                //For access to Auth0 managment API
+                string? auth0Authority = builder?.Configuration["Auth0:Authority"] ?? "";
+                string? auth0ClientId = builder?.Configuration["Auth0:ClientId"] ?? "";
+                string? auth0ClientSecret  = builder?.Configuration["Auth0:ClientSecret"] ?? "";
+                if(auth0Authority != null && auth0ClientId != null && auth0ClientSecret != null) 
+                { 
+                    builder?.Services.AddAuth0AuthenticationClient(config =>
+                    {
+                        config.Domain = auth0Authority;
+                        config.ClientId = auth0ClientId;
+                        config.ClientSecret = auth0ClientSecret;
+                    });
+                }
+                else
+                {
+                    throw new Exception("Auth0 not configured.");
+                }
 
-            //Add data services
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite("Data Source=Hackerspace.db"));
-            builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
-            //End Add Data Services
+                builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
+                //End access to Auth0 management API
 
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages();
+                //End Auth0
 
-            var app = builder.Build();
+                //Add data services
+                builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite("Data Source=Hackerspace.db"));
+                builder.Services.AddTransient<IBadgesRepo, BadgesRepo>();
+                //End Add Data Services
 
-            //Migrate and seed the database
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate();
+                builder.Services.AddControllersWithViews();
+                builder.Services.AddRazorPages();
+
+                var app = builder.Build();
+
+                //Migrate and seed the database
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    dbContext.Database.Migrate();
+                }
+                //End migrate and seed database
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseWebAssemblyDebugging();
+                }
+                else
+                {
+                    app.UseExceptionHandler("/Error");
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
+                }
+
+                app.UseHttpsRedirection();
+
+                app.UseBlazorFrameworkFiles();
+                app.UseStaticFiles();
+
+                app.UseRouting();
+
+                //For Auth0
+                app.UseAuthentication();
+                app.UseAuthorization();
+                //End Auth0
+
+                app.MapRazorPages();
+                app.MapControllers();
+                app.MapFallbackToFile("index.html");
+
+                app.Run();
             }
-            //End migrate and seed database
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseWebAssemblyDebugging();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            //For Auth0
-            app.UseAuthentication();
-            app.UseAuthorization();
-            //End Auth0
-
-            app.MapRazorPages();
-            app.MapControllers();
-            app.MapFallbackToFile("index.html");
-
-            app.Run();
         }
     }
 }
