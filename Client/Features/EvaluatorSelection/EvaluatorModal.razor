@@ -12,39 +12,7 @@
             <div class="modal-body">                
 
                 <h3>Select Evaluators</h3>
-                @if (EvaluatorSelections is null)
-                {
-                    <p>Loading...</p>
-                }
-                else
-                {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Email</th>
-                                <th scope="col">Firstname</th>
-                                <th scope="col">Lastname</th>
-                                <th scope="col">Blocked</th>
-                                <th scope="col">Select</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var user in EvaluatorSelections)
-                            {
-                                if (user != null)
-                                {
-                                    <tr>
-                                        <th scope="row">@user?.Dto?.Email</th>
-                                        <td>@user?.Dto?.FirstName</td>
-                                        <td>@user?.Dto?.LastName</td>
-                                        <td>@user?.Dto?.Blocked</td>
-                                        <td> <InputCheckbox @bind=user.Selected/> </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                }
+                <InputText @bind-Value="Email"/>               
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary">Save changes</button>
@@ -62,12 +30,11 @@
 
 
 @code {
-
-
     public Guid Guid = Guid.NewGuid();
     public string ModalDisplay = "none;";
     public string ModalClass = "";
     public bool ShowBackdrop = false;
+    public string Email;
 
     public void Open()
     {
@@ -83,6 +50,11 @@
         ModalClass = "";
         ShowBackdrop = false;
         StateHasChanged();
+    }
+
+    public void SaveChanges()
+    {
+        //TODO: Add email to evaluators list. RJG
     }
 
     [Parameter]

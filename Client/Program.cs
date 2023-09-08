@@ -38,16 +38,6 @@ namespace Client
             }).AddAccountClaimsPrincipalFactory<CustomUserFactory<RemoteUserAccount>>();
             //End Auth0
 
-            ////For Blazorise see https://blazorise.com/docs/start
-            //builder.Services
-            //.AddBlazorise(options =>
-            //{
-            //    options.Immediate = true;
-            //})
-            //.AddBootstrapProviders()
-            //.AddFontAwesomeIcons();
-            ////End Blazorise
-
             await builder.Build().RunAsync();
         }
     }
