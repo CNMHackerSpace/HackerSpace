@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph;
 using Server.Data.Interfaces;
 using Shared.Models;
 
@@ -12,7 +12,6 @@ namespace Server.Controllers
     {
         private readonly ILogger<EvaluatorsController> _logger;
         private readonly IEvaluatorsRepo _evaluatorsRepo;
-
         public EvaluatorsController(ILogger<EvaluatorsController> logger, IEvaluatorsRepo evaluatorsRepo)
         {
             _logger = logger;
@@ -20,19 +19,37 @@ namespace Server.Controllers
         }
 
         [Authorize(Roles = "admin, badgecreator")]
-        [HttpPut]
-        [Route("/AddUpdatedForBadge/{id:int}")]
-        public async void AddOrUpdateEvaluators(int id, IEnumerable<string> evaluators)
-        {
-            _logger.Log(LogLevel.Information, "AddOrUpdateEvaluators Executed.");
-            await _evaluatorsRepo.AddEvaluatorsForBadgeAsync(id, evaluators);
-        }
-        [Authorize(Roles = "admin, badgecreator")]
         [HttpGet]
         public async Task<IEnumerable<Evaluator>> GetEvaluatorsAsync()
         {
             _logger.Log(LogLevel.Information, "GetEvaluators Executed.");
             return await _evaluatorsRepo.GetAllAsync();
+        }
+
+        [Authorize(Roles = "admin, badgecreator")]
+        [HttpPost]
+        public async Task<ActionResult> AddEvaluator([FromBody] Evaluator evaluator)
+        {
+            _logger.Log(LogLevel.Information, "AddOrUpdateEvaluators Executed.");
+            //TODO: Check to see if email corresponds to an existing user account. RJG
+            await _evaluatorsRepo.AddEvaluatorAsync(evaluator);
+
+
+            try
+            {
+                return StatusCode(StatusCodes.Status200OK);
+
+                //if (employeeToUpdate == null)
+                //    return NotFound($"Employee with Id = {id} not found");
+
+                //return await employeeRepository.UpdateEmployee(employee);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error adding evaluator");
+            }
         }
     }
 }
