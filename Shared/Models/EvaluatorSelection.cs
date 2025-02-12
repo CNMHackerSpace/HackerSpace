@@ -1,8 +1,8 @@
-﻿namespace SharedClasses.Models
+﻿namespace Shared.Models
 {
     public class EvaluatorSelection
     {
-        public UserDto.Index? Dto { get; set; }
-        public bool Selected { get; set; } = false;
+        public UserDto.Index Dto { get; set; }
+        public bool Selected { get; set; }
     }
 }

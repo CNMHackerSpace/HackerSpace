@@ -1,0 +1,162 @@
+﻿@using System.Net.Http.Headers;
+@using Client.Features.EvaluatorSelection
+@using Shared.Models
+@inject CustomHttpClient http
+@inject NavigationManager navManager
+@inject IJSRuntime JS
+@inject ILogger<BadgeEditComponent> logger
+
+<div class="mb-3">
+    <img src="UploadedImages/@Badge.FileName" height="50" />
+    <FileEdit Filter="image/jpeg, image/png, image/gif" Changed="@OnBadgeImageChanged" />
+</div>
+<div class="mb-3">
+    <label for="titleInput" class="form-label">Title</label>
+    <input type="text" class="form-control" id="titleInput" @bind="Badge.Title" placeholder="Title">
+</div>
+<div class="mb-3">
+    <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
+    <Markdown @ref="DescriptionMarkdown" class="form-control" id="descriptionInput" @Value="descriptionMarkdown" @*ValueChanged="@OnDescriptionMarkdownValueChanged" *@ />
+</div>
+<div class="mb-3">
+    <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
+    <Markdown @ref="TurnInInstructionsMarkdown" class="form-control" id="turnInInstructionsInput" @Value="turnInInstructionsMarkdown" @*ValueChanged="@OnTurnInInstructionsMarkdownValueChanged" *@ />
+</div>
+
+<div class="mb-3">
+    <EvaluatorSelectorComponent Badge="Badge" Evaluators ="evaluators"/>
+</div>
+<div class="mb-3">
+    <button class="btn btn-primary" type="button" @onclick="OnSaveChangesClickedAsync">Save Changes</button>
+    <button class="btn btn-danger" type="button" @onclick="OnCancelChangesClickedAsync">Discard Changes</button>
+</div>
+
+@code{
+    [Parameter]
+    public Shared.Models.Badge Badge { get; set; } = new Shared.Models.Badge();
+    private IList<UploadResult> uploadResults = new List<UploadResult>();
+    private string descriptionMarkdownText = "";
+    private Blazorise.Markdown.Markdown? DescriptionMarkdown { get; set; }
+    private string turnInInstructionsMarkdownText = "";
+    private Blazorise.Markdown.Markdown? TurnInInstructionsMarkdown { get; set; }
+    private List<string> evaluators = new List<string>();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        descriptionMarkdownText = Badge.Description;
+        turnInInstructionsMarkdownText = Badge.TurnInInstructions;
+        if (DescriptionMarkdown != null)
+        {
+            await DescriptionMarkdown.SetValueAsync(descriptionMarkdownText);
+        }
+        if (TurnInInstructionsMarkdown != null)
+        {
+            await TurnInInstructionsMarkdown.SetValueAsync(turnInInstructionsMarkdownText);
+        }
+        StateHasChanged();
+    }
+
+    protected async Task OnSaveChangesClickedAsync()
+    {
+        try
+        {
+            if (DescriptionMarkdown != null)
+            {
+                Badge.Description = await DescriptionMarkdown.GetValueAsync();
+            }
+            if (TurnInInstructionsMarkdown != null)
+            {
+                Badge.TurnInInstructions = await TurnInInstructionsMarkdown.GetValueAsync();
+            }
+            if (Badge.Id == 0)
+            {
+                var result = await http.Secure.PostAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", Badge);
+                //TODO: Need to save evaluators
+                if (result.IsSuccessStatusCode)
+                {
+                    logger.Log(LogLevel.Information,"Badge added");
+                }
+                else
+                {
+                    logger.Log(LogLevel.Information,$"Badge not added {result.ReasonPhrase}");
+                }
+            }
+            else
+            {
+                var result = await http.Secure.PutAsJsonAsync<Shared.Models.Badge>($"/api/Badges/", Badge);
+                if (result.IsSuccessStatusCode)
+                {
+                    logger.Log(LogLevel.Information,$"Badge updated {result.ReasonPhrase}");
+                }
+                else
+                {
+                    logger.Log(LogLevel.Information,$"Badge not updated {result.ReasonPhrase}");
+                }
+            }
+
+            var evalResult = await http.Secure.PostAsJsonAsync<List<String>>($"/api/Evaluators/AddUpdatedForBadge/{Badge?.Id}", evaluators ?? new List<string>());
+            if (evalResult.IsSuccessStatusCode)
+            {
+                logger.Log(LogLevel.Information, "Evaluators added");
+            }
+            else
+            {
+                logger.Log(LogLevel.Information, $"Evaluators not added {evalResult.ReasonPhrase}");
+            }
+            navManager.NavigateTo("/badges");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    protected async Task OnCancelChangesClickedAsync()
+    {
+        navManager.NavigateTo("/badges");
+        await Task.CompletedTask;
+    }
+
+    private async Task OnBadgeImageChanged(FileChangedEventArgs e)
+    {
+        try
+        {
+            //messageToUser += $"<p>Number of files: {e.Files.Count()}</p>";
+            var file = e.Files[0];
+            long maxFileSize = 1024 * 1024;
+            if (file.Size > maxFileSize)
+            {
+                //messageToUser += "<p>File too large</p>";
+                return;
+            }
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+
+            fileContent.Headers.ContentType =
+                new MediaTypeHeaderValue(file.Type);
+
+            content.Add(
+                content: fileContent,
+                name: "\"files\"",
+                fileName: file.Name);
+
+            var response = await http.Secure.PostAsync("/api/Filesave", content);
+
+            uploadResults = await response.Content.ReadFromJsonAsync<IList<UploadResult>>() ?? new List<UploadResult>();
+            if (uploadResults.Count > 0)
+            {
+                Badge.FileName = uploadResults[0].StoredFileName ?? "";
+                logger.Log(LogLevel.Information,$"File uploaded: {Badge.FileName}");
+            }
+            else
+            {
+                logger.Log(LogLevel.Information,$"File upload problem: </p><p>UploadResults.Count: {uploadResults.Count}");
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

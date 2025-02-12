@@ -1,15 +1,16 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using SharedClasses.Models;
-using SharedClasses.Models.BlogModels;
+﻿using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
-namespace Server.Data;
-
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+namespace Server.Data
 {
-    public DbSet<Blog> Blogs { get; set; }
-    public DbSet<Post> Posts { get; set; }
-    public DbSet<HSBadge> Badges { get; set; }
-    public DbSet<Evaluator> Evaluators { get; set; }
-}
+    public class ApplicationDbContext : DbContext
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
 
+        public DbSet<Badge> Badges { get; set; }
+        public DbSet<Evaluator> Evaluators { get; set; }
+    }
+}
