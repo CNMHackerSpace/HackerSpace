@@ -1,0 +1,68 @@
+﻿@page "/Badges"
+@using System.Security.Claims
+@inject HttpClient http
+@inject NavigationManager navManager
+@*@inject IMessageService MessageService*@
+<h3>Badges</h3>
+
+@if (_badges == null)
+{
+    <p>
+        ...Loading badges &nbsp;
+        <img src="/images/Spur_gears_animation_blue_small.gif" height="30" />
+    </p>
+}
+else if (_badges.Count() == 0)
+{
+    <p>No badges in database at this time.</p>
+}
+else
+{
+    @foreach (HSBadge badge in _badges)
+    {
+        <p>
+            <a href="/Badge/@badge.Id">
+                <img src="UploadedImages/@badge.FileName" height="50" />
+                @badge.Title
+            </a>
+
+            <AuthorizeView Roles="admin">
+                <Authorized>
+                    @if (!showAsUser)
+                    {
+                        <button class="btn btn-danger" type="button" @onclick="(()=>OnDeleteBadgeClicked(badge))">Delete Badge</button>
+                    }
+                </Authorized>
+            </AuthorizeView>
+        </p>
+    }
+}
+<AuthorizeView Roles="admin, badgecreator">
+    <Authorized>
+        @if (!showAsUser)
+        {
+            <button class="btn btn-primary" type="button" @onclick="OnAddBadgeClicked">Add Badge</button>
+        }
+    </Authorized>
+</AuthorizeView>
+@code {
+    private List<HSBadge>? _badges;
+    private bool showAsUser = true;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _badges = await http.GetFromJsonAsync<List<HSBadge>>(@"/api/Badges/") ?? new List<HSBadge>();
+        _badges = await http.GetFromJsonAsync<List<HSBadge>>(@"/api/Badges/") ?? new List<HSBadge>();
+    }
+
+    protected void OnAddBadgeClicked()
+    {
+        navManager.NavigateTo("/Badge/0");
+    }
+
+    protected void OnDeleteBadgeClicked(HSBadge badge)
+    {
+        //TODO: Implement delete
+    }
+}
