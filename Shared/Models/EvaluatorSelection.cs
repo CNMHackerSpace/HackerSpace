@@ -1,4 +1,4 @@
-﻿namespace Shared.Models
+﻿namespace SharedClasses.Models
 {
     public class EvaluatorSelection
     {
