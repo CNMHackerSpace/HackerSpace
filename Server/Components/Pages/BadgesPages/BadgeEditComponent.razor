@@ -1,0 +1,34 @@
+﻿﻿@using System.Net.Http.Headers;
+@inject NavigationManager navManager
+@inject IJSRuntime JS
+@inject ILogger<BadgeEditComponent> logger
+
+<div class="mb-3">
+    <img src="UploadedImages/@Badge.FileName" height="50" />
+</div>
+<div class="mb-3">
+    <label for="titleInput" class="form-label">Title</label>
+    <input type="text" class="form-control" id="titleInput" @bind="Badge.Title" placeholder="Title">
+</div>
+<div class="mb-3">
+    <label for="descriptionInput" class="form-label">Description (Describe the skill associated with this badge)</label>
+    <Markdown>@Badge.Description</Markdown>
+</div>
+<div class="mb-3">
+    <label for="turnInInstructionsInput" class="form-label">Turn in instructions (Describe what to do to turn in work to be evaluated. Make sure you include what email or teams page to turn work into.)</label>
+    <Markdown>@Badge.TurnInInstructions</Markdown>
+</div>
+
+<div class="mb-3">
+    @* <EvaluatorSelectorComponent Badge="Badge" Evaluators ="evaluators"/> *@
+</div>
+<div class="mb-3">
+    <button class="btn btn-primary" type="button" >Save Changes</button>
+    <button class="btn btn-danger" type="button" >Discard Changes</button>
+</div>
+
+@code{
+    [Parameter]
+    public HackerspaceBadge Badge { get; set; } = new HackerspaceBadge();  
+
+}

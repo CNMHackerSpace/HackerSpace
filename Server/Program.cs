@@ -37,6 +37,8 @@ builder.Services.AddTransient<ManageBlogPageDAL>();
 builder.Services.AddTransient<IBlogPageDAL, BlogPageDAL>();
 builder.Services.AddTransient<IPostPageDAL, PostPageDAL>();
 builder.Services.AddTransient<NavigationDAL>();
+builder.Services.AddTransient<IBadgesDAL, BadgesDAL>();
+builder.Services.AddTransient<IEvaluatorsDAL,EvaluatorsDAL>();
 #endregion
 
 #region Confgure Web Api
@@ -133,7 +135,7 @@ app.MapAdditionalIdentityEndpoints();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roles = new[] { "Admin" };
+    var roles = new[] { "admin" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
@@ -156,7 +158,7 @@ using (var scope = app.Services.CreateScope())
         user.UserName = email;
         user.EmailConfirmed = true;
         var results = await userManager.CreateAsync(user, password);
-        await userManager.AddToRoleAsync(user, "Admin");
+        await userManager.AddToRoleAsync(user, "admin");
     }
 }
 #endregion
