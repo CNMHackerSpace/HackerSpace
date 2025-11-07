@@ -35,7 +35,7 @@
 </AuthorizeView>
 
 
-<AuthorizeView Roles="Admin">
+<AuthorizeView Roles="admin">
     <Authorized>
         You are admin.
     </Authorized>
@@ -62,7 +62,7 @@
         if (user.Identity is not null && user.Identity.IsAuthenticated)
         {
             authMessage = $"{user.Identity.Name} is authenticated.";
-            if (user.IsInRole("Admin"))
+            if (user.IsInRole("admin"))
             {
                 roleMessage = $"{user.Identity.Name} is an Admin.";
             }
