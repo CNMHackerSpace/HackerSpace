@@ -1,9 +1,6 @@
 ﻿@page "/Badges"
-@using Shared.Models;
-@using System.Security.Claims
-@inject CustomHttpClient http
+@inject HttpClient http
 @inject NavigationManager navManager
-@inject IMessageService MessageService
 <h3>Badges</h3>
 
 @if(_badges == null)
@@ -19,7 +16,7 @@ else if(_badges.Count() == 0)
 }
 else
 {
-    @foreach(Shared.Models.Badge badge in _badges)
+    @foreach(SharedClasses.Models.Badge badge in _badges)
     {
         <p>
             <a href="/Badge/@badge.Id">
@@ -49,12 +46,12 @@ else
 <button class="btn btn-primary" type="button" @onclick="OnAddBadgeClicked">Add Badge</button>
 
 @code {
-    private List<Shared.Models.Badge>? _badges;
+    private List<HackerspaceBadge>? _badges;
 
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _badges = await http.Anonymous.GetFromJsonAsync<List<Shared.Models.Badge>>(@"/api/Badges/") ?? new List<Shared.Models.Badge>();
+        _badges = await http.Anonymous.GetFromJsonAsync<List<Shared.Models.Badge>>(@"/api/Badges/") ?? new List<SharedClasses.Models.Badge>();
     }
 
     protected void OnAddBadgeClicked()
@@ -64,7 +61,7 @@ else
         //navManager.NavigateTo("/Badge/0");
     }
 
-    protected async Task OnDeleteBadgeClickedAsync(Shared.Models.Badge badge)
+    protected async Task OnDeleteBadgeClickedAsync(HackerspaceBadge badge)
     {
         if (await MessageService.Confirm("Are you sure you want to delete this badge?", "Confirmation"))
         {

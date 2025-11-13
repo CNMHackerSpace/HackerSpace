@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Data.Interfaces;
-using Shared.Models;
+using SharedClasses.Interfaces;
+using SharedClasses.Models;
 
 namespace Server.Controllers
 {
@@ -10,15 +10,15 @@ namespace Server.Controllers
     public class BadgesController : ControllerBase
     {
         private readonly ILogger<BadgesController> _logger;
-        private readonly IBadgesRepo _badgesRepo;
-        public BadgesController(ILogger<BadgesController> logger, IBadgesRepo badgesRepo)
+        private readonly IBadgesDAL _badgesRepo;
+        public BadgesController(ILogger<BadgesController> logger, IBadgesDAL badgesRepo)
         {
             _logger = logger;
             _badgesRepo = badgesRepo;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Badge>> GetBadges()
+        public async Task<IEnumerable<HackerspaceBadge>> GetBadges()
         {
             _logger.Log(LogLevel.Information, "GetBadges executed.");
             return await _badgesRepo.GetAllAsync();
@@ -26,7 +26,7 @@ namespace Server.Controllers
 
         [HttpGet]
         [Route("{Id:int}")]
-        public async Task<Badge?> GetBadge(int id)
+        public async Task<HackerspaceBadge?> GetBadge(int id)
         {
             _logger.Log(LogLevel.Information, "GetBadges executed.");
             return await _badgesRepo.GetByIdAsync(id);
@@ -35,7 +35,7 @@ namespace Server.Controllers
        // [Authorize(Roles = "admin, badgecreator")]
        // [AllowAnonymous]
         [HttpPost]
-        public async Task AddBadge([FromBody] Badge badge)
+        public async Task AddBadge([FromBody] HackerspaceBadge badge)
         {
             _logger.Log(LogLevel.Information, "AddBadge Executed.");
             await _badgesRepo.AddAsync(badge);
@@ -44,7 +44,7 @@ namespace Server.Controllers
         //[Authorize(Roles = "admin, badgecreator")]
         // [AllowAnonymous]
         [HttpPut]
-        public async void UpdateBadge([FromBody] Badge badge)
+        public async void UpdateBadge([FromBody] HackerspaceBadge badge)
         {
             _logger.Log(LogLevel.Information, "UpdateBadge Executed.");
             await _badgesRepo.UpdateAsync(badge);

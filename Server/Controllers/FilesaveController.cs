@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Models;
+using SharedClasses.Models;
 using System.Net;
 [ApiController]
 [Route("api/[controller]")]
