@@ -1,0 +1,11 @@
+﻿@page "/ssrResponse"
+
+<h3>SSR Response Page</h3>
+
+<p>
+    @MyProperty
+</p>
+@code {
+    [SupplyParameterFromQuery(Name = "text")]
+    string? MyProperty { get; set; }
+}

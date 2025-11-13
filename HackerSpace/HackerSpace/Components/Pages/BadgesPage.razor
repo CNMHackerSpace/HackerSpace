@@ -1,0 +1,83 @@
+﻿@page "/badges"
+@rendermode InteractiveServer 
+@inject IBadgesPageDataService dataService
+<h3>Badges Page</h3>
+
+<!--List View-->
+@if(badges == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (Badge badge in badges)
+        {
+            <li>
+                @badge.Title
+                <button class="btn btn-primary" @onclick="() => OnViewClicked(badge)">View</button>
+                <button class="btn btn-danger" @onclick="() => OnDeleteClickAsync(badge)">Delete</button>
+            </li>
+        }
+    </ul>
+    <button type="button" class="btn btn-primary" @onclick="OnAddBadgeClick">Add Badge</button>
+}
+
+<!--Detail View-->
+@if(badge == null)
+{
+    <p>Please select a badge to show.</p>
+}
+else
+{
+    <p>Id: @badge.Id</p>
+    <p>Title: <input @bind-value="@badge.Title" type="text"/></p>
+    <p>Description: <textarea @bind="@badge.Description"/></p>
+    <p>Turn In Instructions: <textarea @bind="@badge.TurnInInstructions"/></p>
+    <p>Is Visible: <input @bind-value="@badge.IsVisible" type="checkbox"/>  </p>
+    <button type="button" class="btn btn-primary" @onclick="OnSubmitClickAsync">Submit</button>
+}
+
+@code {
+    protected List<Badge>? badges;
+    protected Badge? badge;
+
+    override protected async Task OnInitializedAsync()
+    {        
+        badges = await dataService.GetAllAsync();
+    }
+
+    protected void OnViewClicked(Badge badge)
+    {
+        this.badge = badge;
+    }
+
+    protected void OnAddBadgeClick()
+    {
+        badge = new Badge();
+    }
+
+    protected async Task OnDeleteClickAsync(Badge badge)
+    {
+        await dataService.RemoveAsync(badge.Id);
+    }
+
+    protected async Task OnSubmitClickAsync()
+    {
+        if(badge == null)
+    {
+            throw new ArgumentException("Badge is null can not add or update.");
+            //TODO: replace with toast or popup
+    }
+
+        if(badge.Id == Guid.Empty)
+        {
+            await dataService.AddAsync(badge);
+        }
+        else
+    {
+            await dataService.UpdateAsync(badge);            
+        }
+        badge = null;
+    }
+}

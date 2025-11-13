@@ -1,0 +1,13 @@
+﻿@page "/ssrdemo"
+<h3>SSR Demo Page</h3>
+<p>
+    @message
+</p>
+<form action="/ssrResponse">
+    <input class="form-control" type="text" name="text"/>
+    <input class="btn btn-primary" type="submit" value="Submit"/>
+</form>
+@code {
+    private string message = "Click the button";
+
+}
