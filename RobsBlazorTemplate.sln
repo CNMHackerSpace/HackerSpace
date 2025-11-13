@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebClient", "WebClient\WebClient.csproj", "{B1E266D7-7FB5-44D8-9448-96EC82F820B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedClasses", "Shared\SharedClasses.csproj", "{ACAD9C99-AC3D-48EE-9661-9BFDFA69D95E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedClasses", "SharedClasses\SharedClasses.csproj", "{ACAD9C99-AC3D-48EE-9661-9BFDFA69D95E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiClient", "MauiClient\MauiClient.csproj", "{48AE2A51-D2C0-495F-83CC-6D9EABBA05A2}"
 EndProject
