@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Hackerspace.Shared\Hackerspace.Shared.csproj" />
+    <ProjectReference Include="..\HackerSpace.Shared\HackerSpace.Shared.csproj" />
   </ItemGroup>
 
 </Project>

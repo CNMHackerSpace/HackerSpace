@@ -4,8 +4,7 @@
 //Description: Main entry point for the application.    
 
 using Hackerspace.Shared.Interfaces;
-using HackerSpace.Client.Pages;
-using HackerSpace.Components;
+using HackerSpace.Server.Components;
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
 using HackerSpace.Data.Mocks;
@@ -76,7 +75,7 @@ namespace HackerSpace
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode()
                 .AddInteractiveWebAssemblyRenderMode()
-                .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
+                .AddAdditionalAssemblies(typeof(HackerSpace.WebClient._Imports).Assembly);
 
             // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();

@@ -1,5 +1,5 @@
-using HackerSpace.Components.Account.Pages;
-using HackerSpace.Components.Account.Pages.Manage;
+using HackerSpace.Server.Components.Account.Pages;
+using HackerSpace.Server.Components.Account.Pages.Manage;
 using HackerSpace.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;

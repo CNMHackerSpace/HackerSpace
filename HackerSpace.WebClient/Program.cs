@@ -1,8 +1,8 @@
-using HackerSpace.Client;
+using HackerSpace.WebClient;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace HackerSpace.Client
+namespace HackerSpace.WebClient
 {
     internal class Program
     {
