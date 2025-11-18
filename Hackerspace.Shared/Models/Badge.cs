@@ -1,4 +1,4 @@
-﻿namespace Hackerspace.Shared.Models
+﻿namespace HackerSpace.Shared.Models
 {
     /// <summary>
     /// Represents a Hackerspace Badge that a person can earn.

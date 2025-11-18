@@ -3,11 +3,13 @@
 //Date: 4 Sep 2024
 //Description: Main entry point for the application.    
 
-using Hackerspace.Shared.Interfaces;
-using HackerSpace.Server.Components;
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
 using HackerSpace.Data.Mocks;
+using HackerSpace.Server.Components;
+using HackerSpace.Server.Data.Mocks;
+using HackerSpace.Shared.Interfaces;
+using HackerSpace.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +53,7 @@ namespace HackerSpace
 
             //Add data services
             builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
+            builder.Services.AddSingleton<IEvaluatorsPageDataService, EvaluatorsPageDataServiceMock>();
 
             var app = builder.Build();
 

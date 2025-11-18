@@ -54,6 +54,12 @@
             </NavLink>
         </div>
 
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="evaluators">
+                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Evaluators
+            </NavLink>
+        </div>
+
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
@@ -88,6 +94,7 @@
 </div>
 
 @code {
+
     private string? currentUrl;
 
     protected override void OnInitialized()

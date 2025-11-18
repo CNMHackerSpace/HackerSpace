@@ -1,0 +1,94 @@
+﻿@page "/evaluators"
+@rendermode InteractiveServer
+@inject IEvaluatorsPageDataService ds
+<h3>Evaluators Page</h3>
+
+@if (evaluators == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var evaluator in this.evaluators)
+            {
+                <tr>
+                    @if(evaluator != null && editEvaluator == evaluator)
+                    {
+                        if (evaluator.User == null)
+                        {
+                            <td colspan="4">No user</td>
+                        }
+                        else
+                        {
+                            <td><input @bind="evaluator.User.First" class="form-control" /></td>
+                            <td><input @bind="evaluator.User.Last" class="form-control" /></td>
+                            <td><input @bind="evaluator.NotificationEmail" class="form-control" /></td>
+                            <td><button class="btn btn-success" @onclick="() => editEvaluator = null">Save</button></td>
+                        }
+                    }
+                    else if (evaluator != null)
+                    {
+                        <InputSelect @bind-Value="evaluator.Id" class="form-select">
+                            <option value="">Select Evaluator</option>
+                        </InputSelect>
+                        <td>@evaluator?.User?.First</td>
+                        <td>@evaluator?.User?.Last</td>
+                        <td>@evaluator?.NotificationEmail</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="()=>EditEvaluator(evaluator)">Edit</button>
+                            <button class="btn btn-danger">Delete</button>
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="4">No Data</td>
+                    }
+                </tr>
+            }
+        </tbody>
+        </table>
+}
+@if (showWarning)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Warning!</strong> @warningMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="()=>showWarning=false"></button>
+    </div>
+}
+@code {
+    private bool showWarning = true;
+    private string warningMessage = "";
+    private List<Evaluator>? evaluators;
+    private Evaluator? editEvaluator = null;
+    override protected async Task OnInitializedAsync()
+    {
+        // Simulate fetching data
+        await Task.Delay(500);
+        evaluators = await ds.GetAllAsync();
+    }
+
+    private void EditEvaluator(Evaluator evaluator)
+    {
+        editEvaluator = evaluator;
+    }
+
+    private async Task UpdateEvaluatorAsync()
+    {
+        if(editEvaluator==null)
+        {
+            warningMessage = "No evaluator data.";
+            showWarning = true;
+            return;
+        }
+        await ds.UpdateAsync(editEvaluator);
+    }
+}

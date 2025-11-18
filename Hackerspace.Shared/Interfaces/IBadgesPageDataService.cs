@@ -1,6 +1,6 @@
-﻿using Hackerspace.Shared.Models;
+﻿using HackerSpace.Shared.Models;
 
-namespace Hackerspace.Shared.Interfaces
+namespace HackerSpace.Shared.Interfaces
 {
     public interface IBadgesPageDataService
     {

@@ -1,5 +1,5 @@
-﻿using Hackerspace.Shared.Interfaces;
-using Hackerspace.Shared.Models;
+﻿using HackerSpace.Shared.Interfaces;
+using HackerSpace.Shared.Models;
 
 namespace HackerSpace.Data.Mocks
 {
