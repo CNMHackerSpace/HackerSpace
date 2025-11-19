@@ -1,6 +1,7 @@
 ﻿// Copyright (c) CNM. All rights reserved.
 
 using HackerSpace.Shared.Models;
+using HackerSpace.Shared.ViewModels;
 
 namespace HackerSpace.Shared.Interfaces
 {
@@ -10,6 +11,16 @@ namespace HackerSpace.Shared.Interfaces
     /// </summary>
     public interface IEvaluatorsPageDataService
     {
+
+        /// <summary>
+        /// Asynchronously retrieves the view model for the Evaluators page, including evaluators and users.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
+        /// an <see cref="EvaluatorsPageVM"/> with the data for the Evaluators page.
+        /// </returns>
+        public Task<EvaluatorsPageVM> GetEvaluatorsPageVMAsync();
+
         /// <summary>
         /// Asynchronously retrieves all evaluators.
         /// </summary>

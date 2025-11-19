@@ -4,6 +4,8 @@ namespace HackerSpace.Server.Data.Mocks
 {
     using HackerSpace.Shared.Interfaces;
     using HackerSpace.Shared.Models;
+    using HackerSpace.Shared.ViewModels;
+    using System.Text.Json;
 
     /// <summary>
     /// Mock implementation of <see cref="IEvaluatorsPageDataService"/> for testing and development purposes.
@@ -67,33 +69,58 @@ namespace HackerSpace.Server.Data.Mocks
                 };
         }
 
-        /// <summary>
-        /// Retrieves all <see cref="Evaluator"/> objects from the in-memory store.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="Evaluator"/> objects.</returns>
+        /// <inheritdoc/>
+        public Task<EvaluatorsPageVM> GetEvaluatorsPageVMAsync()
+        {
+            return Task.FromResult(new EvaluatorsPageVM()
+            {
+                Evaluators = JsonSerializer.Deserialize<List<Evaluator>>(JsonSerializer.Serialize(evaluators)),
+                Users = JsonSerializer.Deserialize<List<ApplicationUser>>(JsonSerializer.Serialize(users)),
+            });
+        }
+
+        /// <inheritdoc/>
         public Task<List<Evaluator>?> GetAllAsync()
         {
             return Task.FromResult(evaluators);
         }
 
+        /// <inheritdoc/>
         public Task AddAsync(Evaluator evaluator)
         {
-            throw new NotImplementedException();
+            evaluator 
+            this.evaluators.Add(evaluator);
+            return Task.CompletedTask;
         }
 
-        public Task<Evaluator> GetAsync(Guid id)
+        /// <inheritdoc/>
+        public Task<Evaluator?> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(this.evaluators.Where(e => e.Id == id).FirstOrDefault());
         }
 
+        /// <inheritdoc/>
         public Task RemoveAsync(Guid id)
         {
-            throw new NotImplementedException();
+            if (this.evaluators == null)
+            {
+                throw new Exception("No evaluators list.");
+            }
+
+            var current = this.evaluators.Where(e => e.Id == id).FirstOrDefault();
+            if (current == null)
+            {
+                throw new Exception("Evaluator not found.");
+            }
+
+            this.evaluators.Remove(current);
+            return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task UpdateAsync(Evaluator evaluator)
         {
-            var current = evaluators.Where(e=>e.Id == evaluator.Id).FirstOrDefault();
+            var current = this.evaluators.Where(e=>e.Id == evaluator.Id).FirstOrDefault();
             if (current == null)
             {
                 throw new Exception("Evaluator not found");

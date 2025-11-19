@@ -1,9 +1,10 @@
 ﻿@page "/evaluators"
+@using HackerSpace.Shared.ViewModels
 @rendermode InteractiveServer
 @inject IEvaluatorsPageDataService ds
 <h3>Evaluators Page</h3>
 
-@if (evaluators == null)
+@if (this.viewModel?.Evaluators == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,34 +19,37 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var evaluator in this.evaluators)
+            @foreach (var evaluator in this.viewModel.Evaluators)
             {
                 <tr>
                     @if(evaluator != null && editEvaluator == evaluator)
-                    {
-                        if (evaluator.User == null)
-                        {
-                            <td colspan="4">No user</td>
-                        }
-                        else
-                        {
-                            <td><input @bind="evaluator.User.First" class="form-control" /></td>
-                            <td><input @bind="evaluator.User.Last" class="form-control" /></td>
-                            <td><input @bind="evaluator.NotificationEmail" class="form-control" /></td>
-                            <td><button class="btn btn-success" @onclick="() => editEvaluator = null">Save</button></td>
-                        }
+                    {                        
+                        <td>
+                            <InputSelect @bind-Value="evaluator.UserId" class="form-select">
+                                @if(viewModel.Users==null)
+                                {
+                                    <option>Loading...</option>
+                                }
+                                else
+                                {
+                                    @foreach(var user in viewModel.Users)
+                                    {
+                                        <option value="@user.Id">@user.First @user.Last</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </td>
+                        <td><input @bind="evaluator.NotificationEmail" class="form-control" /></td>
+                        <td><button class="btn btn-success" @onclick="() => UpdateEvaluatorAsync(evaluator)">Save</button></td>                        
                     }
                     else if (evaluator != null)
-                    {
-                        <InputSelect @bind-Value="evaluator.Id" class="form-select">
-                            <option value="">Select Evaluator</option>
-                        </InputSelect>
+                    {                        
                         <td>@evaluator?.User?.First</td>
                         <td>@evaluator?.User?.Last</td>
                         <td>@evaluator?.NotificationEmail</td>
                         <td>
                             <button class="btn btn-primary" @onclick="()=>EditEvaluator(evaluator)">Edit</button>
-                            <button class="btn btn-danger">Delete</button>
+                            <button class="btn btn-danger" @onclick="()=>DeleteEvaluatorAsync(evaluator)">Delete</button>
                         </td>
                     }
                     else
@@ -56,6 +60,7 @@ else
             }
         </tbody>
         </table>
+        <button class="btn btn-secondary" @onclick="AddEvaluator">Add Evaluator</button>
 }
 @if (showWarning)
 {
@@ -65,15 +70,16 @@ else
     </div>
 }
 @code {
-    private bool showWarning = true;
+    private bool showWarning = false;
     private string warningMessage = "";
-    private List<Evaluator>? evaluators;
+    private EvaluatorsPageVM? viewModel;
     private Evaluator? editEvaluator = null;
+
     override protected async Task OnInitializedAsync()
     {
         // Simulate fetching data
         await Task.Delay(500);
-        evaluators = await ds.GetAllAsync();
+        viewModel = await ds.GetEvaluatorsPageVMAsync();
     }
 
     private void EditEvaluator(Evaluator evaluator)
@@ -81,7 +87,7 @@ else
         editEvaluator = evaluator;
     }
 
-    private async Task UpdateEvaluatorAsync()
+    private async Task UpdateEvaluatorAsync(Evaluator evaluator)
     {
         if(editEvaluator==null)
         {
@@ -89,6 +95,40 @@ else
             showWarning = true;
             return;
         }
-        await ds.UpdateAsync(editEvaluator);
+        if (evaluator.Id == Guid.Empty)
+        {
+            evaluator.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
+            evaluator.NotificationEmail = evaluator?.User?.Email;
+            ds.AddAsync(evaluator);
+        }
+        else
+        {
+            if (evaluator.User.Id != evaluator.UserId)
+            {
+                evaluator.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
+                evaluator.NotificationEmail = evaluator?.User?.Email;
+            }
+            await ds.UpdateAsync(evaluator);
+        }
+        editEvaluator = null;
+
+    }
+
+    private async Task DeleteEvaluatorAsync(Evaluator evaluator)
+    {
+        if (evaluator == null)
+        {
+            warningMessage = "No evaluator data.";
+            showWarning = true;
+            return;
+        }
+        await ds.RemoveAsync(evaluator.Id);
+        viewModel?.Evaluators?.Remove(evaluator);
+    }
+
+    private void AddEvaluator()
+    {
+        editEvaluator = new Evaluator();
+        viewModel?.Evaluators?.Add(editEvaluator);
     }
 }
