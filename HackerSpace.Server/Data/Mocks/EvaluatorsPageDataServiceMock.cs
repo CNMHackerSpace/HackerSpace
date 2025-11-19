@@ -65,7 +65,7 @@ namespace HackerSpace.Server.Data.Mocks
                         Id = Guid.NewGuid(),
                         User = this.users[1],
                         NotificationEmail = this.users[1].Email,
-                    },
+                    }
                 };
         }
 
@@ -88,7 +88,6 @@ namespace HackerSpace.Server.Data.Mocks
         /// <inheritdoc/>
         public Task AddAsync(Evaluator evaluator)
         {
-            evaluator 
             this.evaluators.Add(evaluator);
             return Task.CompletedTask;
         }
