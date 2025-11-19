@@ -48,8 +48,8 @@ else
                         <td>@evaluator?.User?.Last</td>
                         <td>@evaluator?.NotificationEmail</td>
                         <td>
-                            <button class="btn btn-primary" @onclick="()=>EditEvaluator(evaluator)">Edit</button>
-                            <button class="btn btn-danger" @onclick="()=>DeleteEvaluatorAsync(evaluator)">Delete</button>
+                            <button class="btn btn-primary" @onclick="()=>EditEvaluator(evaluator!)">Edit</button>
+                            <button class="btn btn-danger" @onclick="()=>DeleteEvaluatorAsync(evaluator!)">Delete</button>
                         </td>
                     }
                     else
@@ -89,9 +89,9 @@ else
 
     private async Task UpdateEvaluatorAsync(Evaluator evaluator)
     {
-        if(editEvaluator==null)
+        if(editEvaluator==null || evaluator == null)
         {
-            warningMessage = "No evaluator data.";
+            warningMessage = "Missing evaluator data.";
             showWarning = true;
             return;
         }
@@ -99,16 +99,16 @@ else
         {
             evaluator.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
             evaluator.NotificationEmail = evaluator?.User?.Email;
-            ds.AddAsync(evaluator);
+            await ds.AddAsync(evaluator!);
         }
         else
         {
-            if (evaluator.User.Id != evaluator.UserId)
+            if (evaluator?.User?.Id != evaluator?.UserId)
             {
-                evaluator.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
+                evaluator!.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
                 evaluator.NotificationEmail = evaluator?.User?.Email;
             }
-            await ds.UpdateAsync(evaluator);
+            await ds.UpdateAsync(evaluator!);
         }
         editEvaluator = null;
 

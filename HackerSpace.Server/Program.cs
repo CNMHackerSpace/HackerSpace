@@ -1,7 +1,4 @@
-//Program.cs
-//Programmer: Rob Garner
-//Date: 4 Sep 2024
-//Description: Main entry point for the application.    
+// Copyright (c) CNM. All rights reserved.
 
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
@@ -16,8 +13,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HackerSpace
 {
+    /// <summary>
+    /// Main entry point for the HackerSpace server application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Application startup method.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -83,11 +87,15 @@ namespace HackerSpace
             // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();
 
-            RunMigrations(app); 
+            RunMigrations(app);
 
             app.Run();
         }
 
+        /// <summary>
+        /// Runs database migrations at application startup.
+        /// </summary>
+        /// <param name="app">The web application instance.</param>
         private static void RunMigrations(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())

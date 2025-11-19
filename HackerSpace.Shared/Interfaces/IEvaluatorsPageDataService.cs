@@ -11,7 +11,6 @@ namespace HackerSpace.Shared.Interfaces
     /// </summary>
     public interface IEvaluatorsPageDataService
     {
-
         /// <summary>
         /// Asynchronously retrieves the view model for the Evaluators page, including evaluators and users.
         /// </summary>
