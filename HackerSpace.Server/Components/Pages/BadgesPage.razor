@@ -60,24 +60,36 @@ else
     protected async Task OnDeleteClickAsync(Badge badge)
     {
         await dataService.RemoveAsync(badge.Id);
+
+        // refresh list
+        badges = await dataService.GetAllAsync();
+
+        // update UI
+        StateHasChanged();
     }
+
 
     protected async Task OnSubmitClickAsync()
     {
-        if(badge == null)
-    {
-            throw new ArgumentException("Badge is null can not add or update.");
-            //TODO: replace with toast or popup
-    }
+        if (badge == null)
+            throw new ArgumentException("Badge is null");
 
-        if(badge.Id == Guid.Empty)
+        if (badge.Id == Guid.Empty)
         {
             await dataService.AddAsync(badge);
         }
         else
-    {
-            await dataService.UpdateAsync(badge);            
+        {
+            await dataService.UpdateAsync(badge);
         }
+
+        // refresh list
+        badges = await dataService.GetAllAsync();
+
         badge = null;
+
+        // update UI
+        StateHasChanged();
     }
+
 }

@@ -4,10 +4,11 @@
 //Description: Main entry point for the application.    
 
 using Hackerspace.Shared.Interfaces;
-using HackerSpace.Server.Components;
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
 using HackerSpace.Data.Mocks;
+using HackerSpace.Data.Services;
+using HackerSpace.Server.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,8 +39,17 @@ namespace HackerSpace
                 .AddIdentityCookies();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(connectionString));
+            
+            /*builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite(connectionString));*/
+
+            // Inject the ContextFactory with connectionString
+            builder.Services.AddDbContextFactory<ApplicationDbContext>(opt => opt.UseSqlite(connectionString));
+
+            // Inject actual service instead of mock service
+            builder.Services.AddScoped<IBadgesPageDataService, BadgeService>();
+
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -50,9 +60,18 @@ namespace HackerSpace
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             //Add data services
-            builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
+            //builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
 
             var app = builder.Build();
+            
+            // Apply migrations at startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+                using var db = factory.CreateDbContext();
+                db.Database.Migrate();
+            }
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
