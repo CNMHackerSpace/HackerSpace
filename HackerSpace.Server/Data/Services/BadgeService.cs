@@ -1,12 +1,9 @@
-﻿using HackerSpace.Data.Interfaces;
+﻿using Hackerspace.Shared.Interfaces;
 using Hackerspace.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Hackerspace.Shared.Interfaces;
 
 namespace HackerSpace.Data.Services
 {
-    // Inherit the service
-    // Defines how service should operate
     public class BadgeService : IBadgesPageDataService
     {
         private readonly IDbContextFactory<ApplicationDbContext> _factory;
@@ -16,25 +13,43 @@ namespace HackerSpace.Data.Services
             _factory = factory;
         }
 
-        public Task AddAsync(Badge badge)
-        {
-            throw new NotImplementedException();
-        }
-
+        // Update badges
         public async Task<List<Badge>> GetAllAsync()
         {
             using var context = _factory.CreateDbContext();
             return await context.Badges.ToListAsync();
         }
 
-        public Task RemoveAsync(Guid id)
+        public async Task AddAsync(Badge badge)
         {
-            throw new NotImplementedException();
+            using var context = _factory.CreateDbContext();
+            badge.Id = Guid.NewGuid(); // ensure ID is created if not provided
+            context.Badges.Add(badge);
+            await context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(Badge badge)
+        public async Task UpdateAsync(Badge badge)
         {
-            throw new NotImplementedException();
+            using var context = _factory.CreateDbContext();
+
+            var existing = await context.Badges.FirstOrDefaultAsync(x => x.Id == badge.Id);
+            if (existing == null)
+                throw new InvalidOperationException("Badge not found");
+
+            context.Entry(existing).CurrentValues.SetValues(badge);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(Guid id)
+        {
+            using var context = _factory.CreateDbContext();
+
+            var badge = await context.Badges.FirstOrDefaultAsync(b => b.Id == id);
+            if (badge == null)
+                throw new InvalidOperationException("Badge not found");
+
+            context.Badges.Remove(badge);
+            await context.SaveChangesAsync();
         }
     }
 }

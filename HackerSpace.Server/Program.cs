@@ -6,7 +6,6 @@
 using Hackerspace.Shared.Interfaces;
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
-using HackerSpace.Data.Interfaces;
 using HackerSpace.Data.Mocks;
 using HackerSpace.Data.Services;
 using HackerSpace.Server.Components;
@@ -48,7 +47,7 @@ namespace HackerSpace
             builder.Services.AddDbContextFactory<ApplicationDbContext>(opt => opt.UseSqlite(connectionString));
 
             // Inject actual service instead of mock service
-            builder.Services.AddScoped<IBadgeService, BadgeService>();
+            builder.Services.AddScoped<IBadgesPageDataService, BadgeService>();
 
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -61,7 +60,7 @@ namespace HackerSpace
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             //Add data services
-            builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
+            //builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
 
             var app = builder.Build();
             
