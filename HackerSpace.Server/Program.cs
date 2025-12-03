@@ -1,6 +1,6 @@
 // Copyright (c) CNM. All rights reserved.
 
-using Hackerspace.Shared.Interfaces;
+using HackerSpace.Shared.Interfaces;
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
 using HackerSpace.Data.Mocks;

@@ -1,7 +1,6 @@
-﻿using Hackerspace.Shared.Interfaces;
-using Hackerspace.Shared.Models;
-using Microsoft.EntityFrameworkCore;
-
+﻿using Microsoft.EntityFrameworkCore;
+using HackerSpace.Shared.Interfaces;
+using HackerSpace.Shared.Models;
 namespace HackerSpace.Data.Services
 {
     public class BadgeService : IBadgesPageDataService
