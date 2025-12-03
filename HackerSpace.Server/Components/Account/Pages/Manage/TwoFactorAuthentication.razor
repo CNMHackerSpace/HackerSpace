@@ -1,8 +1,9 @@
 ﻿@page "/Account/Manage/TwoFactorAuthentication"
 
+@using HackerSpace.Data
+@using HackerSpace.Shared.Interfaces
 @using Microsoft.AspNetCore.Http.Features
 @using Microsoft.AspNetCore.Identity
-@using HackerSpace.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager

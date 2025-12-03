@@ -1,22 +1,31 @@
-//Program.cs
-//Programmer: Rob Garner
-//Date: 4 Sep 2024
-//Description: Main entry point for the application.    
+// Copyright (c) CNM. All rights reserved.
 
-using Hackerspace.Shared.Interfaces;
+using HackerSpace.Shared.Interfaces;
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
 using HackerSpace.Data.Mocks;
 using HackerSpace.Data.Services;
 using HackerSpace.Server.Components;
+using HackerSpace.Server.Components;
+using HackerSpace.Server.Data.Mocks;
+using HackerSpace.Server.Data.Services;
+using HackerSpace.Shared.Interfaces;
+using HackerSpace.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HackerSpace
 {
+    /// <summary>
+    /// Main entry point for the HackerSpace server application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Application startup method.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -60,7 +69,8 @@ namespace HackerSpace
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             //Add data services
-            //builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
+            builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
+            builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
 
             var app = builder.Build();
             
@@ -99,11 +109,15 @@ namespace HackerSpace
             // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();
 
-            RunMigrations(app); 
+            RunMigrations(app);
 
             app.Run();
         }
 
+        /// <summary>
+        /// Runs database migrations at application startup.
+        /// </summary>
+        /// <param name="app">The web application instance.</param>
         private static void RunMigrations(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())

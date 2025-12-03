@@ -1,3 +1,5 @@
+// Copyright (c) CNM. All rights reserved.
+
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 

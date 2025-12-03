@@ -1,32 +1,35 @@
-﻿namespace Hackerspace.Shared.Models
+﻿// Copyright (c) CNM. All rights reserved.
+
+namespace HackerSpace.Shared.Models
 {
     /// <summary>
-    /// Represents a Hackerspace Badge that a person can earn.
+    /// Represents a HackerSpace badge that a person can earn.
     /// </summary>
     public class Badge
     {
         /// <summary>
-        /// Unique id for the badge.
+        /// Gets or sets the unique identifier for the badge.
         /// </summary>
         public Guid Id { get; set; }
+
         /// <summary>
-        /// Title for the badge.
+        /// Gets or sets the badge title.
         /// </summary>
         public string? Title { get; set; }
+
         /// <summary>
-        /// Short paragraph long description of the badge.
+        /// Gets or sets a short paragraph description of the badge.
         /// </summary>
         public string? Description { get; set; }
+
         /// <summary>
-        /// Detailed insructions on how to turn in a badge
-        /// evaluation request. Should include all 
-        /// instructions needed so assessor can evaluate
-        /// whether or not to award the badge.
+        /// Gets or sets detailed instructions for submitting a badge evaluation request.
+        /// Include all information an assessor needs to determine whether to award the badge.
         /// </summary>
         public string? TurnInInstructions { get; set; }
+
         /// <summary>
-        /// Keep the badge invisible until it has been 
-        /// approved for display.
+        /// Gets or sets a value indicating whether the badge is visible.
         /// </summary>
         public bool? IsVisible { get; set; }
     }

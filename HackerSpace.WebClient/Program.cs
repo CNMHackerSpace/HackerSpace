@@ -1,4 +1,5 @@
-using HackerSpace.WebClient;
+// Copyright (c) CNM. All rights reserved.
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -6,7 +7,7 @@ namespace HackerSpace.WebClient
 {
     internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
