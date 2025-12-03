@@ -13,8 +13,7 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>User</th>
                 <th>Email</th>
             </tr>
         </thead>
@@ -25,7 +24,7 @@ else
                     @if(evaluator != null && editEvaluator == evaluator)
                     {                        
                         <td>
-                            <InputSelect @bind-Value="evaluator.UserId" class="form-select">
+                            <InputSelect @bind-Value="evaluator.UserId" @bind-Value:after = "() => OnEvaluatorSelected(evaluator)" class="form-select">
                                 @if(viewModel.Users==null)
                                 {
                                     <option>Loading...</option>
@@ -34,7 +33,7 @@ else
                                 {
                                     @foreach(var user in viewModel.Users)
                                     {
-                                        <option value="@user.Id">@user.First @user.Last</option>
+                                        <option value="@user.Id">@user.UserName</option>
                                     }
                                 }
                             </InputSelect>
@@ -44,12 +43,11 @@ else
                     }
                     else if (evaluator != null)
                     {                        
-                        <td>@evaluator?.User?.First</td>
-                        <td>@evaluator?.User?.Last</td>
+                        <td>@evaluator?.User?.UserName</td>
                         <td>@evaluator?.NotificationEmail</td>
                         <td>
                             <button class="btn btn-primary" @onclick="()=>EditEvaluator(evaluator!)">Edit</button>
-                            <button class="btn btn-danger" @onclick="()=>DeleteEvaluatorAsync(evaluator!)">Delete</button>
+                            <button class="btn btn-danger" @onclick="()=>DeleteEvaluatorAsync(evaluator!.Id)">Delete</button>
                         </td>
                     }
                     else
@@ -77,8 +75,6 @@ else
 
     override protected async Task OnInitializedAsync()
     {
-        // Simulate fetching data
-        await Task.Delay(500);
         viewModel = await ds.GetEvaluatorsPageVMAsync();
     }
 
@@ -114,21 +110,24 @@ else
 
     }
 
-    private async Task DeleteEvaluatorAsync(Evaluator evaluator)
+    private async Task DeleteEvaluatorAsync(Guid evaluatorId)
     {
-        if (evaluator == null)
-        {
-            warningMessage = "No evaluator data.";
-            showWarning = true;
-            return;
-        }
-        await ds.RemoveAsync(evaluator.Id);
-        viewModel?.Evaluators?.Remove(evaluator);
+        await ds.RemoveAsync(evaluatorId);
+        viewModel?.Evaluators?.RemoveAll(e => e.Id == evaluatorId);
     }
 
     private void AddEvaluator()
     {
         editEvaluator = new Evaluator();
         viewModel?.Evaluators?.Add(editEvaluator);
+    }
+
+    private void OnEvaluatorSelected(Evaluator evaluator)
+    {
+        var selectedUser = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
+        if (selectedUser != null && evaluator.NotificationEmail == null)
+        {
+            evaluator.NotificationEmail = selectedUser.Email;
+        }
     }
 }

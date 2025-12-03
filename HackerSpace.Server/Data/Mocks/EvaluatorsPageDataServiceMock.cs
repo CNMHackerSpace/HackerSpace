@@ -86,6 +86,12 @@ namespace HackerSpace.Server.Data.Mocks
         }
 
         /// <inheritdoc/>
+        public Task<Evaluator?> GetAsync(Guid id)
+        {
+            return Task.FromResult(this.evaluators.Where(e => e.Id == id).FirstOrDefault());
+        }
+
+        /// <inheritdoc/>
         public Task AddAsync(Evaluator evaluator)
         {
             this.evaluators.Add(evaluator);
@@ -93,9 +99,17 @@ namespace HackerSpace.Server.Data.Mocks
         }
 
         /// <inheritdoc/>
-        public Task<Evaluator?> GetAsync(Guid id)
+        public Task UpdateAsync(Evaluator evaluator)
         {
-            return Task.FromResult(this.evaluators.Where(e => e.Id == id).FirstOrDefault());
+            var current = this.evaluators.Where(e=>e.Id == evaluator.Id).FirstOrDefault();
+            if (current == null)
+            {
+                throw new Exception("Evaluator not found");
+            }
+            current.NotificationEmail = evaluator.NotificationEmail;
+            current.User = evaluator.User;
+            current.UserId = evaluator.UserId;
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
@@ -113,20 +127,6 @@ namespace HackerSpace.Server.Data.Mocks
             }
 
             this.evaluators.Remove(current);
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task UpdateAsync(Evaluator evaluator)
-        {
-            var current = this.evaluators.Where(e=>e.Id == evaluator.Id).FirstOrDefault();
-            if (current == null)
-            {
-                throw new Exception("Evaluator not found");
-            }
-            current.NotificationEmail = evaluator.NotificationEmail;
-            current.User = evaluator.User;
-            current.UserId = evaluator.UserId;
             return Task.CompletedTask;
         }
     }
