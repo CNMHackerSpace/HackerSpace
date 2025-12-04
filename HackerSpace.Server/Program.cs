@@ -118,10 +118,12 @@ namespace HackerSpace
                 string? password = app.Configuration.GetSection("Admin:Password").Value;
                 if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && await userManager.FindByNameAsync(email) == null)
                 {
-                    var user = new ApplicationUser();
-                    user.Email = email;
-                    user.UserName = email;
-                    user.EmailConfirmed = true;
+                    var user = new ApplicationUser
+                    {
+                        Email = email,
+                        UserName = email,
+                        EmailConfirmed = true
+                    };
 
                     var results = await userManager.CreateAsync(user, password);
                     if (results.Succeeded)
