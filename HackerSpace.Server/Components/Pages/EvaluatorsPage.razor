@@ -1,7 +1,8 @@
 ﻿@page "/evaluators"
-@using HackerSpace.Shared.ViewModels
 @rendermode InteractiveServer
 @inject IEvaluatorsPageDataService ds
+@attribute [Authorize(Roles = "Admin")]
+
 <h3>Evaluators Page</h3>
 
 @if (this.viewModel?.Evaluators == null)
