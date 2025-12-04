@@ -16,11 +16,15 @@ else
             <li>
                 @badge.Title
                 <button class="btn btn-primary" @onclick="() => OnViewClicked(badge)">View</button>
-                <button class="btn btn-danger" @onclick="() => OnDeleteClickAsync(badge)">Delete</button>
+                <AuthorizeView Roles="Admin">
+                    <button class="btn btn-danger" @onclick="() => OnDeleteClickAsync(badge)">Delete</button>
+                </AuthorizeView>
             </li>
         }
     </ul>
-    <button type="button" class="btn btn-primary" @onclick="OnAddBadgeClick">Add Badge</button>
+    <AuthorizeView Roles="Admin">
+        <button type="button" class="btn btn-primary" @onclick="OnAddBadgeClick">Add Badge</button>
+    </AuthorizeView>
 }
 
 <!--Detail View-->
@@ -30,12 +34,24 @@ else
 }
 else
 {
-    <p>Id: @badge.Id</p>
-    <p>Title: <input @bind-value="@badge.Title" type="text"/></p>
-    <p>Description: <textarea @bind="@badge.Description"/></p>
-    <p>Turn In Instructions: <textarea @bind="@badge.TurnInInstructions"/></p>
-    <p>Is Visible: <input @bind-value="@badge.IsVisible" type="checkbox"/>  </p>
-    <button type="button" class="btn btn-primary" @onclick="OnSubmitClickAsync">Submit</button>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <h4>Editing Badge</h4>
+            <p>Id: @badge.Id</p>
+            <p>Title: <input @bind-value="@badge.Title" type="text" /></p>
+            <p>Description: <textarea @bind="@badge.Description" /></p>
+            <p>Turn In Instructions: <textarea @bind="@badge.TurnInInstructions" /></p>
+            <p>Is Visible: <input @bind-value="@badge.IsVisible" type="checkbox" />  </p>
+            <button type="button" class="btn btn-primary" @onclick="OnSubmitClickAsync">Submit</button>
+        </Authorized>
+        <NotAuthorized>
+            <h4>Viewing Badge</h4>
+            <p>Title: @badge.Title</p>
+            <p>Description: @badge.Description</p>
+            <p>Turn In Instructions: @badge.TurnInInstructions</p>
+            <p>Is Visible: @(badge.IsVisible == true ? "Yes" : "No")</p
+        </NotAuthorized>
+    </AuthorizeView>
 }
 
 @code {

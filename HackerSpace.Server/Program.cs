@@ -26,7 +26,7 @@ namespace HackerSpace
         /// Application startup method.
         /// </summary>
         /// <param name="args">Command-line arguments.</param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -41,14 +41,14 @@ namespace HackerSpace
             builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
 
             builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-                })
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
                 .AddIdentityCookies();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            
+
             /*builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(connectionString));*/
 
@@ -62,6 +62,7 @@ namespace HackerSpace
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
@@ -73,7 +74,7 @@ namespace HackerSpace
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
 
             var app = builder.Build();
-            
+
             // Apply migrations at startup
             using (var scope = app.Services.CreateScope())
             {
@@ -111,7 +112,49 @@ namespace HackerSpace
 
             RunMigrations(app);
 
+            await AddRolesAsync(app);
+            await AddAdminUser(builder, app);
+
             app.Run();
+        }
+
+        private static async Task AddAdminUser(WebApplicationBuilder builder, WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                string? email = builder.Configuration.GetSection("Admin:Email").Value;
+                string? password = builder.Configuration.GetSection("Admin:Password").Value;
+                if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && await userManager.FindByNameAsync(email) == null)
+                {
+                    var user = new ApplicationUser();
+                    user.Email = email;
+                    user.UserName = email;
+
+                    // Optional, add if you want the account live right away without email confirmation
+                    user.EmailConfirmed = true;
+
+                    var results = await userManager.CreateAsync(user, password);
+                    await userManager.AddToRoleAsync(user, "Admin");
+                }
+            }
+        }
+
+        private static async Task AddRolesAsync(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var roles = new[] { "Admin", "Instructor" };
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        IdentityRole roleRole = new IdentityRole(role);
+                        await roleManager.CreateAsync(roleRole);
+                    }
+                }
+            }
         }
 
         /// <summary>
