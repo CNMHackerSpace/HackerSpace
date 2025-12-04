@@ -75,15 +75,6 @@ namespace HackerSpace
 
             var app = builder.Build();
 
-            // Apply migrations at startup
-            using (var scope = app.Services.CreateScope())
-            {
-                var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
-                using var db = factory.CreateDbContext();
-                db.Database.Migrate();
-            }
-
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -130,8 +121,6 @@ namespace HackerSpace
                     var user = new ApplicationUser();
                     user.Email = email;
                     user.UserName = email;
-
-                    // Optional, add if you want the account live right away without email confirmation
                     user.EmailConfirmed = true;
 
                     var results = await userManager.CreateAsync(user, password);
@@ -154,8 +143,8 @@ namespace HackerSpace
                 var rolesToCreate = roles.Where((role, index) => !existenceResults[index]);
                 foreach (var role in rolesToCreate)
                 {
-                    IdentityRole roleRole = new IdentityRole(role);
-                    await roleManager.CreateAsync(roleRole);
+                    IdentityRole identityRole = new IdentityRole(role);
+                    await roleManager.CreateAsync(identityRole);
                 }
             }
         }
