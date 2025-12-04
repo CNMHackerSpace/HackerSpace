@@ -135,7 +135,10 @@ namespace HackerSpace
                     user.EmailConfirmed = true;
 
                     var results = await userManager.CreateAsync(user, password);
-                    await userManager.AddToRoleAsync(user, "Admin");
+                    if (results.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, "Admin");
+                    }
                 }
             }
         }
