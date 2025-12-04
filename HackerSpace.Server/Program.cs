@@ -113,18 +113,18 @@ namespace HackerSpace
             RunMigrations(app);
 
             await AddRolesAsync(app);
-            await AddAdminUser(builder, app);
+            await AddAdminUser(app);
 
             app.Run();
         }
 
-        private static async Task AddAdminUser(WebApplicationBuilder builder, WebApplication app)
+        private static async Task AddAdminUser(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                string? email = builder.Configuration.GetSection("Admin:Email").Value;
-                string? password = builder.Configuration.GetSection("Admin:Password").Value;
+                string? email = app.Configuration.GetSection("Admin:Email").Value;
+                string? password = app.Configuration.GetSection("Admin:Password").Value;
                 if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password) && await userManager.FindByNameAsync(email) == null)
                 {
                     var user = new ApplicationUser();
