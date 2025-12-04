@@ -8,6 +8,7 @@ on:
 env:
   PUBLISH_DIR: ./publish
   DOTNET_VERSION: 8.0.x
+  PROD_SQL_CONNECTION: ${{ secrets.PROD_SQL_CONNECTION }}
 
 jobs:
   build-and-deploy:
@@ -24,6 +25,23 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
+
+      - name: Create appsettings.Production.json
+        run: |
+          cat <<EOF > HackerSpace.Server/appsettings.Production.json
+          {
+            "ConnectionStrings": {
+              "DefaultConnection": "$PROD_SQL_CONNECTION"
+            },
+            "Logging": {
+              "LogLevel": {
+                "Default": "Information",
+                "Microsoft.AspNetCore": "Warning"
+              }
+            },
+            "AllowedHosts": "*"
+          }
+          EOF
 
       - name: Build
         run: dotnet build --configuration Release --no-restore

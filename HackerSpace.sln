@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11205.157
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -10,7 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerSpace.Shared", "Hacke
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{B634275C-21A6-490A-9CEC-F5F533E4BA63}"
 	ProjectSection(SolutionItems) = preProject
-		stylecop.json = stylecop.json
+		.github\workflows\deploy-plesk.yml = .github\workflows\deploy-plesk.yml
+		SQLServerOnMac.md = SQLServerOnMac.md
 	EndProjectSection
 EndProject
 Global

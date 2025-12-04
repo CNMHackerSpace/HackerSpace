@@ -27,6 +27,12 @@ namespace HackerSpace
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Force-load appsettings.Production.json if present (overrides appsettings.json)
+            builder.Configuration.AddJsonFile(
+                "appsettings.Production.json",
+                optional: true,
+                reloadOnChange: true);
+
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
@@ -46,15 +52,8 @@ namespace HackerSpace
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-            /*builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(connectionString));*/
-
             // Inject the ContextFactory with connectionString
-            builder.Services.AddDbContextFactory<ApplicationDbContext>(opt => opt.UseSqlite(connectionString));
-
-            // Inject actual service instead of mock service
-            builder.Services.AddScoped<IBadgesPageDataService, BadgeService>();
-
+            builder.Services.AddDbContextFactory<ApplicationDbContext>(opt => opt.UseSqlServer(connectionString));
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -67,7 +66,7 @@ namespace HackerSpace
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             //Add data services
-            builder.Services.AddSingleton<IBadgesPageDataService, BadgesPageServiceMock>();
+            builder.Services.AddScoped<IBadgesPageDataService, BadgeService>();
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
 
             var app = builder.Build();
@@ -213,11 +212,12 @@ namespace HackerSpace
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var roles = new[] { "Admin", "Instructor" };
-                var roleExistenceTasks = roles.Select(role => roleManager.RoleExistsAsync(role)).ToArray();
-                var existenceResults = await Task.WhenAll(roleExistenceTasks);
-                var rolesToCreate = roles.Where((role, index) => !existenceResults[index]);
-                foreach (var role in rolesToCreate)
+                foreach (var role in roles)
                 {
+                    if (await roleManager.RoleExistsAsync(role))
+                    {
+                        continue;
+                    }
                     IdentityRole identityRole = new IdentityRole(role);
                     var result = await roleManager.CreateAsync(identityRole);
                     if (!result.Succeeded)
