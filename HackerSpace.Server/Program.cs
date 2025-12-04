@@ -150,7 +150,11 @@ namespace HackerSpace
                 foreach (var role in rolesToCreate)
                 {
                     IdentityRole identityRole = new IdentityRole(role);
-                    await roleManager.CreateAsync(identityRole);
+                    var result = await roleManager.CreateAsync(identityRole);
+                    if (!result.Succeeded)
+                    {
+                        Console.Error.WriteLine($"Failed to create role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    }
                 }
             }
         }
