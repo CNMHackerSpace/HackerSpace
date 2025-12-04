@@ -29,12 +29,13 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish self-contained(win-x64 example)
-        run: dotnet publish HackerSpace.Server/HackerSpace.Server.csproj \
-          --configuration Release \
-          --runtime win-x64 \
-          --self-contained true \
-          /p:PublishTrimmed=false \
-          --output ${{ env.PUBLISH_DIR }}
+        run: | 
+          dotnet publish HackerSpace.Server/HackerSpace.Server.csproj \
+              --configuration Release \
+              --runtime win-x64 \
+              --self-contained true \
+              /p:PublishTrimmed=false \
+              --output ${{ env.PUBLISH_DIR }}
 
       # Optional: show what got published (for debugging)
       - name: List published files
