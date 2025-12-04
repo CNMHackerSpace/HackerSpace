@@ -134,6 +134,10 @@ namespace HackerSpace
             }
         }
 
+        /// <summary>
+        /// Adds required roles to the identity system at application startup if they do not already exist.
+        /// </summary>
+        /// <param name="app">The web application instance.</param>
         private static async Task AddRolesAsync(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())
