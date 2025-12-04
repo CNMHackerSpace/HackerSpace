@@ -33,6 +33,10 @@ jobs:
             "ConnectionStrings": {
               "DefaultConnection": "$PROD_SQL_CONNECTION"
             },
+            "Admin": {
+              "Email": "${{ secrets.ADMIN_EMAIL }}",
+              "Password": "${{ secrets.ADMIN_PASSWORD }}"
+            },
             "Logging": {
               "LogLevel": {
                 "Default": "Information",
