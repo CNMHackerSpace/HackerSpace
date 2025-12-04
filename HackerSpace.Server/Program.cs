@@ -146,13 +146,13 @@ namespace HackerSpace
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var roles = new[] { "Admin", "Instructor" };
-                foreach (var role in roles)
+                var roleExistenceTasks = roles.Select(role => roleManager.RoleExistsAsync(role)).ToArray();
+                var existenceResults = await Task.WhenAll(roleExistenceTasks);
+                var rolesToCreate = roles.Where((role, index) => !existenceResults[index]);
+                foreach (var role in rolesToCreate)
                 {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        IdentityRole roleRole = new IdentityRole(role);
-                        await roleManager.CreateAsync(roleRole);
-                    }
+                    IdentityRole roleRole = new IdentityRole(role);
+                    await roleManager.CreateAsync(roleRole);
                 }
             }
         }
