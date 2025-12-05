@@ -1,0 +1,21 @@
+﻿@implements IDisposable
+@inject ScriptRegistry ScriptRegistry
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private Guid _id;
+
+    protected override void OnInitialized()
+    {
+        if (ChildContent is not null)
+        {
+            _id = ScriptRegistry.Register(ChildContent);
+        }
+    }
+
+    public void Dispose()
+    {
+        ScriptRegistry.Unregister(_id);
+    }
+}

@@ -10,6 +10,7 @@ using HackerSpace.Shared.Interfaces;
 using HackerSpace.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace HackerSpace
@@ -65,7 +66,10 @@ namespace HackerSpace
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-            //Add data services
+            // For script outlet component
+            builder.Services.AddSingleton<ScriptRegistry>();
+
+            // Add data services
             builder.Services.AddScoped<IBadgesPageDataService, BadgeService>();
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
 
@@ -85,6 +89,18 @@ namespace HackerSpace
             }
 
             app.UseHttpsRedirection();
+
+            // ... in Program.cs after builder.Build()
+            var provider = new FileExtensionContentTypeProvider();
+            provider.Mappings[".data"] = "application/octet-stream";
+            //provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
+            //provider.Mappings[".symbols.json"] = "application/json";
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
+
 
             app.UseStaticFiles();
             app.UseAntiforgery();

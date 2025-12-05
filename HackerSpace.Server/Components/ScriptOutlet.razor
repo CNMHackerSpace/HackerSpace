@@ -1,0 +1,20 @@
+﻿@inject ScriptRegistry ScriptRegistry
+
+@code {
+    protected override void OnInitialized()
+    {
+        ScriptRegistry.OnChanged += HandleChanged;
+    }
+
+    private void HandleChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        ScriptRegistry.OnChanged -= HandleChanged;
+    }
+}
+
+@foreach (var fragment in ScriptRegistry.GetFragments())
+{
+    @fragment
+}
