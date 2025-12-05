@@ -93,8 +93,8 @@ namespace HackerSpace
             // ... in Program.cs after builder.Build()
             var provider = new FileExtensionContentTypeProvider();
             provider.Mappings[".data"] = "application/octet-stream";
-            //provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
-            //provider.Mappings[".symbols.json"] = "application/json";
+            provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
+            provider.Mappings[".symbols.json"] = "application/json";
 
             app.UseStaticFiles(new StaticFileOptions
             {
