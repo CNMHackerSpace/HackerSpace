@@ -32,7 +32,7 @@ namespace HackerSpace.Server.Data.Services
         }
 
         /// <inheritdoc />
-        public async Task<Evaluator?> GetAsync(Guid id)
+        public async Task<Evaluator?> GetAsync(string id)
         {
             return await _context.Evaluators.FindAsync(id);
         }
@@ -72,7 +72,7 @@ namespace HackerSpace.Server.Data.Services
         }
 
         /// <inheritdoc />
-        public async Task RemoveAsync(Guid id)
+        public async Task RemoveAsync(string id)
         {
             var currentEvaluator = await _context.Evaluators.FindAsync(id);
             if (currentEvaluator == null)

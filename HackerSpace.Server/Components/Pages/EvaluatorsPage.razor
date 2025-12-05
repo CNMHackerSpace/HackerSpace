@@ -92,7 +92,7 @@ else
             showWarning = true;
             return;
         }
-        if (evaluator.Id == Guid.Empty)
+        if (string.IsNullOrEmpty(evaluator.Id))
         {
             evaluator.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
             evaluator.NotificationEmail = evaluator?.User?.Email;
@@ -111,7 +111,7 @@ else
 
     }
 
-    private async Task DeleteEvaluatorAsync(Guid evaluatorId)
+    private async Task DeleteEvaluatorAsync(string evaluatorId)
     {
         await ds.RemoveAsync(evaluatorId);
         viewModel?.Evaluators?.RemoveAll(e => e.Id == evaluatorId);

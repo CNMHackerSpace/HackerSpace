@@ -1,0 +1,187 @@
+﻿@page "/submit"
+@using HackerSpace.Shared.Models
+@using System.Security.Claims
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+
+<h3>Submit for Badge</h3>
+
+<EditForm Model="submission" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Badge</label>
+        <InputSelect @bind-Value="submission.BadgeId" class="form-select" aria-label="Select badge">
+            <option value="">-- Select a badge --</option>
+            @foreach (var b in Badges)
+            {
+                <option value="@b.Id">@b.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => submission.BadgeId)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Submission Text</label>
+        <InputTextArea @bind-Value="submission.Text" class="form-control" rows="6" />
+        <ValidationMessage For="@(() => submission.Text)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Your name (optional)</label>
+        <InputText @bind-Value="submission.ApplicantName" class="form-control" />
+        <ValidationMessage For="@(() => submission.ApplicantName)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Supporting links</label>
+        @for (int i = 0; i < submission.Links.Count; i++)
+        {
+            <div class="input-group mb-2">
+                <InputText @bind-Value="submission.Links.ElementAt(i).Url"
+                           class="form-control"
+                           placeholder="https://github.com/..." />
+                <InputText @bind-Value="submission.Links.ElementAt(i).Title"
+                           class="form-control"
+                           placeholder="Optional title" />
+                <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveLink(i)">Remove</button>
+            </div>
+            <ValidationMessage For="@(() => submission.Links.ElementAt(i).Url)" />
+        }
+
+        <button type="button" class="btn btn-outline-primary" @onclick="AddLink">Add link</button>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit" disabled="@isSubmitting">
+            @(isSubmitting ? "Submitting..." : "Submit")
+        </button>
+        <button class="btn btn-secondary ms-2" type="button" @onclick="Cancel">Cancel</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="alert @statusClass">@statusMessage</div>
+    }
+</EditForm>
+
+@code {
+    private Submission submission = new()
+    {
+        Links = new List<SubmissionLink> { new SubmissionLink() }
+    };
+
+    private List<BadgeDto> Badges { get; set; } = new();
+    private bool isSubmitting;
+    private string? statusMessage;
+    private string statusClass = "alert-info";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBadgesAsync();
+        await SetApplicantFromAuthAsync();
+    }
+
+    private async Task LoadBadgesAsync()
+    {
+        try
+        {
+            // Expecting an API endpoint that returns available badges
+            Badges = await Http.GetFromJsonAsync<List<BadgeDto>>("api/badges") ?? new();
+        }
+        catch
+        {
+            Badges = new();
+        }
+    }
+
+    private async Task SetApplicantFromAuthAsync()
+    {
+        try
+        {
+            var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = auth.User;
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                // try common claims for id
+                var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)
+                              ?? user.FindFirst("sub")
+                              ?? user.FindFirst("oid");
+                if (idClaim != null)
+                {
+                    submission.ApplicantId = idClaim.Value;
+                }
+
+                // set a friendly display name if available
+                var nameClaim = user.FindFirst(ClaimTypes.Name) ?? user.FindFirst("name");
+                if (nameClaim != null)
+                {
+                    submission.ApplicantName = nameClaim.Value;
+                }
+            }
+        }
+        catch
+        {
+            // ignore - leave ApplicantId empty and let validation handle it if required
+        }
+    }
+
+    private void AddLink()
+    {
+        submission.Links.Add(new SubmissionLink());
+    }
+
+    private void RemoveLink(int index)
+    {
+        if (index >= 0 && index < submission.Links.Count)
+        {
+            var item = submission.Links.ElementAt(index);
+            submission.Links.Remove(item);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSubmitting = true;
+        statusMessage = null;
+
+        // Ensure ApplicantId is present; if not, fallback to empty string (server may require)
+        submission.ApplicantId ??= string.Empty;
+
+        try
+        {
+            var resp = await Http.PostAsJsonAsync("api/submissions", submission);
+            if (resp.IsSuccessStatusCode)
+            {
+                statusMessage = "Submission created successfully.";
+                statusClass = "alert-success";
+                // navigate to a confirmation or reset form
+                submission = new Submission { Links = new List<SubmissionLink> { new SubmissionLink() } };
+            }
+            else
+            {
+                statusMessage = $"Server returned: {resp.StatusCode}";
+                statusClass = "alert-danger";
+            }
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error: {ex.Message}";
+            statusClass = "alert-danger";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/");
+    }
+
+    // lightweight DTO used for badge dropdown
+    private record BadgeDto(Guid Id, string Name);
+}

@@ -37,7 +37,7 @@ namespace HackerSpace.Shared.Interfaces
         /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
         /// the <see cref="Evaluator"/> if found; otherwise <c>null</c>.
         /// </returns>
-        public Task<Evaluator?> GetAsync(Guid id);
+        public Task<Evaluator?> GetAsync(string id);
 
         /// <summary>
         /// Asynchronously updates the provided evaluator.
@@ -58,6 +58,6 @@ namespace HackerSpace.Shared.Interfaces
         /// </summary>
         /// <param name="id">The unique identifier of the evaluator to remove.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous remove operation.</returns>
-        public Task RemoveAsync(Guid id);
+        public Task RemoveAsync(string id);
     }
 }

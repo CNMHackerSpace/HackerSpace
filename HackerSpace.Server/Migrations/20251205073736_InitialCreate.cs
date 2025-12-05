@@ -57,7 +57,7 @@ namespace HackerSpace.Server.Migrations
                 name: "Badges",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TurnInInstructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -178,7 +178,7 @@ namespace HackerSpace.Server.Migrations
                 name: "Evaluators",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     NotificationEmail = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -190,6 +190,48 @@ namespace HackerSpace.Server.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Submissions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BadgeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    ApplicantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicantName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Submissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Submissions_Badges_BadgeId",
+                        column: x => x.BadgeId,
+                        principalTable: "Badges",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubmissionLinks",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SubmissionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubmissionLinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubmissionLinks_Submissions_SubmissionId",
+                        column: x => x.SubmissionId,
+                        principalTable: "Submissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -235,6 +277,16 @@ namespace HackerSpace.Server.Migrations
                 name: "IX_Evaluators_UserId",
                 table: "Evaluators",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubmissionLinks_SubmissionId",
+                table: "SubmissionLinks",
+                column: "SubmissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Submissions_BadgeId",
+                table: "Submissions",
+                column: "BadgeId");
         }
 
         /// <inheritdoc />
@@ -256,16 +308,22 @@ namespace HackerSpace.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Badges");
+                name: "Evaluators");
 
             migrationBuilder.DropTable(
-                name: "Evaluators");
+                name: "SubmissionLinks");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Submissions");
+
+            migrationBuilder.DropTable(
+                name: "Badges");
         }
     }
 }

@@ -90,7 +90,7 @@ else
         if (badge == null)
             throw new ArgumentException("Badge is null");
 
-        if (badge.Id == Guid.Empty)
+        if (string.IsNullOrEmpty(badge.Id))
         {
             await dataService.AddAsync(badge);
         }

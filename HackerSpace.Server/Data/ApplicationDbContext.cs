@@ -22,5 +22,15 @@ namespace HackerSpace.Data
         /// Gets or sets the <see cref="DbSet{Evaluator}"/> used to query and save <see cref="Evaluator"/> instances.
         /// </summary>
         public DbSet<Evaluator> Evaluators { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{Submission}"/> used to query and save <see cref="Submission"/> instances.
+        /// </summary>
+        public DbSet<Submission> Submissions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{SubmissionLink}"/> used to query and save <see cref="SubmissionLink"/> instances.
+        /// </summary>
+        public DbSet<SubmissionLink> SubmissionLinks { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) CNM. All rights reserved.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HackerSpace.Shared.Models
@@ -13,7 +14,8 @@ namespace HackerSpace.Shared.Models
         /// <summary>
         /// Gets or sets the unique identifier for the evaluator.
         /// </summary>
-        public Guid Id { get; set; } = Guid.Empty;
+        [Key]
+        public string? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the associated application user id (foreign key).
