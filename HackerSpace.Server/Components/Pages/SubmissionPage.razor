@@ -1,4 +1,5 @@
 ﻿@page "/submit"
+@page "/submit/{Id}"
 @using HackerSpace.Shared.Models
 @using System.Security.Claims
 @inject HttpClient Http
@@ -67,11 +68,29 @@
     }
 </EditForm>
 
-@code {
-    private Submission submission = new()
+    @code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    private Submission? submission;
+
+
+    protected override Task OnParametersSetAsync()
     {
-        Links = new List<SubmissionLink> { new SubmissionLink() }
-    };
+        if(Id == null)
+        {
+            submission = new()
+            {
+                Links = new List<SubmissionLink> { new SubmissionLink() }
+            };
+        }
+        else
+        {
+            //TODO: get submission
+            //TODO: check to make sure submission 
+        }
+        return base.OnParametersSetAsync();
+    }
 
     private List<BadgeDto> Badges { get; set; } = new();
     private bool isSubmitting;
