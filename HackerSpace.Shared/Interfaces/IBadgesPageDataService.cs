@@ -38,6 +38,6 @@ namespace HackerSpace.Shared.Interfaces
         /// </summary>
         /// <param name="id">The unique identifier of the badge to remove.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous remove operation.</returns>
-        public Task RemoveAsync(string id);
+        public Task RemoveAsync(Guid id);
     }
 }

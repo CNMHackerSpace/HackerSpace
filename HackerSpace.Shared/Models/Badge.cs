@@ -13,7 +13,7 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets the unique identifier for the badge.
         /// </summary>
         [Key]
-        public string? Id { get; set; }
+        public Guid? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the badge title.

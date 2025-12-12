@@ -15,7 +15,7 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets the unique identifier for the evaluator.
         /// </summary>
         [Key]
-        public string? Id { get; set; }
+        public Guid? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the associated application user id (foreign key).

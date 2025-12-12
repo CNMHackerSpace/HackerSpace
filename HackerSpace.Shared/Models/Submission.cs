@@ -13,13 +13,13 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets primary key for the submission.
         /// </summary>
         [Key]
-        public string? Id { get; set; }
+        public Guid? Id { get; set; }
 
         /// <summary>
         /// Gets or sets identifier of the associated badge.
         /// </summary>
         [Required]
-        public string BadgeId { get; set; } = string.Empty;
+        public Guid? BadgeId { get; set; }
 
         /// <summary>
         /// Gets or sets optional navigation property to the <c>Badge</c> entity.

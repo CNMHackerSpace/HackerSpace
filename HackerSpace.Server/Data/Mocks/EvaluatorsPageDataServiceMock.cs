@@ -56,13 +56,13 @@ namespace HackerSpace.Server.Data.Mocks
                 {
                     new Evaluator
                     {
-                        Id = Guid.NewGuid().ToString(),
+                        Id = Guid.NewGuid(),
                         User = this.users[0],
                         NotificationEmail = this.users[0].Email,
                     },
                     new Evaluator
                     {
-                        Id = Guid.NewGuid().ToString(),
+                        Id = Guid.NewGuid(),
                         User = this.users[1],
                         NotificationEmail = this.users[1].Email,
                     }
@@ -86,7 +86,7 @@ namespace HackerSpace.Server.Data.Mocks
         }
 
         /// <inheritdoc/>
-        public Task<Evaluator?> GetAsync(string id)
+        public Task<Evaluator?> GetAsync(Guid id)
         {
             return Task.FromResult(this.evaluators.Where(e => e.Id == id).FirstOrDefault());
         }
@@ -113,7 +113,7 @@ namespace HackerSpace.Server.Data.Mocks
         }
 
         /// <inheritdoc/>
-        public Task RemoveAsync(string id)
+        public Task RemoveAsync(Guid id)
         {
             if (this.evaluators == null)
             {

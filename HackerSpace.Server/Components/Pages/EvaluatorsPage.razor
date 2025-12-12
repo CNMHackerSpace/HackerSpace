@@ -32,6 +32,7 @@ else
                                 }
                                 else
                                 {
+                                    <option value = null>Select a registered user to be an evaluator.</option>
                                     @foreach(var user in viewModel.Users)
                                     {
                                         <option value="@user.Id">@user.UserName</option>
@@ -48,7 +49,7 @@ else
                         <td>@evaluator?.NotificationEmail</td>
                         <td>
                             <button class="btn btn-primary" @onclick="()=>EditEvaluator(evaluator!)">Edit</button>
-                            <button class="btn btn-danger" @onclick="()=>DeleteEvaluatorAsync(evaluator!.Id)">Delete</button>
+                            <button class="btn btn-danger" @onclick="async ()=>{if(evaluator?.Id != null) await DeleteEvaluatorAsync((Guid)evaluator.Id);}">Delete</button>
                         </td>
                     }
                     else
@@ -92,10 +93,10 @@ else
             showWarning = true;
             return;
         }
-        if (string.IsNullOrEmpty(evaluator.Id))
+        if (evaluator.Id == null)
         {
             evaluator.User = viewModel?.Users?.FirstOrDefault(u => u.Id == evaluator.UserId);
-            evaluator.NotificationEmail = evaluator?.User?.Email;
+            //evaluator.NotificationEmail = evaluator?.User?.Email;
             await ds.AddAsync(evaluator!);
         }
         else
@@ -111,7 +112,7 @@ else
 
     }
 
-    private async Task DeleteEvaluatorAsync(string evaluatorId)
+    private async Task DeleteEvaluatorAsync(Guid evaluatorId)
     {
         await ds.RemoveAsync(evaluatorId);
         viewModel?.Evaluators?.RemoveAll(e => e.Id == evaluatorId);

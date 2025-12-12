@@ -12,7 +12,7 @@ namespace HackerSpace.Data.Mocks
         {
             new Badge
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Title = "Beginner Hacker",
                 Description = "Awarded for completing the beginner hacking course.",
                 TurnInInstructions = "Submit your course completion certificate.",
@@ -20,7 +20,7 @@ namespace HackerSpace.Data.Mocks
             },
             new Badge
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Title = "Security Expert",
                 Description = "Awarded for demonstrating advanced security skills.",
                 TurnInInstructions = "Submit a report on your security project.",
@@ -28,7 +28,7 @@ namespace HackerSpace.Data.Mocks
             },
             new Badge
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Title = "Code Contributor",
                 Description = "Awarded for contributing to open-source projects.",
                 TurnInInstructions = "Submit your GitHub profile link.",
@@ -36,7 +36,7 @@ namespace HackerSpace.Data.Mocks
             },
             new Badge
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Title = "Bug Hunter",
                 Description = "Awarded for finding and reporting bugs.",
                 TurnInInstructions = "Submit your bug report.",
@@ -44,7 +44,7 @@ namespace HackerSpace.Data.Mocks
             },
             new Badge
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Title = "Community Helper",
                 Description = "Awarded for helping others in the community.",
                 TurnInInstructions = "Submit testimonials from community members.",
@@ -88,7 +88,7 @@ namespace HackerSpace.Data.Mocks
         /// <returns>A task that completes when the badge has been added.</returns>
         public Task AddAsync(Badge badge)
         {
-            badge.Id = Guid.NewGuid().ToString();
+            badge.Id = Guid.NewGuid();
             _badges.Add(badge);
             return Task.FromResult(true);
         }
@@ -99,7 +99,7 @@ namespace HackerSpace.Data.Mocks
         /// <param name="id">The unique identifier of the badge to remove.</param>
         /// <returns>A task that completes when the badge has been removed.</returns>
         /// <exception cref="ArgumentException">Thrown if the badge to remove does not exist.</exception>
-        public Task RemoveAsync(string id)
+        public Task RemoveAsync(Guid id)
         {
             var existingBadge = _badges.Where(b => b.Id == id).FirstOrDefault();
             if (existingBadge == null)

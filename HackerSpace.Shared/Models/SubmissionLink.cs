@@ -13,13 +13,13 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets the primary key for the submission link.
         /// </summary>
         [Key]
-        public string? Id { get; set; }
+        public Guid? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the foreign key referencing the associated submission.
         /// </summary>
         [Required]
-        public string SubmissionId { get; set; } = string.Empty;
+        public Guid? SubmissionId { get; set; }
 
         /// <summary>
         /// Gets or sets the associated <see cref="Submission"/> entity.

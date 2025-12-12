@@ -57,7 +57,7 @@ namespace HackerSpace.Server.Migrations
                 name: "Badges",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TurnInInstructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -178,7 +178,7 @@ namespace HackerSpace.Server.Migrations
                 name: "Evaluators",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     NotificationEmail = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -196,8 +196,8 @@ namespace HackerSpace.Server.Migrations
                 name: "Submissions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BadgeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BadgeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
                     ApplicantId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApplicantName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -218,8 +218,8 @@ namespace HackerSpace.Server.Migrations
                 name: "SubmissionLinks",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SubmissionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubmissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },

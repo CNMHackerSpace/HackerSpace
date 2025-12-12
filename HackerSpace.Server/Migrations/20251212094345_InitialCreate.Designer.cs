@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HackerSpace.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251205073736_InitialCreate")]
+    [Migration("20251212094345_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -101,8 +101,9 @@ namespace HackerSpace.Server.Migrations
 
             modelBuilder.Entity("HackerSpace.Shared.Models.Badge", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -123,8 +124,9 @@ namespace HackerSpace.Server.Migrations
 
             modelBuilder.Entity("HackerSpace.Shared.Models.Evaluator", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NotificationEmail")
                         .HasColumnType("nvarchar(max)");
@@ -141,8 +143,9 @@ namespace HackerSpace.Server.Migrations
 
             modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApplicantId")
                         .IsRequired()
@@ -152,9 +155,9 @@ namespace HackerSpace.Server.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("BadgeId")
+                    b.Property<Guid?>("BadgeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -173,12 +176,13 @@ namespace HackerSpace.Server.Migrations
 
             modelBuilder.Entity("HackerSpace.Shared.Models.SubmissionLink", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SubmissionId")
+                    b.Property<Guid?>("SubmissionId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()

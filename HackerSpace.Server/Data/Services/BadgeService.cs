@@ -22,7 +22,7 @@ namespace HackerSpace.Data.Services
         public async Task AddAsync(Badge badge)
         {
             using var context = _factory.CreateDbContext();
-            badge.Id = Guid.NewGuid().ToString(); // ensure ID is created if not provided
+            badge.Id = Guid.NewGuid(); // ensure ID is created if not provided
             context.Badges.Add(badge);
             await context.SaveChangesAsync();
         }
@@ -39,7 +39,7 @@ namespace HackerSpace.Data.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task RemoveAsync(string id)
+        public async Task RemoveAsync(Guid id)
         {
             using var context = _factory.CreateDbContext();
 
