@@ -32,10 +32,4 @@
 		<Folder Include="wwwroot\images\" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="wwwroot\Build\Deployment.data">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
 </Project>
