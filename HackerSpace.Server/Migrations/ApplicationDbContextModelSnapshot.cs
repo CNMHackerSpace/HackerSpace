@@ -98,7 +98,7 @@ namespace HackerSpace.Server.Migrations
 
             modelBuilder.Entity("HackerSpace.Shared.Models.Badge", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -121,7 +121,7 @@ namespace HackerSpace.Server.Migrations
 
             modelBuilder.Entity("HackerSpace.Shared.Models.Evaluator", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -136,6 +136,64 @@ namespace HackerSpace.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Evaluators");
+                });
+
+            modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
+                {
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApplicantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApplicantName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("BadgeId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BadgeId");
+
+                    b.ToTable("Submissions");
+                });
+
+            modelBuilder.Entity("HackerSpace.Shared.Models.SubmissionLink", b =>
+                {
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SubmissionId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubmissionId");
+
+                    b.ToTable("SubmissionLinks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -280,6 +338,28 @@ namespace HackerSpace.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
+                {
+                    b.HasOne("HackerSpace.Shared.Models.Badge", "Badge")
+                        .WithMany("Submissions")
+                        .HasForeignKey("BadgeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Badge");
+                });
+
+            modelBuilder.Entity("HackerSpace.Shared.Models.SubmissionLink", b =>
+                {
+                    b.HasOne("HackerSpace.Shared.Models.Submission", "Submission")
+                        .WithMany("Links")
+                        .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Submission");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -329,6 +409,16 @@ namespace HackerSpace.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HackerSpace.Shared.Models.Badge", b =>
+                {
+                    b.Navigation("Submissions");
+                });
+
+            modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
+                {
+                    b.Navigation("Links");
                 });
 #pragma warning restore 612, 618
         }

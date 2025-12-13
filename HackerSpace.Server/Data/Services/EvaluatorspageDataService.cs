@@ -52,6 +52,7 @@ namespace HackerSpace.Server.Data.Services
         /// <inheritdoc />
         public async Task AddAsync(Evaluator evaluator)
         {
+            evaluator.Id = Guid.NewGuid();
             _context.Evaluators.Add(evaluator);
             await _context.SaveChangesAsync();
         }

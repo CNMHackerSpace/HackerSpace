@@ -17,7 +17,7 @@ else
                 @badge.Title
                 <button class="btn btn-primary" @onclick="() => OnViewClicked(badge)">View</button>
                 <AuthorizeView Roles="Admin">
-                    <button class="btn btn-danger" @onclick="() => OnDeleteClickAsync(badge)">Delete</button>
+                    <button class="btn btn-danger" @onclick="async () => {if (badge.Id != null) await OnDeleteClickAsync((Guid) badge.Id);}">Delete</button>
                 </AuthorizeView>
             </li>
         }
@@ -73,9 +73,9 @@ else
         badge = new Badge();
     }
 
-    protected async Task OnDeleteClickAsync(Badge badge)
+    protected async Task OnDeleteClickAsync(Guid id)
     {
-        await dataService.RemoveAsync(badge.Id);
+        await dataService.RemoveAsync(id);
 
         // refresh list
         badges = await dataService.GetAllAsync();
@@ -90,7 +90,7 @@ else
         if (badge == null)
             throw new ArgumentException("Badge is null");
 
-        if (badge.Id == Guid.Empty)
+        if (badge.Id == null)
         {
             await dataService.AddAsync(badge);
         }

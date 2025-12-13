@@ -1,5 +1,7 @@
 ﻿// Copyright (c) CNM. All rights reserved.
 
+using System.ComponentModel.DataAnnotations;
+
 namespace HackerSpace.Shared.Models
 {
     /// <summary>
@@ -10,7 +12,8 @@ namespace HackerSpace.Shared.Models
         /// <summary>
         /// Gets or sets the unique identifier for the badge.
         /// </summary>
-        public Guid Id { get; set; }
+        [Key]
+        public Guid? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the badge title.
@@ -32,5 +35,10 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets a value indicating whether the badge is visible.
         /// </summary>
         public bool? IsVisible { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of submissions associated with the badge.
+        /// </summary>
+        public List<Submission>? Submissions { get; set; }
     }
 }
