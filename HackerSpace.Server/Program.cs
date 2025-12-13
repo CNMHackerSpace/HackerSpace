@@ -98,7 +98,22 @@ namespace HackerSpace
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                ContentTypeProvider = provider
+                ContentTypeProvider = provider,
+                
+                // Handle gzipped files for unity game
+                OnPrepareResponse = ctx => 
+                {
+                    var path = ctx.File.PhysicalPath ?? "";
+                    if (path.EndsWith(".gz"))
+                    {
+                        ctx.Context.Response.Headers["Content-Encoding"] = "gzip";
+
+                        // Fix content-type based on the *original* extension
+                        if (path.EndsWith(".js.gz")) ctx.Context.Response.ContentType = "application/javascript";
+                        if (path.EndsWith(".data.gz")) ctx.Context.Response.ContentType = "application/octet-stream";
+                        if (path.EndsWith(".wasm.gz")) ctx.Context.Response.ContentType = "application/wasm";
+                    }
+                }
             });
 
 
