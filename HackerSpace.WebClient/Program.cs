@@ -1,4 +1,4 @@
-// Copyright (c) CNM. All rights reserved.
+// Copyright (c) 2025. All rights reserved.
 
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

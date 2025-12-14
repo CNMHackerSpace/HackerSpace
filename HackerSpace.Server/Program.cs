@@ -1,11 +1,11 @@
-// Copyright (c) CNM. All rights reserved.
+// Copyright (c) 2025. All rights reserved.
 
 using HackerSpace.Components.Account;
 using HackerSpace.Data;
-using HackerSpace.Data.Mocks;
 using HackerSpace.Data.Services;
 using HackerSpace.Server.Components;
 using HackerSpace.Server.Data.Services;
+using HackerSpace.Server.Services;
 using HackerSpace.Shared.Interfaces;
 using HackerSpace.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -37,7 +37,8 @@ namespace HackerSpace
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
-                .AddInteractiveWebAssemblyComponents();
+                .AddCircuitOptions(o => o.DetailedErrors = true)
+                .AddInteractiveWebAssemblyComponents(); 
 
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityUserAccessor>();
@@ -70,8 +71,11 @@ namespace HackerSpace
             builder.Services.AddSingleton<ScriptRegistry>();
 
             // Add data services
-            builder.Services.AddScoped<IBadgesPageDataService, BadgeService>();
+            builder.Services.AddScoped<IBadgesPageDataService, BadgesPageDataService>();
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
+            builder.Services.AddTransient<IBadgeEditPageDataService, BadgesEditPageDataService>();
+            builder.Services.AddScoped<IBadgeViewPageDataService, BadgeViewPageDataService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             var app = builder.Build();
 
