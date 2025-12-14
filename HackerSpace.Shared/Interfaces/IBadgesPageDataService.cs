@@ -1,4 +1,4 @@
-﻿// Copyright (c) CNM. All rights reserved.
+﻿// Copyright (c) 2025. All rights reserved.
 
 using HackerSpace.Shared.Models;
 
@@ -18,6 +18,15 @@ namespace HackerSpace.Shared.Interfaces
         /// a <see cref="List{Badge}"/> of badges, or <c>null</c> if none are available.
         /// </returns>
         public Task<List<Badge>> GetAllAsync();
+
+        /// <summary>
+        /// Asynchronously retrieves all visible badges.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
+        /// a <see cref="List{Badge}"/> of visible badges, or <c>null</c> if none are available.
+        /// </returns>
+        public Task<List<Badge>> GetVisibleAsync();
 
         /// <summary>
         /// Asynchronously updates the provided badge.

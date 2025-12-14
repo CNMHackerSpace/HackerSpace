@@ -1,6 +1,9 @@
 ﻿@page "/badges"
 @rendermode InteractiveServer 
 @inject IBadgesPageDataService dataService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
 <h3>Badges Page</h3>
 
 <!--List View-->
@@ -15,41 +18,20 @@ else
         {
             <li>
                 @badge.Title
-                <button class="btn btn-primary" @onclick="() => OnViewClicked(badge)">View</button>
+                <button class="btn btn-primary btn-sm" @onclick="() => OnViewClicked(badge.Id)">View</button>
                 <AuthorizeView Roles="Admin">
-                    <button class="btn btn-danger" @onclick="async () => {if (badge.Id != null) await OnDeleteClickAsync((Guid) badge.Id);}">Delete</button>
+                    <button class="btn btn-primary btn-sm" @onclick="() => OnEditClicked(badge.Id)">Edit</button>
+                    <button class="btn btn-danger  btn-sm" @onclick="async () => await OnDeleteClickAsync(badge.Id)">Delete</button>
                 </AuthorizeView>
             </li>
         }
     </ul>
     <AuthorizeView Roles="Admin">
-        <button type="button" class="btn btn-primary" @onclick="OnAddBadgeClick">Add Badge</button>
-    </AuthorizeView>
-}
-
-<!--Detail View-->
-@if(badge == null)
-{
-    <p>Please select a badge to show.</p>
-}
-else
-{
-    <AuthorizeView Roles="Admin">
         <Authorized>
-            <h4>Editing Badge</h4>
-            <p>Id: @badge.Id</p>
-            <p>Title: <input @bind-value="@badge.Title" type="text" /></p>
-            <p>Description: <textarea @bind="@badge.Description" /></p>
-            <p>Turn In Instructions: <textarea @bind="@badge.TurnInInstructions" /></p>
-            <p>Is Visible: <input @bind-value="@badge.IsVisible" type="checkbox" />  </p>
-            <button type="button" class="btn btn-primary" @onclick="OnSubmitClickAsync">Submit</button>
+            <button type="button" class="btn btn-primary" @onclick="OnAddBadgeClick">Add Badge</button>
         </Authorized>
         <NotAuthorized>
-            <h4>Viewing Badge</h4>
-            <p>Title: @badge.Title</p>
-            <p>Description: @badge.Description</p>
-            <p>Turn In Instructions: @badge.TurnInInstructions</p>
-            <p>Is Visible: @(badge.IsVisible == true ? "Yes" : "No")</p>
+            <button type="button" class="btn btn-primary" @onclick="OnSuggestBadgeClick">Suggest a Badge</button>
         </NotAuthorized>
     </AuthorizeView>
 }
@@ -59,28 +41,43 @@ else
     protected Badge? badge;
 
     override protected async Task OnInitializedAsync()
-    {        
-        badges = await dataService.GetAllAsync();
+    {
+        // Get all badges if user is admin, otherwise get only visible badges
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        badges = user.IsInRole("Admin")
+            ? await dataService.GetAllAsync()
+            : await dataService.GetVisibleAsync();
     }
 
-    protected void OnViewClicked(Badge badge)
+    protected void OnViewClicked(Guid id)
     {
-        this.badge = badge;
+        Navigation.NavigateTo($"/badge/{id.ToString()}");
+    }
+
+    protected void OnEditClicked(Guid id)
+    {
+        Navigation.NavigateTo($"/badge/edit/{id.ToString()}");
     }
 
     protected void OnAddBadgeClick()
     {
-        badge = new Badge();
+        Navigation.NavigateTo("/badge/edit/");
     }
 
     protected async Task OnDeleteClickAsync(Guid id)
     {
         await dataService.RemoveAsync(id);
 
-        // refresh list
-        badges = await dataService.GetAllAsync();
+        // Refresh list based on user role
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        // update UI
+        badges = user.IsInRole("Admin")
+            ? await dataService.GetAllAsync()
+            : await dataService.GetVisibleAsync();
+
         StateHasChanged();
     }
 
@@ -90,7 +87,7 @@ else
         if (badge == null)
             throw new ArgumentException("Badge is null");
 
-        if (badge.Id == null)
+        if (badge.Id == Guid.Empty)
         {
             await dataService.AddAsync(badge);
         }
@@ -99,13 +96,20 @@ else
             await dataService.UpdateAsync(badge);
         }
 
-        // refresh list
-        badges = await dataService.GetAllAsync();
+        // Refresh list based on user role
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        badges = user.IsInRole("Admin")
+            ? await dataService.GetAllAsync()
+            : await dataService.GetVisibleAsync();
 
         badge = null;
 
-        // update UI
         StateHasChanged();
     }
-
+    private void OnSuggestBadgeClick(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/suggest-a-badge");
+    }
 }

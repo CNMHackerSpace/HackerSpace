@@ -1,4 +1,4 @@
-// Copyright (c) CNM. All rights reserved.
+// Copyright (c) 2025. All rights reserved.
 
 using System.ComponentModel.DataAnnotations;
 
@@ -13,18 +13,17 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets primary key for the submission.
         /// </summary>
         [Key]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets identifier of the associated badge.
         /// </summary>
-        [Required]
-        public Guid? BadgeId { get; set; }
+        public Guid BadgeId { get; set; }
 
         /// <summary>
         /// Gets or sets optional navigation property to the <c>Badge</c> entity.
         /// </summary>
-        public Badge? Badge { get; set; }
+        public Badge Badge { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the submission text provided by the applicant.
@@ -43,12 +42,12 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets optional human-friendly applicant name for quick display.
         /// </summary>
         [MaxLength(200)]
-        public string? ApplicantName { get; set; }
+        public string ApplicantName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets links (GitHub repositories, cloud documents, etc.) that support this submission.
         /// </summary>
-        public ICollection<SubmissionLink> Links { get; set; } = new List<SubmissionLink>();
+        public List<SubmissionLink> Links { get; set; } = new List<SubmissionLink>();
 
         /// <summary>
         /// Gets or sets uTC timestamp when the submission was created.

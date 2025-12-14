@@ -1,0 +1,122 @@
+﻿@page "/badge/edit/{Id}"
+@page "/badge/edit/"
+@using System.Threading.Tasks
+@rendermode InteractiveServer
+@inject IBadgeEditPageDataService dataService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin, Instructor")]
+
+@if (badge == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    
+    <EditForm Model="badge" OnValidSubmit="OnSubmitClickAsync">
+        <DataAnnotationsValidator />
+        @if (isEditView)
+        {
+            <div class="form-group">
+                <h3>Badge Edit</h3><button type="button" class="btn btn-outline-primary" @onclick="SwitchToUserView">See User View</button>
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label> 
+                <InputText class="form-control" id="title" @bind-value="badge.Title" aria-describeedby="Title of the badge" />
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <InputTextArea class="form-control" rows="10"  id="description" @bind-value="badge.Description"></InputTextArea>
+            </div>
+            <div class="form-group">
+                <label for="turn-in-instructions">Turn In Instructions</label>
+                <InputTextArea class="form-control" rows="7" id="turn-in-instructions" @bind-value="badge.TurnInInstructions"></InputTextArea>
+            </div>
+            <div class="form-group">
+                <label for="title">Is Visible</label>  
+                <InputCheckbox @bind-Value="badge.IsVisible" type="checkbox" />
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <h3>Badge Edit</h3><button type="button" class="btn btn-outline-primary" @onclick="SwitchToEditView">See Edit View</button>
+            </div>
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+
+                    <h5 class="card-title mb-2">
+                        @badge.Title
+                    </h5>
+
+                    <p class="card-text text-muted mb-3">
+                        @((MarkupString)badge.Description)
+                    </p>
+
+                    <div class="border-start ps-3">
+                        <h6 class="fw-semibold mb-1">
+                            Turn-in Instructions
+                        </h6>
+                        <p class="mb-0">
+                            @((MarkupString)badge.TurnInInstructions)
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary" @onclick="OnCancelClick">Cancel</button>
+        </div>
+    </EditForm>
+}
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    protected Badge? badge;
+
+    private bool isEditView = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(Id, out Guid badgeId))
+        {
+            badge = await dataService.GetByIdAsync(badgeId);
+        }
+        else
+        {
+            badge = new Badge()
+            {
+                Title = $"New badge created on {DateTime.Now.ToString("s")}",
+                Description = "TBD",
+                TurnInInstructions = "TBD",
+                IsVisible = false,
+            };
+        }
+    }
+    private async Task OnSubmitClickAsync()
+    {
+        if (badge == null)
+        {
+            return;
+        }
+        await dataService.AddOrUpdateAsync(badge);
+        Navigation.NavigateTo("/badges");
+    }
+    private void OnCancelClick(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/badges");
+    }
+
+    private void SwitchToEditView()
+    {
+        isEditView = true;
+    }
+
+    private void SwitchToUserView()
+    {
+        isEditView = false;
+    }
+}

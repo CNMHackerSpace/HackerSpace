@@ -1,0 +1,283 @@
+@page "/badge/{Id}"
+@using HackerSpace.Server.Services
+@using HackerSpace.Shared.Models
+@using System.Security.Claims
+@rendermode InteractiveServer
+@inject IBadgeViewPageDataService dataService
+@inject IEmailService emailService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Badge Details</PageTitle>
+
+@if (badge == null)
+{
+    <p>Loading badge details...</p>
+}
+else
+{
+    <div class="container py-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-3">@badge.Title</h3>
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Description</h5>
+                    <div class="text-muted">
+                        @((MarkupString)badge.Description)
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Turn-In Instructions</h5>
+                    <div class="border-start ps-3">
+                        @((MarkupString)badge.TurnInInstructions)
+                    </div>
+                </div>
+
+                <AuthorizeView>
+                    <Authorized>
+                        <button class="btn btn-primary" @onclick="OpenSubmissionDialog">
+                            Apply for Badge
+                        </button>
+                    </Authorized>
+                    <NotAuthorized>
+                        <p class="text-muted">Please log in to apply for this badge.</p>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+                @* <button class="btn btn-secondary ms-2" @onclick="GoBack">
+                    Back to Badges
+                </button> *@
+            </div>
+        </div>
+    </div>
+}
+
+@* Submission Dialog *@
+@if (showSubmissionDialog)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Apply for @badge?.Title</h5>
+                    <button type="button" class="btn-close" @onclick="CloseSubmissionDialog" aria-label="Close"></button>
+                </div>
+                <EditForm Model="submission" OnValidSubmit="HandleSubmissionAsync">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label class="form-label">Submission Remarks <span class="text-danger">*</span></label>
+                            <InputTextArea @bind-Value="submission.Text" 
+                                          class="form-control" 
+                                          rows="6"
+                                          placeholder="Describe how you meet the requirements for this badge..." />
+                            <ValidationMessage For="@(() => submission.Text)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Supporting Links</label>
+                            <small class="text-muted d-block mb-2">
+                                Provide links to GitHub repositories, documentation, or other evidence.
+                            </small>
+
+                            @for (int i = 0; i < submission.Links.Count; i++)
+                            {
+                                var index = i; // Capture for lambda
+                                <div class="input-group mb-2">
+                                    <InputText @bind-Value="submission.Links[index].Url"
+                                              class="form-control"
+                                              placeholder="https://github.com/username/repo" />
+                                    <InputText @bind-Value="submission.Links[index].Title"
+                                              class="form-control"
+                                              placeholder="Optional description" />
+                                    <button type="button" 
+                                            class="btn btn-outline-danger" 
+                                            @onclick="() => RemoveLink(index)">
+                                        Remove
+                                    </button>
+                                </div>
+                                <ValidationMessage For="@(() => submission.Links[index].Url)" />
+                            }
+
+                            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddLink">
+                                + Add Link
+                            </button>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(submissionMessage))
+                        {
+                            <div class="alert @submissionAlertClass" role="alert">
+                                @submissionMessage
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseSubmissionDialog">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                            @(isSubmitting ? "Submitting..." : "Submit Application")
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    private Badge? badge;
+    private Submission submission = new();
+    private bool showSubmissionDialog = false;
+    private bool isSubmitting = false;
+    private string? submissionMessage;
+    private string submissionAlertClass = "alert-info";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(Id, out Guid badgeId))
+        {
+            badge = await dataService.GetByIdAsync(badgeId);
+        }
+
+        InitializeSubmission();
+    }
+
+    private void InitializeSubmission()
+    {
+        submission = new Submission
+        {
+            BadgeId = badge?.Id ?? Guid.Empty,
+            Links = new List<SubmissionLink> { new SubmissionLink() }
+        };
+    }
+
+    private async Task OpenSubmissionDialog()
+    {
+        InitializeSubmission();
+
+        // Pre-populate applicant information from authentication
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)
+                         ?? user.FindFirst("sub")
+                         ?? user.FindFirst("oid");
+            if (idClaim != null)
+            {
+                submission.ApplicantId = idClaim.Value;
+            }
+
+            var nameClaim = user.FindFirst(ClaimTypes.Name) ?? user.FindFirst("name");
+            if (nameClaim != null)
+            {
+                submission.ApplicantName = nameClaim.Value;
+            }
+        }
+
+        showSubmissionDialog = true;
+        submissionMessage = null;
+    }
+
+    private void CloseSubmissionDialog()
+    {
+        showSubmissionDialog = false;
+        submissionMessage = null;
+    }
+
+    private void AddLink()
+    {
+        submission.Links.Add(new SubmissionLink());
+    }
+
+    private void RemoveLink(int index)
+    {
+        if (submission.Links.Count > 1 && index >= 0 && index < submission.Links.Count)
+        {
+            submission.Links.RemoveAt(index);
+        }
+    }
+
+    private async Task HandleSubmissionAsync()
+    {
+        isSubmitting = true;
+        submissionMessage = null;
+
+        try
+        {
+            // Remove empty links before submission
+            submission.Links = submission.Links
+                .Where(l => !string.IsNullOrWhiteSpace(l.Url))
+                .ToList();
+
+            // Create the submission
+            await dataService.CreateSubmissionAsync(submission);
+
+            // Send notification emails to evaluators
+            var evaluatorEmails = await dataService.GetEvaluatorEmailsAsync(submission.BadgeId);
+            if (evaluatorEmails.Any())
+            {
+                await SendEvaluatorNotificationsAsync(evaluatorEmails);
+            }
+
+            submissionMessage = "Your application has been submitted successfully!";
+            submissionAlertClass = "alert-success";
+
+            // Close dialog after short delay
+            await Task.Delay(2000);
+            CloseSubmissionDialog();
+
+            // Optionally navigate to a submissions page
+            // Navigation.NavigateTo("/my-submissions");
+        }
+        catch (Exception ex)
+        {
+            submissionMessage = $"Error submitting application: {ex.Message}";
+            submissionAlertClass = "alert-danger";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task SendEvaluatorNotificationsAsync(List<string> evaluatorEmails)
+    {
+        var subject = $"New Badge Application: {badge?.Title}";
+        var body = $@"
+            <h3>New Badge Application Submitted</h3>
+            <p><strong>Badge:</strong> {badge?.Title}</p>
+            <p><strong>Applicant:</strong> {submission.ApplicantName ?? submission.ApplicantId}</p>
+            <p><strong>Submission Date:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm} UTC</p>
+            <p><strong>Remarks:</strong></p>           
+            <p>Please review this submission in the admin portal.</p>
+        ";
+
+        foreach (var email in evaluatorEmails)
+        {
+            try
+            {
+                await emailService.SendEmailAsync(email, subject, body);
+            }
+            catch (Exception ex)
+            {
+                // Log but don't fail the submission
+                Console.WriteLine($"Failed to send email to {email}: {ex.Message}");
+            }
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/badges");
+    }
+}

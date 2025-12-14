@@ -1,4 +1,4 @@
-﻿// Copyright (c) CNM. All rights reserved.
+﻿// Copyright (c) 2025. All rights reserved.
 
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -15,15 +15,15 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets the unique identifier for the evaluator.
         /// </summary>
         [Key]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
 
         /// <summary>
         /// Gets or sets the associated application user id (foreign key).
         /// </summary>
-        public string? UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
         /// <summary>
-        /// Navigation property for the associated <see cref="ApplicationUser"/>.
+        /// Gets or sets navigation property for the associated <see cref="ApplicationUser"/>.
         /// </summary>
         [ForeignKey(nameof(UserId))]
         public ApplicationUser? User { get; set; }

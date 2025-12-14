@@ -1,4 +1,4 @@
-// Copyright (c) CNM. All rights reserved.
+// Copyright (c) 2025. All rights reserved.
 
 using HackerSpace.Shared.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

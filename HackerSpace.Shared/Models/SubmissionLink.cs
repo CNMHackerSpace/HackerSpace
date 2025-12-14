@@ -1,4 +1,4 @@
-﻿// Copyright (c) CNM. All rights reserved.
+﻿// Copyright (c) 2025. All rights reserved.
 
 using System.ComponentModel.DataAnnotations;
 
@@ -13,18 +13,18 @@ namespace HackerSpace.Shared.Models
         /// Gets or sets the primary key for the submission link.
         /// </summary>
         [Key]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
 
         /// <summary>
         /// Gets or sets the foreign key referencing the associated submission.
         /// </summary>
         [Required]
-        public Guid? SubmissionId { get; set; }
+        public Guid SubmissionId { get; set; }
 
         /// <summary>
         /// Gets or sets the associated <see cref="Submission"/> entity.
         /// </summary>
-        public Submission? Submission { get; set; }
+        public Submission Submission { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the title of the submission link.
