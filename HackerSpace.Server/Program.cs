@@ -97,31 +97,33 @@ namespace HackerSpace
             // ... in Program.cs after builder.Build()
             var provider = new FileExtensionContentTypeProvider();
             provider.Mappings[".data"] = "application/octet-stream";
-            provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
+            provider.Mappings[".wasm"] = "application/wasm";
             provider.Mappings[".symbols.json"] = "application/json";
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                ContentTypeProvider = provider,
-                
-                // Handle gzipped files for unity game
-                OnPrepareResponse = ctx => 
-                {
-                    var path = ctx.File.PhysicalPath ?? "";
-                    if (path.EndsWith(".gz"))
-                    {
-                        ctx.Context.Response.Headers["Content-Encoding"] = "gzip";
-
-                        // Fix content-type based on the *original* extension
-                        if (path.EndsWith(".js.gz")) ctx.Context.Response.ContentType = "application/javascript";
-                        if (path.EndsWith(".data.gz")) ctx.Context.Response.ContentType = "application/octet-stream";
-                        if (path.EndsWith(".wasm.gz")) ctx.Context.Response.ContentType = "application/wasm";
-                    }
-                }
+                ContentTypeProvider = provider
             });
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    ContentTypeProvider = provider,
 
+            //    // Handle gzipped files for unity game
+            //    OnPrepareResponse = ctx => 
+            //    {
+            //        var path = ctx.File.PhysicalPath ?? "";
+            //        if (path.EndsWith(".gz"))
+            //        {
+            //            ctx.Context.Response.Headers["Content-Encoding"] = "gzip";
 
-            app.UseStaticFiles();
+            //            // Fix content-type based on the *original* extension
+            //            if (path.EndsWith(".js.gz")) ctx.Context.Response.ContentType = "application/javascript";
+            //            if (path.EndsWith(".data.gz")) ctx.Context.Response.ContentType = "application/octet-stream";
+            //            if (path.EndsWith(".wasm.gz")) ctx.Context.Response.ContentType = "application/wasm";
+            //        }
+            //    }
+            //});
+
             app.UseAntiforgery();
 
             app.MapRazorComponents<App>()

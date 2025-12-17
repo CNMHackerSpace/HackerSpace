@@ -1,6 +1,5 @@
 ﻿@page "/suncat-adventures"
 @rendermode InteractiveServer
-@* @inject ScriptRegistry ScriptRegistry *@
 @inject IJSRuntime JS
 
 <HeadContent>
@@ -24,21 +23,19 @@
         <div id="unity-build-title">SuncatAdventures</div>
     </div>
 </div>
-
 @code {
-    private bool started = false;
+    private bool started;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !started)
-        {
-            started = true;
-            await JS.InvokeVoidAsync("unityBoot.start", "/Build");
-        }
+        if (!firstRender || started) return;
+        started = true;
+
+        await JS.InvokeVoidAsync("unityBoot.start", "/Build");
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await JS.InvokeVoidAsync("unityBoot.stop");
-    }
+    // public async ValueTask DisposeAsync()
+    // {
+    //     await JS.InvokeVoidAsync("unityBoot.stop");
+    // }
 }

@@ -29,7 +29,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="wwwroot\Build\" />
 		<Folder Include="wwwroot\images\" />
 	</ItemGroup>
 
+
+	<!-- Force Unity build files to be copied -->
+	<ItemGroup>
+		<None Include="wwwroot\Build\Build.data" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="wwwroot\Build\Build.wasm" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="wwwroot\Build\Build.framework.js" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="wwwroot\Build\Build.loader.js" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 </Project>
