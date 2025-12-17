@@ -1,4 +1,6 @@
-﻿ window.unityBoot = {
+﻿window.unityBoot = {
+    _bannerTimeouts: [],
+
     start: function (buildUrl) {
 
         const canvas = document.querySelector("#unity-canvas");
@@ -17,15 +19,21 @@
         const fullscreenButton = document.querySelector("#unity-fullscreen-button");
         const warningBanner = document.querySelector("#unity-warning");
 
-        function unityShowBanner(msg, type) {
-            const div = document.createElement("div");
-            div.innerHTML = msg;
-            div.style = type === "error"
-                ? "background:red;padding:10px"
-                : "background:yellow;padding:10px";
-            warningBanner.appendChild(div);
-            setTimeout(() => warningBanner.removeChild(div), 5000);
-        }
+         function unityShowBanner(msg, type) {
+             const div = document.createElement("div");
+             div.innerHTML = msg;
+             div.style = type === "error"
+                 ? "background:red;padding:10px"
+                 : "background:yellow;padding:10px";
+
+             if (warningBanner) warningBanner.appendChild(div);
+
+             const t = setTimeout(() => {
+                 if (div.parentNode) div.parentNode.removeChild(div);
+             }, 5000);
+
+             window.unityBoot._bannerTimeouts.push(t);
+         }
 
         const config = {
             dataUrl: buildUrl + "/Deployment.data.gz",
@@ -52,13 +60,24 @@
             }).catch(alert);
         };
 
+        window._unityLoaderScript?.remove();
+        window._unityLoaderScript = script;
         document.body.appendChild(script);
     },
 
     stop: async function () {
-        if (window._unityInstance) {
-            await window._unityInstance.Quit();
-            window._unityInstance = null;
-        }
+        // cancel pending banner removals
+        for (const t of window.unityBoot._bannerTimeouts) clearTimeout(t);
+        window.unityBoot._bannerTimeouts = [];
+
+        window._unityLoaderScript?.remove();
+        window._unityLoaderScript = null;
+
+        const inst = window._unityInstance;
+        if (!inst) return;
+        window._unityInstance = null;
+
+        try { await inst.Quit(); }
+        catch (e) { console.warn("Unity Quit failed:", e); }
     }
 };
