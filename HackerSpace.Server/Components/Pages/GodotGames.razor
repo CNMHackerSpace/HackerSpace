@@ -2,31 +2,9 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 
-<style>
-    html, body, #godot-canvas {
-        margin: 0;
-        padding: 0;
-        border: 0;
-    }
-
-    body {
-        background: black;
-        overflow: hidden;
-        touch-action: none;
-    }
-
-    #godot-canvas {
-        display: block;
-        width: 100vw;
-        height: 100vh;
-    }
-
-        #godot-canvas:focus {
-            outline: none;
-        }
-</style>
-
-<canvas id="godot-canvas">Your browser does not support canvas.</canvas>
+<div class="godot-host">
+    <canvas id="godot-canvas">Your browser does not support canvas.</canvas>
+</div>
 
 <script src="/godot/CNM-CiC-2025-Godot/CNM-CiC-2025-Godot.js" defer></script>
 
@@ -49,7 +27,7 @@
                 executable: exePath, // ✅ makes it load exePath + ".wasm" from /godot/...
                 mainPack: basePath + "/CNM-CiC-2025-Godot.pck",
                 args: [],
-                canvasResizePolicy: 2,
+                canvasResizePolicy: 1, // Resize to parent container
                 focusCanvas: true,
                 ensureCrossOriginIsolationHeaders: false
             };
