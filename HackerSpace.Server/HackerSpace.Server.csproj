@@ -32,4 +32,6 @@
 		<Folder Include="wwwroot\images\" />
 	</ItemGroup>
 
+	<!-- Force Unity build files to be copied -->
+
 </Project>
