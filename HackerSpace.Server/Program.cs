@@ -103,7 +103,8 @@ namespace HackerSpace
             app.UseStaticFiles(new StaticFileOptions
             {
                 ContentTypeProvider = provider,
-                
+                ServeUnknownFileTypes = true,
+
                 // Handle gzipped files for unity game
                 OnPrepareResponse = ctx => 
                 {

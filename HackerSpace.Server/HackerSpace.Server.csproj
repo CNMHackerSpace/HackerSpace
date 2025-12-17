@@ -32,6 +32,24 @@
 		<Folder Include="wwwroot\images\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Update="wwwroot\Build\Deployment.data.gz">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\Build\Deployment.framework.js.gz">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\Build\Deployment.loader.js">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\Build\Deployment.wasm.gz">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\CNM-CiC-2025-Godot.pck">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
 	<!-- Force Unity build files to be copied -->
 
 </Project>
