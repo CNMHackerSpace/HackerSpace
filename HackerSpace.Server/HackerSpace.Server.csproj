@@ -45,9 +45,6 @@
 	  <Content Update="wwwroot\Build\Deployment.wasm.gz">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
-	  <Content Update="wwwroot\CNM-CiC-2025-Godot.pck">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
 	</ItemGroup>
 
 	<!-- Force Unity build files to be copied -->

@@ -1,55 +1,35 @@
 ﻿@page "/godot-games"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<h3>CNM CiC 2025 – Godot Game</h3>
 
 <div class="godot-host">
-    <canvas id="godot-canvas">Your browser does not support canvas.</canvas>
+    <iframe @ref="_frame"
+            class="godot-frame"
+            src="/godot/CNM-CiC-2025-Godot/CNM-CiC-2025-Godot.html"
+            title="CNM CiC 2025 Godot Game"
+            loading="lazy"
+            allow="autoplay; fullscreen; gamepad"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-fullscreen">
+    </iframe>
 </div>
 
-<script src="/godot/CNM-CiC-2025-Godot/CNM-CiC-2025-Godot.js" defer></script>
-
-<script>
-    window.godotBoot = window.godotBoot ?? {
-        started: false,
-        start: function () {
-            if (typeof Engine === "undefined") { this.started = false; setTimeout(() => this.start(), 50); return; }
-
-            if (this.started) return;
-            this.started = true;
-
-            const canvas = document.getElementById("godot-canvas");
-
-            const basePath = "/godot/CNM-CiC-2025-Godot";
-            const exePath  = basePath + "/CNM-CiC-2025-Godot"; 
-
-            const config = {
-                canvas: canvas,
-                executable: exePath, // ✅ makes it load exePath + ".wasm" from /godot/...
-                mainPack: basePath + "/CNM-CiC-2025-Godot.pck",
-                args: [],
-                canvasResizePolicy: 1, // Resize to parent container
-                focusCanvas: true,
-                ensureCrossOriginIsolationHeaders: false
-            };
-
-            const engine = new Engine(config);
-
-            engine.startGame().catch(err => {
-                console.error("Godot failed to start:", err);
-                this.started = false;
-            });
-        }
-    };
-</script>
+<button class="btn btn-secondary mt-2" @onclick="EnterFullscreen">
+    Fullscreen
+</button>
 
 @code {
-    private bool _started;
+    private ElementReference _frame;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task EnterFullscreen()
     {
-        if (!firstRender || _started) return;
-        _started = true;
+        await JS.InvokeVoidAsync("godotHost.enterFullscreen", _frame);
+    }
 
-        await JS.InvokeVoidAsync("godotBoot.start");
+    public async ValueTask DisposeAsync()
+    {
+        await JS.InvokeVoidAsync("godotHost.stop", _frame);
     }
 }
