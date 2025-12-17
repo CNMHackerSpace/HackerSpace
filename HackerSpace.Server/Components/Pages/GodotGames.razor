@@ -1,0 +1,77 @@
+﻿@page "/godot-games"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<style>
+    html, body, #godot-canvas {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    body {
+        background: black;
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    #godot-canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+    }
+
+        #godot-canvas:focus {
+            outline: none;
+        }
+</style>
+
+<canvas id="godot-canvas">Your browser does not support canvas.</canvas>
+
+<script src="/godot/CNM-CiC-2025-Godot/CNM-CiC-2025-Godot.js" defer></script>
+
+<script>
+    window.godotBoot = window.godotBoot ?? {
+        started: false,
+        start: function () {
+            if (typeof Engine === "undefined") { this.started = false; setTimeout(() => this.start(), 50); return; }
+
+            if (this.started) return;
+            this.started = true;
+
+            const canvas = document.getElementById("godot-canvas");
+
+            const basePath = "/godot/CNM-CiC-2025-Godot";
+            const exePath  = basePath + "/CNM-CiC-2025-Godot"; 
+
+            const config = {
+                canvas: canvas,
+                executable: exePath, // ✅ makes it load exePath + ".wasm" from /godot/...
+                mainPack: basePath + "/CNM-CiC-2025-Godot.pck",
+                args: [],
+                canvasResizePolicy: 2,
+                focusCanvas: true,
+                ensureCrossOriginIsolationHeaders: false
+            };
+
+            const engine = new Engine(config);
+
+            engine.startGame().catch(err => {
+                console.error("Godot failed to start:", err);
+                this.started = false;
+            });
+        }
+    };
+</script>
+
+@code {
+    private bool _started;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _started) return;
+        _started = true;
+
+        await JS.InvokeVoidAsync("godotBoot.start");
+    }
+}

@@ -1,7 +1,7 @@
 ﻿@page "/suncat-adventures"
 @rendermode InteractiveServer
-@* @inject ScriptRegistry ScriptRegistry *@
 @inject IJSRuntime JS
+@implements IAsyncDisposable
 
 <HeadContent>
     <title>Suncat Adventures - HackerSpace</title>
@@ -39,6 +39,13 @@
 
     public async ValueTask DisposeAsync()
     {
-        await JS.InvokeVoidAsync("unityBoot.stop");
+        try
+        {
+            await JS.InvokeVoidAsync("unityBoot.stop");
+        }
+        catch(Exception exc) 
+        {
+            
+        }
     }
 }
