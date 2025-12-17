@@ -1,51 +1,15 @@
 ﻿@page "/suncat-adventures"
 @rendermode InteractiveServer
 @inject IJSRuntime JS
-@implements IAsyncDisposable
 
-<HeadContent>
-    <title>Suncat Adventures - HackerSpace</title>
-    <meta name="description" content="Play Suncat Adventures, a fun Unity game developed by HackerSpace." />
-</HeadContent>
-
-<h3>Suncat Adventures</h3>
-<div id="unity-container" class="unity-desktop">
-    <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-    <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-            <div id="unity-progress-bar-full"></div>
-        </div>
-    </div>
-    <div id="unity-warning"> </div>
-    <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">SuncatAdventures</div>
-    </div>
+<div id="unity-container">
+    <canvas id="unity-canvas" width="960" height="600"></canvas>
 </div>
 
 @code {
-    private bool started = false;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !started)
-        {
-            started = true;
+        if (firstRender)
             await JS.InvokeVoidAsync("unityBoot.start", "/Build");
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("unityBoot.stop");
-        }
-        catch(Exception exc) 
-        {
-            
-        }
     }
 }
