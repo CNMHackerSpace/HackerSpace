@@ -96,9 +96,15 @@ namespace HackerSpace
 
             // ... in Program.cs after builder.Build()
             var provider = new FileExtensionContentTypeProvider();
+
+            // Unity “real” types
             provider.Mappings[".data"] = "application/octet-stream";
             provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
             provider.Mappings[".symbols.json"] = "application/json";
+
+            // Unity compressed container extension
+            provider.Mappings[".unityweb"] = "application/octet-stream"; // will be corrected in OnPrepareResponse
+
 
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -109,14 +115,30 @@ namespace HackerSpace
                 OnPrepareResponse = ctx => 
                 {
                     var path = ctx.File.PhysicalPath ?? "";
-                    if (path.EndsWith(".gz"))
-                    {
-                        ctx.Context.Response.Headers["Content-Encoding"] = "gzip";
 
-                        // Fix content-type based on the *original* extension
-                        if (path.EndsWith(".js.gz")) ctx.Context.Response.ContentType = "application/javascript";
-                        if (path.EndsWith(".data.gz")) ctx.Context.Response.ContentType = "application/octet-stream";
-                        if (path.EndsWith(".wasm.gz")) ctx.Context.Response.ContentType = "application/wasm";
+                    // Unity’s WebGL compression output: *.unityweb (usually Brotli)
+                    if (path.EndsWith(".unityweb", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ctx.Context.Response.Headers["Content-Encoding"] = "br"; // if Brotli is used, set to br if gzipped, set to gzip
+
+                        // Fix content-type based on the "inner" extension before .unityweb
+                        // e.g. build.wasm.unityweb, build.data.unityweb, build.framework.js.unityweb
+                        if (path.EndsWith(".js.unityweb", StringComparison.OrdinalIgnoreCase) ||
+                            path.EndsWith(".framework.js.unityweb", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ctx.Context.Response.ContentType = "application/javascript";
+                        }
+                        else if (path.EndsWith(".wasm.unityweb", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ctx.Context.Response.ContentType = "application/wasm";
+                        }
+                        else if (path.EndsWith(".data.unityweb", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ctx.Context.Response.ContentType = "application/octet-stream";
+                        }
+
+                        // Optional but helpful for proxies/CDNs: vary by encoding
+                        ctx.Context.Response.Headers["Vary"] = "Accept-Encoding";
                     }
                 }
             });
