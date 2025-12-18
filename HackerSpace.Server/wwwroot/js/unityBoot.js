@@ -7,12 +7,12 @@
         window._unityInstance = null;
 
         const script = document.createElement("script");
-        script.src = buildUrl + "/Deployment.loader.js";
+        script.src = buildUrl + "/Build.loader.js";
         script.onload = () => {
             createUnityInstance(canvas, {
-                dataUrl: buildUrl + "/Deployment.data.gz",
-                frameworkUrl: buildUrl + "/Deployment.framework.js.gz",
-                codeUrl: buildUrl + "/Deployment.wasm.gz",
+                dataUrl: buildUrl + "/Build.data.unityweb",
+                frameworkUrl: buildUrl + "/Build.framework.js.unityweb",
+                codeUrl: buildUrl + "/Build.wasm.unityweb",
                 streamingAssetsUrl: "StreamingAssets",
                 companyName: "CNM Hackerspace",
                 productName: "SuncatAdventures",

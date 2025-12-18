@@ -1,15 +1,10 @@
 ﻿@page "/suncat-adventures"
-@rendermode InteractiveServer
-@inject IJSRuntime JS
 
-<div id="unity-container">
-    <canvas id="unity-canvas" width="960" height="600"></canvas>
+<div style="width:960px;height:600px;">
+    <iframe src="/games/suncat/index.html"
+            style="width:100%;height:110%;border:0;"
+            allow="autoplay; fullscreen; gamepad"
+            scrolling="no">
+    </iframe>
 </div>
 
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await JS.InvokeVoidAsync("unityBoot.start", "/Build");
-    }
-}
