@@ -38,7 +38,7 @@ namespace HackerSpace
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
                 .AddCircuitOptions(o => o.DetailedErrors = true)
-                .AddInteractiveWebAssemblyComponents(); 
+                .AddInteractiveWebAssemblyComponents();
 
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityUserAccessor>();
@@ -55,7 +55,7 @@ namespace HackerSpace
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             // Inject the ContextFactory with connectionString
-            builder.Services.AddDbContextFactory<ApplicationDbContext>(opt => opt.UseSqlServer(connectionString));
+            builder.Services.AddDbContextFactory<ApplicationDbContext>(opt => opt.UseSqlite(connectionString));
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -97,7 +97,7 @@ namespace HackerSpace
             // ... in Program.cs after builder.Build()
             var provider = new FileExtensionContentTypeProvider();
 
-            // Unity “real” types
+            // Unity ï¿½realï¿½ types
             provider.Mappings[".data"] = "application/octet-stream";
             provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
             provider.Mappings[".symbols.json"] = "application/json";
@@ -112,11 +112,11 @@ namespace HackerSpace
                 ServeUnknownFileTypes = true,
 
                 // Handle gzipped files for unity game
-                OnPrepareResponse = ctx => 
+                OnPrepareResponse = ctx =>
                 {
                     var path = ctx.File.PhysicalPath ?? "";
 
-                    // Unity’s WebGL compression output: *.unityweb (usually Brotli)
+                    // Unityï¿½s WebGL compression output: *.unityweb (usually Brotli)
                     if (path.EndsWith(".unityweb", StringComparison.OrdinalIgnoreCase))
                     {
                         ctx.Context.Response.Headers["Content-Encoding"] = "br"; // if Brotli is used, set to br if gzipped, set to gzip
