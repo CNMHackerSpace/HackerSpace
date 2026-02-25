@@ -16,10 +16,10 @@ namespace WebClient
     // cookie that will be included on HttpClient requests to the server.
     internal class PersistentAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private static readonly Task<AuthenticationState> defaultUnauthenticatedTask =
+        private static readonly Task<AuthenticationState> DefaultUnauthenticatedTask =
             Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
 
-        private readonly Task<AuthenticationState> authenticationStateTask = defaultUnauthenticatedTask;
+        private readonly Task<AuthenticationState> authenticationStateTask = DefaultUnauthenticatedTask;
 
         public PersistentAuthenticationStateProvider(PersistentComponentState state)
         {
@@ -28,10 +28,12 @@ namespace WebClient
                 return;
             }
 
-            Claim[] claims = [
+            Claim[] claims =
+            {
                 new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
                 new Claim(ClaimTypes.Name, userInfo.Email),
-                new Claim(ClaimTypes.Email, userInfo.Email) ];
+                new Claim(ClaimTypes.Email, userInfo.Email),
+            };
 
             this.authenticationStateTask = Task.FromResult(
                 new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(

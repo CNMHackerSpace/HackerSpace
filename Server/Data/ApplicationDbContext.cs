@@ -11,8 +11,17 @@ namespace Server.Data
     /// <summary>
     /// EF Core database context for the application, including Identity and application-specific sets.
     /// </summary>
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class.
+        /// </summary>
+        /// <param name="options">The EF Core options for this context.</param>
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
         /// <summary>
         /// Gets or sets the <see cref="DbSet{Badge}"/> used to query and save <see cref="Badge"/> instances.
         /// </summary>

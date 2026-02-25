@@ -12,10 +12,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\WebClient\WebClient.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.2" />
@@ -23,11 +19,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2" />
-
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
