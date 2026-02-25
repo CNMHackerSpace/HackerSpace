@@ -1,6 +1,112 @@
-﻿@page "/suggest-a-badge"
-<h3>Suggest A Badge</h3>
+@page "/suggest-a-badge"
+@using System.Security.Claims
+@rendermode InteractiveServer
+@inject ISuggestABadgePageDataService dataService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@attribute [Authorize]
+
+<PageTitle>Suggest a Badge</PageTitle>
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title mb-3">Suggest a Badge</h3>
+            <p class="text-muted mb-4">Have an idea for a new badge? Fill out the form below and we'll review your suggestion.</p>
+
+            <EditForm Model="suggestion" OnValidSubmit="OnSubmitClickAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                    <InputText class="form-control" id="title" @bind-Value="suggestion.Title"
+                               placeholder="Enter a title for your badge idea" />
+                    <ValidationMessage For="@(() => suggestion.Title)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                    <InputTextArea class="form-control" rows="6" id="description" @bind-Value="suggestion.Description"
+                                   placeholder="Describe what skills or achievements this badge should represent..." />
+                    <ValidationMessage For="@(() => suggestion.Description)" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(statusMessage))
+                {
+                    <div class="alert @alertClass" role="alert">
+                        @statusMessage
+                    </div>
+                }
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                        @(isSubmitting ? "Submitting..." : "Submit Suggestion")
+                    </button>
+                    <button type="button" class="btn btn-secondary ms-2" @onclick="OnCancelClick">Cancel</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
 
 @code {
+    private BadgeSuggestion suggestion = new();
+    private bool isSubmitting = false;
+    private string? statusMessage;
+    private string alertClass = "alert-info";
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)
+                         ?? user.FindFirst("sub")
+                         ?? user.FindFirst("oid");
+            if (idClaim != null)
+            {
+                suggestion.SuggestedById = idClaim.Value;
+            }
+
+            var nameClaim = user.FindFirst(ClaimTypes.Name) ?? user.FindFirst("name");
+            if (nameClaim != null)
+            {
+                suggestion.SuggestedByName = nameClaim.Value;
+            }
+        }
+    }
+
+    private async Task OnSubmitClickAsync()
+    {
+        isSubmitting = true;
+        statusMessage = null;
+
+        try
+        {
+            await dataService.AddAsync(suggestion);
+
+            statusMessage = "Thank you for your suggestion!";
+            alertClass = "alert-success";
+
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/badges");
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error submitting suggestion: {ex.Message}";
+            alertClass = "alert-danger";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void OnCancelClick()
+    {
+        Navigation.NavigateTo("/badges");
+    }
 }

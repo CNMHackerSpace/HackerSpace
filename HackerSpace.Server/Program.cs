@@ -76,6 +76,7 @@ namespace HackerSpace
             builder.Services.AddTransient<IBadgeEditPageDataService, BadgesEditPageDataService>();
             builder.Services.AddScoped<IBadgeViewPageDataService, BadgeViewPageDataService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ISuggestABadgePageDataService, SuggestABadgePageDataService>();
 
             var app = builder.Build();
 
