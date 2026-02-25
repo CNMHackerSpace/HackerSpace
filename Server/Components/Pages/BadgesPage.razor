@@ -1,0 +1,115 @@
+﻿@page "/badges"
+@rendermode InteractiveServer
+@inject IBadgesPageDataService dataService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Badges Page</h3>
+
+<!--List View-->
+@if(badges == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (Badge badge in badges)
+        {
+            <li>
+                @badge.Title
+                <button class="btn btn-primary btn-sm" @onclick="() => OnViewClicked(badge.Id)">View</button>
+                <AuthorizeView Roles="Admin">
+                    <button class="btn btn-primary btn-sm" @onclick="() => OnEditClicked(badge.Id)">Edit</button>
+                    <button class="btn btn-danger  btn-sm" @onclick="async () => await OnDeleteClickAsync(badge.Id)">Delete</button>
+                </AuthorizeView>
+            </li>
+        }
+    </ul>
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <button type="button" class="btn btn-primary" @onclick="OnAddBadgeClick">Add Badge</button>
+        </Authorized>
+        <NotAuthorized>
+            <button type="button" class="btn btn-primary" @onclick="OnSuggestBadgeClick">Suggest a Badge</button>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+@code {
+    protected List<Badge>? badges;
+    protected Badge? badge;
+
+    override protected async Task OnInitializedAsync()
+    {
+        // Get all badges if user is admin, otherwise get only visible badges
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        badges = user.IsInRole("Admin")
+            ? await dataService.GetAllAsync()
+            : await dataService.GetVisibleAsync();
+    }
+
+    protected void OnViewClicked(Guid id)
+    {
+        Navigation.NavigateTo($"/badge/{id.ToString()}");
+    }
+
+    protected void OnEditClicked(Guid id)
+    {
+        Navigation.NavigateTo($"/badge/edit/{id.ToString()}");
+    }
+
+    protected void OnAddBadgeClick()
+    {
+        Navigation.NavigateTo("/badge/edit/");
+    }
+
+    protected async Task OnDeleteClickAsync(Guid id)
+    {
+        await dataService.RemoveAsync(id);
+
+        // Refresh list based on user role
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        badges = user.IsInRole("Admin")
+            ? await dataService.GetAllAsync()
+            : await dataService.GetVisibleAsync();
+
+        StateHasChanged();
+    }
+
+
+    protected async Task OnSubmitClickAsync()
+    {
+        if (badge == null)
+            throw new ArgumentException("Badge is null");
+
+        if (badge.Id == Guid.Empty)
+        {
+            await dataService.AddAsync(badge);
+        }
+        else
+        {
+            await dataService.UpdateAsync(badge);
+        }
+
+        // Refresh list based on user role
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        badges = user.IsInRole("Admin")
+            ? await dataService.GetAllAsync()
+            : await dataService.GetVisibleAsync();
+
+        badge = null;
+
+        StateHasChanged();
+    }
+    private void OnSuggestBadgeClick(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/suggest-a-badge");
+    }
+}
