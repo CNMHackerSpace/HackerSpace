@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 
-namespace HackerSpace.Shared.Models
+namespace Common.Models
 {
     /// <summary>
     /// Represents an application user with extended profile information.

@@ -1,6 +1,6 @@
 // Copyright (c) 2025. All rights reserved.
 
-namespace HackerSpace.Shared.Interfaces
+namespace Common.Interfaces
 {
     /// <summary>
     /// Service interface for sending emails.

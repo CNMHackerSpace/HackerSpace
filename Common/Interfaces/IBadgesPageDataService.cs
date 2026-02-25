@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
-using HackerSpace.Shared.Models;
+using Common.Models;
 
-namespace HackerSpace.Shared.Interfaces
+namespace Common.Interfaces
 {
     /// <summary>
     /// Defines data operations for the Badges page.

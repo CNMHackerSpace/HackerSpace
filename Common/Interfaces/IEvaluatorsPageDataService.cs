@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
-using HackerSpace.Shared.Models;
-using HackerSpace.Shared.ViewModels;
+using Common.Models;
+using Common.ViewModels;
 
-namespace HackerSpace.Shared.Interfaces
+namespace Common.Interfaces
 {
     /// <summary>
     /// Defines data operations for the Evaluators page.

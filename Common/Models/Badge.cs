@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace HackerSpace.Shared.Models
+namespace Common.Models
 {
     /// <summary>
     /// Represents a HackerSpace badge that a person can earn.
@@ -39,6 +39,6 @@ namespace HackerSpace.Shared.Models
         /// <summary>
         /// Gets or sets the list of submissions associated with the badge.
         /// </summary>
-        public List<Submission> Submissions { get; set; } = new ();
+        public List<Submission> Submissions { get; set; } = new();
     }
 }

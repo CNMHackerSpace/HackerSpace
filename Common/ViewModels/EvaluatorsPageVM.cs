@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
 using System.Collections.Generic;
-using HackerSpace.Shared.Models;
+using Common.Models;
 
-namespace HackerSpace.Shared.ViewModels
+namespace Common.ViewModels
 {
     /// <summary>
     /// View model containing the data required by the Evaluators page.

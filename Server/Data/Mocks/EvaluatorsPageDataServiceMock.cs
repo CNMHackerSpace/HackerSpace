@@ -2,9 +2,9 @@
 
 namespace Server.Data.Mocks
 {
-    using HackerSpace.Shared.Interfaces;
-    using HackerSpace.Shared.Models;
-    using HackerSpace.Shared.ViewModels;
+    using Common.Interfaces;
+    using Common.Models;
+    using Common.ViewModels;
     using System.Text.Json;
 
     /// <summary>

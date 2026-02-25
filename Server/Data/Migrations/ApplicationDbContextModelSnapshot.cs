@@ -17,7 +17,7 @@ namespace Server.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.24");
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Common.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -90,7 +90,7 @@ namespace Server.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Badge", b =>
+            modelBuilder.Entity("Common.Models.Badge", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,7 +116,7 @@ namespace Server.Data.Migrations
                     b.ToTable("Badges");
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Evaluator", b =>
+            modelBuilder.Entity("Common.Models.Evaluator", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,7 +136,7 @@ namespace Server.Data.Migrations
                     b.ToTable("Evaluators");
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
+            modelBuilder.Entity("Common.Models.Submission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,7 +169,7 @@ namespace Server.Data.Migrations
                     b.ToTable("Submissions");
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.SubmissionLink", b =>
+            modelBuilder.Entity("Common.Models.SubmissionLink", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,9 +321,9 @@ namespace Server.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Evaluator", b =>
+            modelBuilder.Entity("Common.Models.Evaluator", b =>
                 {
-                    b.HasOne("HackerSpace.Shared.Models.ApplicationUser", "User")
+                    b.HasOne("Common.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -332,9 +332,9 @@ namespace Server.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
+            modelBuilder.Entity("Common.Models.Submission", b =>
                 {
-                    b.HasOne("HackerSpace.Shared.Models.Badge", "Badge")
+                    b.HasOne("Common.Models.Badge", "Badge")
                         .WithMany("Submissions")
                         .HasForeignKey("BadgeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -343,9 +343,9 @@ namespace Server.Data.Migrations
                     b.Navigation("Badge");
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.SubmissionLink", b =>
+            modelBuilder.Entity("Common.Models.SubmissionLink", b =>
                 {
-                    b.HasOne("HackerSpace.Shared.Models.Submission", "Submission")
+                    b.HasOne("Common.Models.Submission", "Submission")
                         .WithMany("Links")
                         .HasForeignKey("SubmissionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -365,7 +365,7 @@ namespace Server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("HackerSpace.Shared.Models.ApplicationUser", null)
+                    b.HasOne("Common.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -374,7 +374,7 @@ namespace Server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("HackerSpace.Shared.Models.ApplicationUser", null)
+                    b.HasOne("Common.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -389,7 +389,7 @@ namespace Server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HackerSpace.Shared.Models.ApplicationUser", null)
+                    b.HasOne("Common.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,19 +398,19 @@ namespace Server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("HackerSpace.Shared.Models.ApplicationUser", null)
+                    b.HasOne("Common.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Badge", b =>
+            modelBuilder.Entity("Common.Models.Badge", b =>
                 {
                     b.Navigation("Submissions");
                 });
 
-            modelBuilder.Entity("HackerSpace.Shared.Models.Submission", b =>
+            modelBuilder.Entity("Common.Models.Submission", b =>
                 {
                     b.Navigation("Links");
                 });

@@ -1,7 +1,7 @@
 // Copyright (c) 2025. All rights reserved.
 
 using Server.Data;
-using HackerSpace.Shared.Models;
+using Common.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

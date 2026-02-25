@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HackerSpace.Shared.Models
+namespace Common.Models
 {
     /// <summary>
     /// Represents a person who can evaluate badge submissions.

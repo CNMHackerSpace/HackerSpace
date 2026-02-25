@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
 using Server.Data;
-using HackerSpace.Shared.Interfaces;
-using HackerSpace.Shared.Models;
-using HackerSpace.Shared.ViewModels;
+using Common.Interfaces;
+using Common.Models;
+using Common.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Server.Data.Services

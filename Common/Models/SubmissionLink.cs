@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace HackerSpace.Shared.Models
+namespace Common.Models
 {
     /// <summary>
     /// Represents a link associated with a submission.

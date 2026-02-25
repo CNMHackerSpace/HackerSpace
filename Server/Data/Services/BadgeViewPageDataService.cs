@@ -2,7 +2,7 @@
 
 using Server.Data;
 using Server.Services;
-using HackerSpace.Shared.Models;
+using Common.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Server.Data.Services

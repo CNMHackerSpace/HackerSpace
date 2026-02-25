@@ -2,7 +2,7 @@
 
 using System.Net;
 using System.Net.Mail;
-using HackerSpace.Shared.Interfaces;
+using Common.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Server.Services

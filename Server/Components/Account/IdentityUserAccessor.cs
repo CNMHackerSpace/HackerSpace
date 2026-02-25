@@ -1,5 +1,5 @@
 using Server.Data;
-using HackerSpace.Shared.Models;
+using Common.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Server.Components.Account

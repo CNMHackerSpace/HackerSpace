@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 using System.Text.Json;
-using HackerSpace.Shared.Models;
+using Common.Models;
 
 namespace Microsoft.AspNetCore.Routing
 {

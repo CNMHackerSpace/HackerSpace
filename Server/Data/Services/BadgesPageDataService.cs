@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
 using Microsoft.EntityFrameworkCore;
-using HackerSpace.Shared.Interfaces;
-using HackerSpace.Shared.Models;
+using Common.Interfaces;
+using Common.Models;
 
 namespace Server.Data.Services
 {

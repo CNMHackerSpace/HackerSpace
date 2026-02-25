@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Security.Claims;
-using HackerSpace.Shared.Models;
+using Common.Models;
 
 namespace Server.Components.Account
 {
