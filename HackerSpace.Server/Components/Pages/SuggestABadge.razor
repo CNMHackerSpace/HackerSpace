@@ -96,7 +96,8 @@
         }
         catch (Exception ex)
         {
-            statusMessage = $"Error submitting suggestion: {ex.Message}";
+            Console.WriteLine($"Error submitting badge suggestion: {ex.Message}");
+            statusMessage = "Something went wrong. Please try again later.";
             alertClass = "alert-danger";
         }
         finally
