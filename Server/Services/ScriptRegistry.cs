@@ -9,7 +9,7 @@ namespace Server.Services
     /// </summary>
     public class ScriptRegistry
     {
-        private readonly Dictionary<Guid, RenderFragment> fragments = [];
+        private readonly Dictionary<Guid, RenderFragment> fragments = new Dictionary<Guid, RenderFragment>();
 
         /// <summary>
         /// Occurs when a fragment is registered or unregistered.

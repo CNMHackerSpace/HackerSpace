@@ -30,9 +30,11 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             [FromForm] string provider,
             [FromForm] string returnUrl) =>
         {
-            IEnumerable<KeyValuePair<string, StringValues>> query = [
-                new ("ReturnUrl", returnUrl),
-                new ("Action", ExternalLogin.LoginCallbackAction)];
+            IEnumerable<KeyValuePair<string, StringValues>> query = new[]
+            {
+                new KeyValuePair<string, StringValues>("ReturnUrl", returnUrl),
+                new KeyValuePair<string, StringValues>("Action", ExternalLogin.LoginCallbackAction),
+            };
 
             var redirectUrl = UriHelper.BuildRelative(
                 context.Request.PathBase,
@@ -40,7 +42,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
                 QueryString.Create(query));
 
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return TypedResults.Challenge(properties, [provider]);
+            return TypedResults.Challenge(properties, new[] { provider });
         });
 
         accountGroup.MapPost("/Logout", async (
@@ -107,7 +109,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
                 QueryString.Create("Action", ExternalLogins.LinkLoginCallbackAction));
 
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, signInManager.UserManager.GetUserId(context.User));
-            return TypedResults.Challenge(properties, [provider]);
+            return TypedResults.Challenge(properties, new[] { provider });
         });
 
         var loggerFactory = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>();
@@ -142,7 +144,8 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 
-            personalData.Add("Authenticator Key", (await userManager.GetAuthenticatorKeyAsync(user))!);
+            var authenticatorKey = await userManager.GetAuthenticatorKeyAsync(user);
+            personalData.Add("Authenticator Key", authenticatorKey ?? string.Empty);
             var fileBytes = JsonSerializer.SerializeToUtf8Bytes(personalData);
 
             context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
