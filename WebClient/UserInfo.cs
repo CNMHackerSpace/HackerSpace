@@ -1,6 +1,6 @@
 // Copyright (c) 2025. All rights reserved.
 
-namespace HackerSpace.WebClient
+namespace WebClient
 {
     /// <summary>
     /// Minimal DTO containing persisted user information exposed to the client application.

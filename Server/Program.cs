@@ -147,7 +147,7 @@ namespace Server
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode()
                 .AddInteractiveWebAssemblyRenderMode()
-                .AddAdditionalAssemblies(typeof(HackerSpace.WebClient._Imports).Assembly);
+                .AddAdditionalAssemblies(typeof(WebClient._Imports).Assembly);
 
             // Add additional endpoints required by the Identity /Account Razor components.
             app.MapAdditionalIdentityEndpoints();

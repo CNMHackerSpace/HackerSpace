@@ -1,4 +1,4 @@
-using HackerSpace.WebClient;
+using WebClient;
 using Server.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;

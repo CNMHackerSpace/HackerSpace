@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace HackerSpace.WebClient
+namespace WebClient
 {
     internal class Program
     {

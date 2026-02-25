@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.24" />
-        <ProjectReference Include="..\HackerSpace.WebClient\HackerSpace.WebClient.csproj" />
+        <ProjectReference Include="..\WebClient\WebClient.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.22" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.22" />
