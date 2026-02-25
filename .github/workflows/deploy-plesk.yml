@@ -28,7 +28,7 @@ jobs:
 
       - name: Create appsettings.Production.json
         run: |
-          cat <<EOF > HackerSpace.Server/appsettings.Production.json
+          cat <<EOF > Server/appsettings.Production.json
           {
             "ConnectionStrings": {
               "DefaultConnection": "$PROD_SQL_CONNECTION"
@@ -51,8 +51,8 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish self-contained(win-x64 example)
-        run: | 
-          dotnet publish HackerSpace.Server/HackerSpace.Server.csproj \
+        run: |
+          dotnet publish Server/Server.csproj \
               --configuration Release \
               --runtime win-x64 \
               --self-contained true \

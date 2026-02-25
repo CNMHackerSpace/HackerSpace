@@ -2,7 +2,7 @@
 
 using HackerSpace.Shared.Models;
 
-namespace HackerSpace.Server.Services
+namespace Server.Services
 {
     /// <summary>
     /// Service interface for badge view and submission operations.
