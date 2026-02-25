@@ -1,11 +1,9 @@
 ﻿@page "/Account/Manage/Disable2fa"
 
-@using Server.Data
-@using Common.Interfaces
 @using Microsoft.AspNetCore.Identity
+@using Server.Data
 
 @inject UserManager<ApplicationUser> UserManager
-@inject IdentityUserAccessor UserAccessor
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<Disable2fa> Logger
 
@@ -21,7 +19,7 @@
     <p>
         Disabling 2FA does not change the keys used in authenticator apps. If you wish to change the key
         used in an authenticator app you should <a href="Account/Manage/ResetAuthenticator">reset your authenticator
-        keys.</a>
+            keys.</a>
     </p>
 </div>
 
@@ -33,14 +31,19 @@
 </div>
 
 @code {
-    private ApplicationUser user = default!;
+    private ApplicationUser? user;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        user = await UserManager.GetUserAsync(HttpContext.User);
+        if (user is null)
+        {
+            RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
+            return;
+        }
 
         if (HttpMethods.IsGet(HttpContext.Request.Method) && !await UserManager.GetTwoFactorEnabledAsync(user))
         {
@@ -50,6 +53,12 @@
 
     private async Task OnSubmitAsync()
     {
+        if (user is null)
+        {
+            RedirectManager.RedirectToInvalidUser(UserManager, HttpContext);
+            return;
+        }
+
         var disable2faResult = await UserManager.SetTwoFactorEnabledAsync(user, false);
         if (!disable2faResult.Succeeded)
         {
@@ -59,8 +68,8 @@
         var userId = await UserManager.GetUserIdAsync(user);
         Logger.LogInformation("User with ID '{UserId}' has disabled 2fa.", userId);
         RedirectManager.RedirectToWithStatus(
-            "Account/Manage/TwoFactorAuthentication",
-            "2fa has been disabled. You can reenable 2fa when you setup an authenticator app",
-            HttpContext);
+        "Account/Manage/TwoFactorAuthentication",
+        "2fa has been disabled. You can reenable 2fa when you setup an authenticator app",
+        HttpContext);
     }
 }

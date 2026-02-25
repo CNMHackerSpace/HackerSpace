@@ -47,7 +47,7 @@ namespace Common.Models
         /// <summary>
         /// Gets or sets links (GitHub repositories, cloud documents, etc.) that support this submission.
         /// </summary>
-        public List<SubmissionLink> Links { get; set; } = new List<SubmissionLink>();
+        public List<SubmissionLink> Links { get; set; } = [];
 
         /// <summary>
         /// Gets or sets uTC timestamp when the submission was created.

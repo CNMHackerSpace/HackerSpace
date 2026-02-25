@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
-using Server.Data;
 using Common.Interfaces;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
+using Server.Data;
 
 namespace Server.Data.Services
 {
@@ -12,7 +12,7 @@ namespace Server.Data.Services
     /// </summary>
     public class BadgesEditPageDataService : IBadgeEditPageDataService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext dbContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BadgesEditPageDataService"/> class.
@@ -20,7 +20,7 @@ namespace Server.Data.Services
         /// <param name="dbContext">The application's database context.</param>
         public BadgesEditPageDataService(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Server.Data.Services
         /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="Badge"/>.</returns>
         public Task<Badge> GetByIdAsync(Guid id)
         {
-            return _dbContext.Badges.FirstAsync(badge => badge.Id == id);
+            return this.dbContext.Badges.FirstAsync(badge => badge.Id == id);
         }
 
         /// <summary>
@@ -43,13 +43,14 @@ namespace Server.Data.Services
             if (badge.Id == Guid.Empty)
             {
                 badge.Id = Guid.NewGuid();
-                _dbContext.Badges.Add(badge);
+                this.dbContext.Badges.Add(badge);
             }
             else
             {
-                _dbContext.Badges.Update(badge);
+                this.dbContext.Badges.Update(badge);
             }
-            return _dbContext.SaveChangesAsync();
+
+            return this.dbContext.SaveChangesAsync();
         }
     }
 }

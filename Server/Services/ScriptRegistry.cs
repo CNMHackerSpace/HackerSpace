@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) 2025. All rights reserved.
+
+using Microsoft.AspNetCore.Components;
 
 namespace Server.Services
 {
@@ -7,7 +9,7 @@ namespace Server.Services
     /// </summary>
     public class ScriptRegistry
     {
-        private readonly Dictionary<Guid, RenderFragment> _fragments = new();
+        private readonly Dictionary<Guid, RenderFragment> fragments = [];
 
         /// <summary>
         /// Occurs when a fragment is registered or unregistered.
@@ -22,8 +24,8 @@ namespace Server.Services
         public Guid Register(RenderFragment fragment)
         {
             var id = Guid.NewGuid();
-            _fragments[id] = fragment;
-            OnChanged?.Invoke();
+            this.fragments[id] = fragment;
+            this.OnChanged?.Invoke();
             return id;
         }
 
@@ -33,9 +35,9 @@ namespace Server.Services
         /// <param name="id">The unique identifier of the fragment to unregister.</param>
         public void Unregister(Guid id)
         {
-            if (_fragments.Remove(id))
+            if (this.fragments.Remove(id))
             {
-                OnChanged?.Invoke();
+                this.OnChanged?.Invoke();
             }
         }
 
@@ -43,6 +45,6 @@ namespace Server.Services
         /// Gets all registered render fragments.
         /// </summary>
         /// <returns>A read-only collection of registered fragments.</returns>
-        public IReadOnlyCollection<RenderFragment> GetFragments() => _fragments.Values;
+        public IReadOnlyCollection<RenderFragment> GetFragments() => this.fragments.Values;
     }
 }

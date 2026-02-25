@@ -10,11 +10,11 @@ namespace WebClient
         /// <summary>
         /// Gets or sets the unique identifier for the user.
         /// </summary>
-        public required string UserId { get; set; }
+        required public string UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the user's email address.
         /// </summary>
-        public required string Email { get; set; }
+        required public string Email { get; set; }
     }
 }

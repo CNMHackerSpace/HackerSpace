@@ -20,6 +20,7 @@ namespace Server.Services
         /// Creates a new submission for a badge.
         /// </summary>
         /// <param name="submission">The submission to create.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         Task CreateSubmissionAsync(Submission submission);
 
         /// <summary>

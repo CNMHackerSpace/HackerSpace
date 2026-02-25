@@ -1,16 +1,16 @@
 // Copyright (c) 2025. All rights reserved.
 
-using Server.Components.Account;
-using Server.Data;
-using Server.Data.Services;
-using Server.Components;
-using Server.Services;
 using Common.Interfaces;
 using Common.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Server.Components;
+using Server.Components.Account;
+using Server.Data;
+using Server.Data.Services;
+using Server.Services;
 
 namespace Server
 {
@@ -23,26 +23,27 @@ namespace Server
         /// Application startup method.
         /// </summary>
         /// <param name="args">Command-line arguments.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Force-load appsettings.Production.json if present (overrides appsettings.json)
-            builder.Configuration.AddJsonFile(
-                "appsettings.Production.json",
-                optional: true,
-                reloadOnChange: true);
+            // TODO: Do we need this?
+            // builder.Configuration.AddJsonFile(
+            //     "appsettings.Production.json",
+            //     optional: true,
+            //     reloadOnChange: true);
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
-                .AddCircuitOptions(o => o.DetailedErrors = true)
-                .AddInteractiveWebAssemblyComponents();
+                .AddInteractiveWebAssemblyComponents()
+                .AddAuthenticationStateSerialization();
 
             builder.Services.AddCascadingAuthenticationState();
-            builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
-            builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
             builder.Services.AddAuthentication(options =>
             {
@@ -58,7 +59,11 @@ namespace Server
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentityCore<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+                })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
@@ -86,24 +91,23 @@ namespace Server
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Error", createScopeForErrors: true);
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
+            app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
             app.UseHttpsRedirection();
 
-            // ... in Program.cs after builder.Build()
+            // For Unity in Program.cs after builder.Build() Unity real types
             var provider = new FileExtensionContentTypeProvider();
-
-            // Unity �real� types
             provider.Mappings[".data"] = "application/octet-stream";
             provider.Mappings[".wasm"] = "application/wasm"; // or application/octet-stream
             provider.Mappings[".symbols.json"] = "application/json";
 
             // Unity compressed container extension
             provider.Mappings[".unityweb"] = "application/octet-stream"; // will be corrected in OnPrepareResponse
-
 
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -113,7 +117,7 @@ namespace Server
                 // Handle gzipped files for unity game
                 OnPrepareResponse = ctx =>
                 {
-                    var path = ctx.File.PhysicalPath ?? "";
+                    var path = ctx.File.PhysicalPath ?? string.Empty;
 
                     // Unity�s WebGL compression output: *.unityweb (usually Brotli)
                     if (path.EndsWith(".unityweb", StringComparison.OrdinalIgnoreCase))
@@ -139,11 +143,12 @@ namespace Server
                         // Optional but helpful for proxies/CDNs: vary by encoding
                         ctx.Context.Response.Headers["Vary"] = "Accept-Encoding";
                     }
-                }
+                },
             });
 
             app.UseAntiforgery();
 
+            app.MapStaticAssets();
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode()
                 .AddInteractiveWebAssemblyRenderMode()
@@ -182,7 +187,7 @@ namespace Server
                 {
                     Email = email,
                     UserName = email,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
                 };
 
                 var errors = new System.Collections.Generic.List<string>();
@@ -241,15 +246,33 @@ namespace Server
             else
             {
                 // Fallback basic checks in case no validators are configured
-                if (password.Length < 6) errors.Add("Password must be at least 6 characters.");
-                if (!password.Any(char.IsUpper)) errors.Add("Password must contain an uppercase letter.");
-                if (!password.Any(char.IsLower)) errors.Add("Password must contain a lowercase letter.");
-                if (!password.Any(char.IsDigit)) errors.Add("Password must contain a digit.");
-                if (!password.Any(ch => !char.IsLetterOrDigit(ch))) errors.Add("Password must contain a non-alphanumeric character.");
+                if (password.Length < 6)
+                {
+                    errors.Add("Password must be at least 6 characters.");
+                }
+
+                if (!password.Any(char.IsUpper))
+                {
+                    errors.Add("Password must contain an uppercase letter.");
+                }
+
+                if (!password.Any(char.IsLower))
+                {
+                    errors.Add("Password must contain a lowercase letter.");
+                }
+
+                if (!password.Any(char.IsDigit))
+                {
+                    errors.Add("Password must contain a digit.");
+                }
+
+                if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+                {
+                    errors.Add("Password must contain a non-alphanumeric character.");
+                }
 
                 if (errors.Count > 0)
                 {
-
                     isValidPassword = false;
                 }
             }
@@ -273,6 +296,7 @@ namespace Server
                     {
                         continue;
                     }
+
                     IdentityRole identityRole = new IdentityRole(role);
                     var result = await roleManager.CreateAsync(identityRole);
                     if (!result.Succeeded)

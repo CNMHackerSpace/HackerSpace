@@ -1,12 +1,12 @@
 ﻿// Copyright (c) 2025. All rights reserved.
 
+using System.Text.Json;
+using Common.Interfaces;
+using Common.Models;
+using Common.ViewModels;
+
 namespace Server.Data.Mocks
 {
-    using Common.Interfaces;
-    using Common.Models;
-    using Common.ViewModels;
-    using System.Text.Json;
-
     /// <summary>
     /// Mock implementation of <see cref="IEvaluatorsPageDataService"/> for testing and development purposes.
     /// Provides in-memory storage and manipulation of <see cref="Evaluator"/> objects.
@@ -22,8 +22,8 @@ namespace Server.Data.Mocks
         /// </summary>
         public EvaluatorsPageDataServiceMock()
         {
-            this.users = new List<ApplicationUser>
-            {
+            this.users =
+            [
                 new ApplicationUser
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -51,9 +51,9 @@ namespace Server.Data.Mocks
                     Last = "Three",
                     EmailConfirmed = true,
                 },
-            };
-            this.evaluators = new List<Evaluator>
-                {
+            ];
+            this.evaluators =
+                [
                     new Evaluator
                     {
                         Id = Guid.NewGuid(),
@@ -66,7 +66,8 @@ namespace Server.Data.Mocks
                         User = this.users[1],
                         NotificationEmail = this.users[1].Email,
                     }
-                };
+
+                ];
         }
 
         /// <inheritdoc/>
@@ -74,15 +75,15 @@ namespace Server.Data.Mocks
         {
             return Task.FromResult(new EvaluatorsPageVM()
             {
-                Evaluators = JsonSerializer.Deserialize<List<Evaluator>>(JsonSerializer.Serialize(evaluators)),
-                Users = JsonSerializer.Deserialize<List<ApplicationUser>>(JsonSerializer.Serialize(users)),
+                Evaluators = JsonSerializer.Deserialize<List<Evaluator>>(JsonSerializer.Serialize(this.evaluators)),
+                Users = JsonSerializer.Deserialize<List<ApplicationUser>>(JsonSerializer.Serialize(this.users)),
             });
         }
 
         /// <inheritdoc/>
         public Task<List<Evaluator>?> GetAllAsync()
         {
-            return Task.FromResult<List<Evaluator>?>(evaluators);
+            return Task.FromResult<List<Evaluator>?>(this.evaluators);
         }
 
         /// <inheritdoc/>
@@ -106,6 +107,7 @@ namespace Server.Data.Mocks
             {
                 throw new Exception("Evaluator not found");
             }
+
             current.NotificationEmail = evaluator.NotificationEmail;
             current.User = evaluator.User;
             current.UserId = evaluator.UserId;

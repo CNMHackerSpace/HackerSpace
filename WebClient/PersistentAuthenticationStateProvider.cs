@@ -1,8 +1,8 @@
 // Copyright (c) 2025. All rights reserved.
 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 
 namespace WebClient
 {
@@ -34,7 +34,8 @@ namespace WebClient
                 new Claim(ClaimTypes.Email, userInfo.Email) ];
 
             this.authenticationStateTask = Task.FromResult(
-                new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims,
+                new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(
+                    claims,
                     authenticationType: nameof(PersistentAuthenticationStateProvider)))));
         }
 

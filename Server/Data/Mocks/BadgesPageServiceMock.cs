@@ -1,8 +1,7 @@
-﻿//using Common.Interfaces;
-//using Common.Models;
+﻿// Copyright (c) 2025. All rights reserved.
 
-//namespace HackerSpace.Data.Mocks
-//{
+// namespace HackerSpace.Data.Mocks
+// {
 //    /// <summary>
 //    /// In-memory mock implementation of <see cref="IBadgesPageDataService"/> used for development and testing.
 //    /// </summary>
@@ -52,7 +51,7 @@
 //            }
 //        };
 
-//        /// <summary>
+// /// <summary>
 //        /// Asynchronously returns the list of badges held by the mock store.
 //        /// </summary>
 //        /// <returns>A task whose result is the list of <see cref="Badge"/> instances.</returns>
@@ -61,7 +60,7 @@
 //            return Task.FromResult(_badges);
 //        }
 
-//        /// <summary>
+// /// <summary>
 //        /// Updates the badge in the mock store that matches the provided badge's identifier.
 //        /// </summary>
 //        /// <param name="badge">The badge containing updated values.</param>
@@ -81,7 +80,7 @@
 //            return Task.FromResult(true);
 //        }
 
-//        /// <summary>
+// /// <summary>
 //        /// Adds a new badge to the mock store. The badge's Id will be replaced with a newly generated GUID.
 //        /// </summary>
 //        /// <param name="badge">The badge to add.</param>
@@ -93,7 +92,7 @@
 //            return Task.FromResult(true);
 //        }
 
-//        /// <summary>
+// /// <summary>
 //        /// Removes the badge with the specified identifier from the mock store.
 //        /// </summary>
 //        /// <param name="id">The unique identifier of the badge to remove.</param>
@@ -110,4 +109,4 @@
 //            return Task.FromResult(true);
 //        }
 //    }
-//}
+// }

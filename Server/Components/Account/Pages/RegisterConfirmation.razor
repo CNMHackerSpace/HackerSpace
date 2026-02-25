@@ -1,10 +1,9 @@
 ﻿@page "/Account/RegisterConfirmation"
 
 @using System.Text
-@using Server.Data
-@using Common.Interfaces
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
+@using Server.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IEmailSender<ApplicationUser> EmailSender
@@ -21,13 +20,13 @@
 {
     <p>
         This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these
-        docs</a> for how to configure a real email sender.
+            docs</a> for how to configure a real email sender.
         Normally this would be emailed: <a href="@emailConfirmationLink">Click here to confirm your account</a>
     </p>
 }
 else
 {
-    <p>Please check your email to confirm your account.</p>
+    <p role="alert">Please check your email to confirm your account.</p>
 }
 
 @code {
@@ -48,6 +47,7 @@ else
         if (Email is null)
         {
             RedirectManager.RedirectTo("");
+            return;
         }
 
         var user = await UserManager.FindByEmailAsync(Email);
@@ -63,8 +63,8 @@ else
             var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             emailConfirmationLink = NavigationManager.GetUriWithQueryParameters(
-                NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-                new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
+            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
         }
     }
 }

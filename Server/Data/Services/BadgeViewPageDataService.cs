@@ -1,9 +1,9 @@
 // Copyright (c) 2025. All rights reserved.
 
-using Server.Data;
-using Server.Services;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
+using Server.Data;
+using Server.Services;
 
 namespace Server.Data.Services
 {
@@ -12,17 +12,18 @@ namespace Server.Data.Services
     /// </summary>
     public class BadgeViewPageDataService : IBadgeViewPageDataService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BadgeViewPageDataService"/> class.
         /// </summary>
-        public BadgeViewPageDataService(ApplicationDbContext context) => _context = context;
+        /// <param name="context">The application database context.</param>
+        public BadgeViewPageDataService(ApplicationDbContext context) => this.context = context;
 
         /// <inheritdoc />
         public async Task<Badge?> GetByIdAsync(Guid id)
         {
-            return await _context.Badges
+            return await this.context.Badges
                 .AsNoTracking()
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
@@ -44,8 +45,8 @@ namespace Server.Data.Services
                 link.SubmissionId = submission.Id;
             }
 
-            _context.Submissions.Add(submission);
-            await _context.SaveChangesAsync();
+            this.context.Submissions.Add(submission);
+            await this.context.SaveChangesAsync();
         }
 
         /// <inheritdoc />
@@ -53,14 +54,16 @@ namespace Server.Data.Services
         {
             // TODO: Replace with actual evaluator logic based on your user/role system
             // This is a placeholder that returns users with "Evaluator", "Instructor", or "Admin" roles
-            // You'll need to adjust this based on how evaluators are associated with badges in your schema
 
-            var evaluatorEmails = await _context.Users
-                .Join(_context.UserRoles,
+            // You'll need to adjust this based on how evaluators are associated with badges in your schema
+            var evaluatorEmails = await this.context.Users
+                .Join(
+                    this.context.UserRoles,
                     user => user.Id,
                     userRole => userRole.UserId,
                     (user, userRole) => new { user, userRole })
-                .Join(_context.Roles,
+                .Join(
+                    this.context.Roles,
                     combined => combined.userRole.RoleId,
                     role => role.Id,
                     (combined, role) => new { combined.user, role })

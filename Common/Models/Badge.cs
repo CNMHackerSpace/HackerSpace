@@ -39,6 +39,6 @@ namespace Common.Models
         /// <summary>
         /// Gets or sets the list of submissions associated with the badge.
         /// </summary>
-        public List<Submission> Submissions { get; set; } = new();
+        public List<Submission> Submissions { get; set; } = [];
     }
 }
