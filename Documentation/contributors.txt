@@ -1,4 +1,8 @@
 Rob Garner, rgarner7@cnm.edu, rgarne011235@gmail.com
 Marty Bonacci, mbonacci@cnm.edu, martybonacci@gmail.com
 Lane Brockinton
+<<<<<<< HEAD
 Emma Hines, ehines4@student.cnm.edu, emuhmoore@gmail.com
+=======
+Chance Gomez
+>>>>>>> 9a1124be2f4ac212efa06b36d10ae85d3573a88b
