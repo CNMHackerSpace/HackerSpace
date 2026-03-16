@@ -5,6 +5,7 @@
 @inject IBadgeEditPageDataService dataService
 @inject NavigationManager Navigation
 @attribute [Authorize(Roles = "Admin, Instructor")]
+@using Microsoft.AspNetCore.Components.Forms
 
 @if (badge == null)
 {
@@ -64,6 +65,15 @@ else
 
                 </div>
             </div>
+            <div class="form-group">
+    <label>Badge Image</label>
+    <InputFile OnChange="UploadImage" />
+</div>
+
+<div class="form-group">
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="button" class="btn btn-secondary" @onclick="OnCancelClick">Cancel</button>
+</div>
         }
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -104,6 +114,7 @@ else
         }
         await dataService.AddOrUpdateAsync(badge);
         Navigation.NavigateTo("/badges");
+    
     }
     private void OnCancelClick(MouseEventArgs args)
     {
@@ -116,7 +127,23 @@ else
     }
 
     private void SwitchToUserView()
+{
+    isEditView = false;
+}
+
+private async Task UploadImage(InputFileChangeEventArgs e)
+{
+    var file = e.File;
+    var filePath = Path.Combine("wwwroot/images", file.Name);
+    using var stream = new FileStream(filePath, FileMode.Create);
+    await file.OpenReadStream().CopyToAsync(stream);
+    badge.ImageUrl = "/images/" + file.Name;
+    if (badge == null)
     {
-        isEditView = false;
+        return;
     }
+
+    
+
+}
 }
