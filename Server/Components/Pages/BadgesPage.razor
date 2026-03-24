@@ -1,6 +1,9 @@
-﻿@page "/badges"
+@page "/badges"
+@using Common.Models
+@using System.Security.Claims
 @rendermode InteractiveServer
 @inject IBadgesPageDataService dataService
+@inject ISuggestABadgePageDataService suggestService
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
 
@@ -36,19 +39,63 @@ else
     </AuthorizeView>
 }
 
+<AuthorizeView>
+    <Authorized>
+        @if (mySuggestions != null && mySuggestions.Any())
+        {
+            <hr class="my-4" />
+            <h4>My Badge Suggestions</h4>
+            <div class="row">
+                @foreach (var item in mySuggestions)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="card-title mb-1">@item.Title</h6>
+                                    <span class="badge @GetStatusBadgeClass(item.Status)">@item.Status</span>
+                                </div>
+                                <small class="text-muted">@item.CreatedAt.ToString("yyyy-MM-dd")</small>
+                                <p class="card-text mt-2 small">@TruncateText(item.Description, 120)</p>
+                                @if (!string.IsNullOrWhiteSpace(item.AdminNotes))
+                                {
+                                    <div class="alert alert-secondary py-1 px-2 mb-0">
+                                        <small><strong>Admin:</strong> @item.AdminNotes</small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
+
 @code {
     protected List<Badge>? badges;
     protected Badge? badge;
+    private List<BadgeSuggestion>? mySuggestions;
 
     override protected async Task OnInitializedAsync()
     {
-        // Get all badges if user is admin, otherwise get only visible badges
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         badges = user.IsInRole("Admin")
             ? await dataService.GetAllAsync()
             : await dataService.GetVisibleAsync();
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)
+                         ?? user.FindFirst("sub")
+                         ?? user.FindFirst("oid");
+            if (idClaim != null)
+            {
+                mySuggestions = await suggestService.GetSuggestionsByUserIdAsync(idClaim.Value);
+            }
+        }
     }
 
     protected void OnViewClicked(Guid id)
@@ -111,5 +158,26 @@ else
     private void OnSuggestBadgeClick(MouseEventArgs args)
     {
         Navigation.NavigateTo("/suggest-a-badge");
+    }
+
+    private static string GetStatusBadgeClass(BadgeSuggestionStatus status)
+    {
+        return status switch
+        {
+            BadgeSuggestionStatus.Pending => "bg-warning text-dark",
+            BadgeSuggestionStatus.Approved => "bg-success",
+            BadgeSuggestionStatus.Rejected => "bg-danger",
+            _ => "bg-secondary",
+        };
+    }
+
+    private static string TruncateText(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length <= maxLength)
+        {
+            return text;
+        }
+
+        return text[..maxLength] + "...";
     }
 }

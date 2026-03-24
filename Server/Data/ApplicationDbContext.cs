@@ -41,5 +41,10 @@ namespace Server.Data
         /// Gets or sets the <see cref="DbSet{SubmissionLink}"/> used to query and save <see cref="SubmissionLink"/> instances.
         /// </summary>
         public DbSet<SubmissionLink> SubmissionLinks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{BadgeSuggestion}"/> used to query and save <see cref="BadgeSuggestion"/> instances.
+        /// </summary>
+        public DbSet<BadgeSuggestion> BadgeSuggestions { get; set; }
     }
 }
