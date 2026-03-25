@@ -61,7 +61,7 @@ namespace Server
 
             builder.Services.AddIdentityCore<ApplicationUser>(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = true;
+                    options.SignIn.RequireConfirmedAccount = !builder.Environment.IsDevelopment();
                     options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
                 })
                 .AddRoles<IdentityRole>()
@@ -79,6 +79,7 @@ namespace Server
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
             builder.Services.AddTransient<IBadgeEditPageDataService, BadgesEditPageDataService>();
             builder.Services.AddScoped<IBadgeViewPageDataService, BadgeViewPageDataService>();
+            builder.Services.AddScoped<ISuggestABadgePageDataService, SuggestABadgePageDataService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
 
             var app = builder.Build();

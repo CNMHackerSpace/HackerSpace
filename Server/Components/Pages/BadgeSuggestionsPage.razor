@@ -1,0 +1,290 @@
+@page "/badge-suggestions"
+@using Common.Models
+@using System.Security.Claims
+@rendermode InteractiveServer
+@inject ISuggestABadgePageDataService dataService
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Badge Suggestions</PageTitle>
+
+<h3>Badge Suggestions</h3>
+
+@if (suggestions == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!suggestions.Any())
+{
+    <p class="text-muted">No badge suggestions to review.</p>
+}
+else
+{
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <button class="nav-link @(showAll ? "" : "active")" @onclick="() => showAll = false">
+                Pending (@suggestions.Count(s => s.Status == BadgeSuggestionStatus.Pending))
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(showAll ? "active" : "")" @onclick="() => showAll = true">
+                All (@suggestions.Count)
+            </button>
+        </li>
+    </ul>
+
+    @foreach (var item in FilteredSuggestions)
+    {
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title mb-1">@item.Title</h5>
+                        <small class="text-muted">
+                            Suggested by @item.SuggestedByName on @item.CreatedAt.ToString("yyyy-MM-dd")
+                        </small>
+                    </div>
+                    <span class="badge @GetStatusBadgeClass(item.Status)">@item.Status</span>
+                </div>
+
+                <p class="card-text mt-2">@item.Description</p>
+
+                @if (!string.IsNullOrWhiteSpace(item.TurnInInstructions))
+                {
+                    <div class="border-start ps-3 mb-2">
+                        <small class="fw-semibold">Turn-In Instructions:</small>
+                        <p class="mb-0">@item.TurnInInstructions</p>
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(item.AdminNotes))
+                {
+                    <div class="alert alert-secondary mt-2 mb-2 py-2">
+                        <small class="fw-semibold">Admin Notes:</small> @item.AdminNotes
+                    </div>
+                }
+
+                @if (item.Status == BadgeSuggestionStatus.Pending)
+                {
+                    @if (rejectingId == item.Id)
+                    {
+                        <div class="mt-2">
+                            <div class="mb-2">
+                                <label class="form-label">Rejection Notes (Optional)</label>
+                                <InputText @bind-Value="rejectNotes" class="form-control" placeholder="Reason for rejection..." />
+                            </div>
+                            <button class="btn btn-danger btn-sm" @onclick="() => ConfirmRejectAsync(item.Id)">
+                                Confirm Reject
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="CancelReject">
+                                Cancel
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mt-2 d-flex gap-2">
+                            <button class="btn btn-success btn-sm" @onclick="() => OpenApproveModal(item)">
+                                Review &amp; Approve
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" @onclick="() => StartReject(item.Id)">
+                                Reject
+                            </button>
+                        </div>
+                    }
+                }
+
+                @if (item.ReviewedAt.HasValue)
+                {
+                    <small class="text-muted d-block mt-2">
+                        Reviewed on @item.ReviewedAt.Value.ToString("yyyy-MM-dd HH:mm") UTC
+                    </small>
+                }
+            </div>
+        </div>
+    }
+}
+
+@* Approve Modal *@
+@if (showApproveModal && approvingItem != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Approve Badge Suggestion</h5>
+                    <button type="button" class="btn-close" @onclick="CloseApproveModal" aria-label="Close"></button>
+                </div>
+                <EditForm Model="approvingItem" OnValidSubmit="ConfirmApproveAsync">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <p class="text-muted mb-3">
+                            Edit the badge details below before approving. The original suggestion will be preserved for audit history.
+                        </p>
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
+                            <InputText @bind-Value="editTitle" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <InputTextArea @bind-Value="editDescription" class="form-control" rows="5" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Turn-In Instructions</label>
+                            <InputTextArea @bind-Value="editTurnInInstructions" class="form-control" rows="4" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseApproveModal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success" disabled="@isApproving">
+                            @(isApproving ? "Approving..." : "Approve")
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="alert @statusAlertClass alert-dismissible fade show" role="alert">
+        @statusMessage
+        <button type="button" class="btn-close" @onclick="() => statusMessage = null" aria-label="Close"></button>
+    </div>
+}
+
+@code {
+    private List<BadgeSuggestion>? suggestions;
+    private bool showAll = false;
+    private Guid? rejectingId;
+    private string rejectNotes = string.Empty;
+    private string? statusMessage;
+    private string statusAlertClass = "alert-info";
+    private string? currentUserId;
+
+    private bool showApproveModal = false;
+    private BadgeSuggestion? approvingItem;
+    private string editTitle = string.Empty;
+    private string editDescription = string.Empty;
+    private string editTurnInInstructions = string.Empty;
+    private bool isApproving = false;
+
+    private IEnumerable<BadgeSuggestion> FilteredSuggestions =>
+        showAll
+            ? suggestions ?? new List<BadgeSuggestion>()
+            : (suggestions ?? new List<BadgeSuggestion>()).Where(s => s.Status == BadgeSuggestionStatus.Pending);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)
+                     ?? user.FindFirst("sub")
+                     ?? user.FindFirst("oid");
+        if (idClaim != null)
+        {
+            currentUserId = idClaim.Value;
+        }
+
+        suggestions = await dataService.GetAllSuggestionsAsync();
+    }
+
+    private void OpenApproveModal(BadgeSuggestion item)
+    {
+        approvingItem = item;
+        editTitle = item.Title;
+        editDescription = item.Description;
+        editTurnInInstructions = item.TurnInInstructions;
+        showApproveModal = true;
+        statusMessage = null;
+    }
+
+    private void CloseApproveModal()
+    {
+        showApproveModal = false;
+        approvingItem = null;
+        editTitle = string.Empty;
+        editDescription = string.Empty;
+        editTurnInInstructions = string.Empty;
+        isApproving = false;
+    }
+
+    private async Task ConfirmApproveAsync()
+    {
+        if (approvingItem == null)
+        {
+            return;
+        }
+
+        isApproving = true;
+
+        try
+        {
+            await dataService.ApproveSuggestionAsync(
+                approvingItem.Id,
+                currentUserId ?? string.Empty,
+                editTitle,
+                editDescription,
+                editTurnInInstructions);
+            statusMessage = "Suggestion approved! A new hidden badge has been created. Edit it at /badges to publish.";
+            statusAlertClass = "alert-success";
+            CloseApproveModal();
+            suggestions = await dataService.GetAllSuggestionsAsync();
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error approving suggestion: {ex.Message}";
+            statusAlertClass = "alert-danger";
+            isApproving = false;
+        }
+    }
+
+    private void StartReject(Guid id)
+    {
+        rejectingId = id;
+        rejectNotes = string.Empty;
+    }
+
+    private void CancelReject()
+    {
+        rejectingId = null;
+        rejectNotes = string.Empty;
+    }
+
+    private async Task ConfirmRejectAsync(Guid id)
+    {
+        try
+        {
+            await dataService.RejectSuggestionAsync(id, currentUserId ?? string.Empty, string.IsNullOrWhiteSpace(rejectNotes) ? null : rejectNotes);
+            statusMessage = "Suggestion rejected.";
+            statusAlertClass = "alert-warning";
+            rejectingId = null;
+            rejectNotes = string.Empty;
+            suggestions = await dataService.GetAllSuggestionsAsync();
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error rejecting suggestion: {ex.Message}";
+            statusAlertClass = "alert-danger";
+        }
+    }
+
+    private static string GetStatusBadgeClass(BadgeSuggestionStatus status)
+    {
+        return status switch
+        {
+            BadgeSuggestionStatus.Pending => "bg-warning text-dark",
+            BadgeSuggestionStatus.Approved => "bg-success",
+            BadgeSuggestionStatus.Rejected => "bg-danger",
+            _ => "bg-secondary",
+        };
+    }
+}

@@ -1,6 +1,165 @@
-﻿@page "/suggest-a-badge"
-<h3>Suggest A Badge</h3>
+@page "/suggest-a-badge"
+@using Common.Models
+@using System.Security.Claims
+@rendermode InteractiveServer
+@inject ISuggestABadgePageDataService dataService
+@inject IEmailService emailService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@attribute [Authorize]
+
+<PageTitle>Suggest a Badge</PageTitle>
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title mb-3">Suggest a Badge</h3>
+            <p class="text-muted mb-4">
+                Have an idea for a new badge? Fill out the form below and an admin will review your suggestion.
+            </p>
+
+            <EditForm Model="suggestion" OnValidSubmit="HandleSubmitAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Badge Title <span class="text-danger">*</span></label>
+                    <InputText @bind-Value="suggestion.Title"
+                               class="form-control"
+                               id="title"
+                               placeholder="e.g. Python Web Scraping" />
+                    <ValidationMessage For="@(() => suggestion.Title)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                    <InputTextArea @bind-Value="suggestion.Description"
+                                   class="form-control"
+                                   id="description"
+                                   rows="5"
+                                   placeholder="Describe what this badge represents and what skills it demonstrates..." />
+                    <ValidationMessage For="@(() => suggestion.Description)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="instructions" class="form-label">Turn-In Instructions (Optional)</label>
+                    <InputTextArea @bind-Value="suggestion.TurnInInstructions"
+                                   class="form-control"
+                                   id="instructions"
+                                   rows="4"
+                                   placeholder="What should a student submit to earn this badge?" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(submissionMessage))
+                {
+                    <div class="alert @submissionAlertClass" role="alert">
+                        @submissionMessage
+                    </div>
+                }
+
+                <div class="d-flex gap-2">
+                    @if (isSubmitted)
+                    {
+                        <button type="button" class="btn btn-primary" @onclick="OnCancelClick">
+                            Back to Badges
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                            @(isSubmitting ? "Submitting..." : "Submit Suggestion")
+                        </button>
+                        <button type="button" class="btn btn-secondary" @onclick="OnCancelClick">
+                            Cancel
+                        </button>
+                    }
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
 
 @code {
+    private BadgeSuggestion suggestion = new();
+    private bool isSubmitting = false;
+    private bool isSubmitted = false;
+    private string? submissionMessage;
+    private string submissionAlertClass = "alert-info";
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)
+                         ?? user.FindFirst("sub")
+                         ?? user.FindFirst("oid");
+            if (idClaim != null)
+            {
+                suggestion.SuggestedById = idClaim.Value;
+            }
+
+            var nameClaim = user.FindFirst(ClaimTypes.Name) ?? user.FindFirst("name");
+            if (nameClaim != null)
+            {
+                suggestion.SuggestedByName = nameClaim.Value;
+            }
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        isSubmitting = true;
+        submissionMessage = null;
+
+        try
+        {
+            await dataService.CreateSuggestionAsync(suggestion);
+
+            await SendEvaluatorNotificationsAsync();
+
+            submissionMessage = "Your badge suggestion has been submitted! An admin will review it soon.";
+            submissionAlertClass = "alert-success";
+            isSubmitted = true;
+        }
+        catch (Exception ex)
+        {
+            submissionMessage = $"Error submitting suggestion: {ex.Message}";
+            submissionAlertClass = "alert-danger";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task SendEvaluatorNotificationsAsync()
+    {
+        var subject = $"New Badge Suggestion: {suggestion.Title}";
+        var body = $@"
+            <h3>New Badge Suggestion Submitted</h3>
+            <p><strong>Title:</strong> {suggestion.Title}</p>
+            <p><strong>Suggested by:</strong> {suggestion.SuggestedByName ?? suggestion.SuggestedById}</p>
+            <p><strong>Date:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm} UTC</p>
+            <p><strong>Description:</strong></p>
+            <p>{suggestion.Description}</p>
+            <p>Please review this suggestion in the admin portal at /badge-suggestions.</p>
+        ";
+
+        try
+        {
+            await emailService.SendEmailAsync("mail@emmw.net", subject, body);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send notification email: {ex.Message}");
+        }
+    }
+
+    private void OnCancelClick()
+    {
+        Navigation.NavigateTo("/badges");
+    }
 }
