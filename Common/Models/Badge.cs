@@ -39,7 +39,7 @@ namespace Common.Models
         /// <summary>
         /// Gets or sets the badge image URL.
         /// </summary>
-        public string ImageUrl { get; set; } = "";
+        public string ImageUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the list of submissions associated with the badge.

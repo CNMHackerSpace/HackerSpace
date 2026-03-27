@@ -54,6 +54,27 @@ namespace Server.Data.Services
         }
 
         /// <summary>
+        /// Creates a new user DTO with default values and available role selections.
+        /// </summary>
+        /// <returns>A new user DTO.</returns>
+        public Task<UserDto> CreateNewUserAsync()
+        {
+            var userDto = new UserDto
+            {
+                Email = string.Empty,
+                EmailConfirmed = false,
+                Password = string.Empty,
+                ConfirmPassword = string.Empty,
+                RoleSelections = this.roleManager.Roles.Select(role => new RoleSelection
+                {
+                    RoleName = role.Name ?? string.Empty,
+                    IsSelected = false,
+                }).ToList(),
+            };
+            return Task.FromResult(userDto);
+        }
+
+        /// <summary>
         /// Retrieves a user by identifier with role selections.
         /// </summary>
         /// <param name="userId">The user identifier.</param>
@@ -85,7 +106,7 @@ namespace Server.Data.Services
         /// </summary>
         /// <param name="userDto">The user data to create.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task CreateUserAsync(UserDto userDto)
+        public async Task AddUserAsync(UserDto userDto)
         {
             ApplicationUser appUser = new()
             {

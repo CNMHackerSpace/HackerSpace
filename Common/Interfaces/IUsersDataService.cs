@@ -23,11 +23,17 @@ namespace Common.Interfaces
         Task<UserDto?> GetUserByIdAsync(string userId);
 
         /// <summary>
+        /// Creates a new user DTO with default values and available role selections.
+        /// </summary>
+        /// <returns>A new user DTO.</returns>
+        Task<UserDto> CreateNewUserAsync();
+
+        /// <summary>
         /// Creates a new user.
         /// </summary>
         /// <param name="userDto">The user data transfer object to create.</param>
         /// <returns>A task that represents the asynchronous create operation.</returns>
-        Task CreateUserAsync(UserDto userDto);
+        Task AddUserAsync(UserDto userDto);
 
         /// <summary>
         /// Updates an existing user.
