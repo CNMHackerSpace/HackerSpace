@@ -68,6 +68,7 @@ namespace Server
             builder.Services.AddSingleton<ScriptRegistry>();
 
             // Add data services
+            builder.Services.AddTransient<IUsersDataService, UsersDataService>();
             builder.Services.AddScoped<IBadgesPageDataService, BadgesPageDataService>();
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
             builder.Services.AddTransient<IBadgeEditPageDataService, BadgesEditPageDataService>();
@@ -232,7 +233,7 @@ namespace Server
                     var validationResult = await validator.ValidateAsync(userManager, user, password);
                     if (!validationResult.Succeeded)
                     {
-                        errors.Concat(validationResult.Errors.Select(e => e.Description).ToList());
+                        errors.AddRange(validationResult.Errors.Select(e => e.Description));
                         isValidPassword = false;
                     }
                 }

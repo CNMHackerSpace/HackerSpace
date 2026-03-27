@@ -35,10 +35,11 @@ namespace Common.Models
         /// Gets or sets a value indicating whether the badge is visible.
         /// </summary>
         public bool IsVisible { get; set; } = false;
+
         /// <summary>
-        /// Gets the badge to store an image.
+        /// Gets or sets the badge image URL.
         /// </summary>
-        public string ImageUrl { get; set; } = "";
+        public string ImageUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the list of submissions associated with the badge.
