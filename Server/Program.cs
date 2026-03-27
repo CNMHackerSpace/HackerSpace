@@ -28,13 +28,6 @@ namespace Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Force-load appsettings.Production.json if present (overrides appsettings.json)
-            // TODO: Do we need this?
-            // builder.Configuration.AddJsonFile(
-            //     "appsettings.Production.json",
-            //     optional: true,
-            //     reloadOnChange: true);
-
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents()
