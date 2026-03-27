@@ -1,0 +1,28 @@
+@if (Badge == null)
+{
+    <div class="alert alert-warning" role="alert">
+        No badge data available.
+    </div>
+    return;
+}
+else
+{
+    @if (!string.IsNullOrEmpty(Badge.ImageUrl))
+    {
+        <img src="@Badge.ImageUrl" alt="Badge Image" class="mb-3" style="max-width: 100px; max-height: 100px;" />
+    }
+    <h3 class="card-title mb-2">
+        @Badge.Title
+    </h3>
+
+    <div class="mb-4">
+        <h5 class="fw-semibold">Description</h5>
+        <div class="text-muted">
+            @((MarkupString)Badge.Description)
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public Badge? Badge { get; set; }
+}

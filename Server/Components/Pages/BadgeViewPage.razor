@@ -19,6 +19,10 @@ else
     <div class="container py-4">
         <div class="card shadow-sm">
             <div class="card-body">
+                @if (!string.IsNullOrEmpty(badge.ImageUrl))
+                {
+                    <img src="@badge.ImageUrl" alt="Badge Image" class="mb-3" style="max-width: 100px; max-height: 100px;" />
+                }
                 <h3 class="card-title mb-3">@badge.Title</h3>
 
                 <div class="mb-4">
