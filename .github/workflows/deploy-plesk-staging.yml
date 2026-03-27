@@ -1,14 +1,14 @@
-name: Build and Deploy Blazor to Plesk
+name: Build and Deploy Blazor to Plesk (Staging)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "qa" ]
   workflow_dispatch: {}
 
 env:
   PUBLISH_DIR: ./publish
   DOTNET_VERSION: 10.0.x
-  SQLITE_DB_NAME: hackerspace-prod.db
+  SQLITE_DB_NAME: hackerspace-staging.db
 
 jobs:
   build-and-deploy:
@@ -66,13 +66,13 @@ jobs:
       - name: Deploy via FTP to Plesk
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.STAGING_FTP_SERVER }}
+          username: ${{ secrets.STAGING_FTP_USERNAME }}
+          password: ${{ secrets.STAGING_FTP_PASSWORD }}
           protocol: ftps
           port: 21
           local-dir: ${{ env.PUBLISH_DIR }}/
-          server-dir: ${{ secrets.FTP_REMOTE_DIR }}/
+          server-dir: ${{ secrets.STAGING_FTP_REMOTE_DIR }}/
           exclude: |
             data/**
           # optional safety flags:
