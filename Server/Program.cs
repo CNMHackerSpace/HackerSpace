@@ -68,6 +68,7 @@ namespace Server
             builder.Services.AddSingleton<ScriptRegistry>();
 
             // Add data services
+            builder.Services.AddTransient<IUsersDataService, UsersDataService>();
             builder.Services.AddScoped<IBadgesPageDataService, BadgesPageDataService>();
             builder.Services.AddTransient<IEvaluatorsPageDataService, EvaluatorspageDataService>();
             builder.Services.AddTransient<IBadgeEditPageDataService, BadgesEditPageDataService>();
