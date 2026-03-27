@@ -2,6 +2,7 @@
 @using Server.Services
 @using Common.Models
 @using System.Security.Claims
+@using WebClient.Pages
 @rendermode InteractiveServer
 @inject IBadgeViewPageDataService dataService
 @inject IEmailService emailService
@@ -19,36 +20,11 @@ else
     <div class="container py-4">
         <div class="card shadow-sm">
             <div class="card-body">
-                @if (!string.IsNullOrEmpty(badge.ImageUrl))
-                {
-                    <img src="@badge.ImageUrl" alt="Badge Image" class="mb-3" style="max-width: 100px; max-height: 100px;" />
-                }
-                <h3 class="card-title mb-3">@badge.Title</h3>
+                <BadgeView Badge="badge" />
 
-                <div class="mb-4">
-                    <h5 class="fw-semibold">Description</h5>
-                    <div class="text-muted">
-                        @((MarkupString)badge.Description)
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <h5 class="fw-semibold">Turn-In Instructions</h5>
-                    <div class="border-start ps-3">
-                        @((MarkupString)badge.TurnInInstructions)
-                    </div>
-                </div>
-
-                <AuthorizeView>
-                    <Authorized>
-                        <button class="btn btn-primary" @onclick="OpenSubmissionDialog">
-                            Apply for Badge
-                        </button>
-                    </Authorized>
-                    <NotAuthorized>
-                        <p class="text-muted">Please log in to apply for this badge.</p>
-                    </NotAuthorized>
-                </AuthorizeView>
+                <button class="btn btn-primary" @onclick="OpenSubmissionDialog">
+                    Apply for Badge
+                </button>
 
                 @* <button class="btn btn-secondary ms-2" @onclick="GoBack">
                     Back to Badges
@@ -75,7 +51,7 @@ else
 
                         <div class="mb-3">
                             <label class="form-label">Submission Remarks <span class="text-danger">*</span></label>
-                            <InputTextArea @bind-Value="submission.Text"                                          class="form-control"                                          rows="6"
+                            <InputTextArea @bind-Value="submission.Text" class="form-control" rows="6"
                                            placeholder="Describe how you meet the requirements for this badge..." />
                             <ValidationMessage For="@(() => submission.Text)" />
                         </div>
@@ -90,11 +66,11 @@ else
                             {
                                 var index = i; // Capture for lambda
                                 <div class="input-group mb-2">
-                                    <InputText @bind-Value="submission.Links[index].Url"                                              class="form-control"
+                                    <InputText @bind-Value="submission.Links[index].Url" class="form-control"
                                                placeholder="https://github.com/username/repo" />
-                                    <InputText @bind-Value="submission.Links[index].Title"                                              class="form-control"
+                                    <InputText @bind-Value="submission.Links[index].Title" class="form-control"
                                                placeholder="Optional description" />
-                                    <button type="button"                                            class="btn btn-outline-danger"                                            @onclick="() => RemoveLink(index)">
+                                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveLink(index)">
                                         Remove
                                     </button>
                                 </div>
@@ -126,6 +102,7 @@ else
         </div>
     </div>
 }
+
 
 @code {
     [Parameter]
@@ -159,10 +136,17 @@ else
 
     private async Task OpenSubmissionDialog()
     {
+        // if not logged in redirect to login page
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/Account/login");
+            return;
+        }
+
         InitializeSubmission();
 
         // Pre-populate applicant information from authentication
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user?.Identity?.IsAuthenticated == true)

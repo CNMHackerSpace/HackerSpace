@@ -1,12 +1,9 @@
 ﻿@page "/badge/edit/{Id}"
 @page "/badge/edit/"
-@using System.Threading.Tasks
 @rendermode InteractiveServer
 @inject IBadgeEditPageDataService dataService
 @inject NavigationManager Navigation
 @attribute [Authorize(Roles = "Admin, Instructor")]
-@using Microsoft.AspNetCore.Components.Forms
-@using Server.Components.Shared
 
 @if (badge == null)
 {
@@ -130,17 +127,14 @@ else
 
     private async Task UploadImage(InputFileChangeEventArgs e)
     {
+        if (badge == null)
+        {
+            return;
+        }
         var file = e.File;
         var filePath = Path.Combine("wwwroot/images", file.Name);
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.OpenReadStream().CopyToAsync(stream);
         badge.ImageUrl = "/images/" + file.Name;
-        if (badge == null)
-        {
-            return;
-        }
-
-
-
     }
 }
