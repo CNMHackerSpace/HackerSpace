@@ -233,7 +233,7 @@ namespace Server
                     var validationResult = await validator.ValidateAsync(userManager, user, password);
                     if (!validationResult.Succeeded)
                     {
-                        errors.Concat(validationResult.Errors.Select(e => e.Description).ToList());
+                        errors.AddRange(validationResult.Errors.Select(e => e.Description));
                         isValidPassword = false;
                     }
                 }

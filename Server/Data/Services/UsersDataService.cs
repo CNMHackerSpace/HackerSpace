@@ -33,19 +33,31 @@ namespace Server.Data.Services
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
             List<UserDto> userDtos = new List<UserDto>();
-            foreach (ApplicationUser appUser in this.userManager.Users)
+            foreach (ApplicationUser appUser in this.userManager.Users.ToList())
             {
+                // Retrieve all roles for the user once to avoid N+M async queries.
+                var userRoles = await this.userManager.GetRolesAsync(appUser);
+                var userRolesSet = new HashSet<string>(userRoles);
+
+                List<RoleSelection> roleSelections = new List<RoleSelection>();
+                foreach (IdentityRole role in this.roleManager.Roles)
+                {
+                    string roleName = role.Name ?? string.Empty;
+                    bool isSelected = roleName != string.Empty && userRolesSet.Contains(roleName);
+                    roleSelections.Add(new RoleSelection
+                    {
+                        RoleName = roleName,
+                        IsSelected = isSelected,
+                    });
+                }
+
                 UserDto userDto = new()
                 {
                     Id = appUser.Id,
                     Email = appUser.Email ?? string.Empty,
                     EmailConfirmed = appUser.EmailConfirmed,
                     Password = string.Empty, // Do not return the password
-                    RoleSelections = this.roleManager.Roles.Select(role => new RoleSelection
-                    {
-                        RoleName = role.Name ?? string.Empty,
-                        IsSelected = this.userManager.IsInRoleAsync(appUser, role.Name ?? string.Empty).Result,
-                    }).ToList(),
+                    RoleSelections = roleSelections,
                 };
                 userDtos.Add(userDto);
             }
@@ -87,16 +99,24 @@ namespace Server.Data.Services
                 return null;
             }
 
+            List<RoleSelection> roleSelections = new List<RoleSelection>();
+            foreach (IdentityRole role in this.roleManager.Roles)
+            {
+                string roleName = role.Name ?? string.Empty;
+                bool isSelected = await this.userManager.IsInRoleAsync(appUser, roleName);
+                roleSelections.Add(new RoleSelection
+                {
+                    RoleName = roleName,
+                    IsSelected = isSelected,
+                });
+            }
+
             var userDto = new UserDto
             {
                 Email = appUser.Email ?? string.Empty,
                 EmailConfirmed = appUser.EmailConfirmed,
                 Password = string.Empty, // Do not return the password
-                RoleSelections = this.roleManager.Roles.Select(role => new RoleSelection
-                {
-                    RoleName = role.Name ?? string.Empty,
-                    IsSelected = this.userManager.IsInRoleAsync(appUser, role.Name ?? string.Empty).Result,
-                }).ToList(),
+                RoleSelections = roleSelections,
             };
             return userDto;
         }
@@ -150,6 +170,10 @@ namespace Server.Data.Services
             {
                 string? token = await this.userManager.GeneratePasswordResetTokenAsync(appUser);
                 var passwordResult = await this.userManager.ResetPasswordAsync(appUser, token, userDto.Password);
+                if (!passwordResult.Succeeded)
+                {
+                    throw new Exception($"Failed to update password for user {appUser.Id}: {string.Join(", ", passwordResult.Errors.Select(e => e.Description))}");
+                }
             }
 
             // Update roles

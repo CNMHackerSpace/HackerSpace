@@ -5,6 +5,7 @@
 @attribute [Authorize(Roles = "Admin")]
 
 @inject IUsersDataService DAL
+@inject IJSRuntime JSRuntime
 
 <h3>User Management</h3>
 
@@ -123,7 +124,16 @@
         else
         {
             // Existing user
-            await DAL.UpdateUserAsync(selectedUser);
+            try
+            {
+                await DAL.UpdateUserAsync(selectedUser);
+            }
+            catch (Exception ex)
+            {
+                // Display alert with error message
+                await JSRuntime.InvokeVoidAsync("alert", $"Error updating user: {ex.Message}");
+                return; // Exit without closing the modal
+            }
         }
 
         users = await DAL.GetAllUsersAsync();

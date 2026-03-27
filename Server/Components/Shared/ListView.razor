@@ -5,11 +5,11 @@
     <h3>@Title</h3>
 }
 
-@if (items == null)
+@if (Items == null)
 {
     <p><em>Loading...</em></p>
 }
-else if (items.Count == 0)
+else if (Items.Count == 0)
 {
     <p><em>No items to display.</em></p>
 }
@@ -22,7 +22,7 @@ else
         </div>
     }
     <ul class="list-group">
-        @foreach (var item in items)
+        @foreach (var item in Items)
         {
             <li class="list-group-item">
                 @ItemTemplate(item)
@@ -37,7 +37,7 @@ else
     public string Title { get; set; } = "List View";
 
     [Parameter]
-    public List<TModel>? items { get; set; }
+    public List<TModel>? Items { get; set; }
 
     [Parameter]
     public RenderFragment HeaderTemplate { get; set; } = default!;
