@@ -62,7 +62,7 @@ namespace Server
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+            builder.Services.AddScoped<Common.Interfaces.IEmailSender<Common.Models.ApplicationUser>,Server.Services.IdentityEmailSender>();
 
             // For script outlet component
             builder.Services.AddSingleton<ScriptRegistry>();
