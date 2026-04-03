@@ -1,6 +1,7 @@
 // Copyright (c) 2025. All rights reserved.
 
 using Common.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Server.Services
 {
@@ -29,5 +30,13 @@ namespace Server.Services
         /// <param name="badgeId">The badge ID.</param>
         /// <returns>A list of evaluator email addresses.</returns>
         Task<List<string>> GetEvaluatorEmailsAsync(Guid badgeId);
+
+        public async Task<List<Badge>> GetBadgesForUserAsync(string userId)
+        {
+            return await badgeId
+           
+                .Where(b => b.UserId == userId)
+                .ToListAsync();
+        }
     }
 }
