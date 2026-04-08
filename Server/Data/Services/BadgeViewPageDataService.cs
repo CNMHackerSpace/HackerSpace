@@ -74,5 +74,15 @@ namespace Server.Data.Services
 
             return evaluatorEmails.Where(e => !string.IsNullOrEmpty(e)).Cast<string>().ToList();
         }
+            /// <inheritdoc />
+            public async Task<List<Badge>> GetBadgesForUserAsync(string userID)
+            {
+                return await this.context.Badges
+                    .AsNoTracking()
+                    .Where(b=> b.Submissions.Any(s => s.ApplicantId == userID))
+                    .ToListAsync();
+            }
+
     }
+
 }

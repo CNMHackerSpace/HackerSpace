@@ -49,7 +49,7 @@ namespace Common.Models
         /// <summary>
         /// A compact representation of a badge linked to a user.
         /// </summary>
-        public class Badge
+        public class BadgeSummary
         {
             /// <summary>
             /// Internal integer id for the compact badge representation.
