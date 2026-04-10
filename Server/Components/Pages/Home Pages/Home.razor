@@ -1,0 +1,108 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Sections
+@using Common.Models
+
+<PageTitle>Home</PageTitle>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="title1">Welcome to Hackerspace!</h1>
+        </div>
+    </div>
+    <div class="main">
+        <div class="container2">
+            <div class="row">
+                <div class="col-md-8 col-lg-6">
+                    <figure class="imageandcaption">       
+                        <img src="/images/picture of hackerspace pi wars winners.jpeg" class="img-fluid" alt="Image of Hackerspace Pi-Wars team when they got first place in the international Pi Wars robotics competition in Cambrige, England." />
+                        <figcaption class="caption1">Hackerspace Pi-Wars team when they got first place in the international Pi Wars robotics competition in Cambrige, England.</figcaption>
+                    </figure>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="about1">
+                        This student organization is dedicated to the goal of improving group members’ skills in technology, engineering, collaboration, and coding. Students accomplish this goal by participating in activities such as working on group software, hardware projects, and training for and participating in computer-related competitions, events, and activities.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="container3">
+            <div class = "AnnouncementTitle">
+                <p class = "AnnouncementTitle1"><b>Announcements</b></p>
+                <button class="add_Announcement" onclick="previousAnnouncement()">&lt;</button>
+                <button class="add_Announcement" onclick="nextAnnouncement()">&gt;</button>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <button class="add_Announcement" onclick="createAnnouncement()">+</button>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+            <div class = "AnnouncementSelect">
+                <select id="AnnouncementHolder" onchange="getAnnouncement()">
+                    <option value="0">Select an Announcement</option>
+                </select>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <textarea id="AnnouncementText" rows="10" style="width: auto; ">To create a new Announcement, be on "Select an Announcement", to edit, go to the Announcement you want to edit. After doing things, click the "+" to save.</textarea>
+                    </Authorized>
+                    <NotAuthorized>
+                        <textarea id="AnnouncementText" rows="10" style="width: auto;" readonly>Please Select an Announcement.</textarea>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const textArea = document.getElementById("AnnouncementText");
+
+    const dropBox = document.getElementById("AnnouncementHolder");
+
+    var Announcements = ["Please Select an Announcement."];
+
+    function nextAnnouncement(){
+        var selected = dropBox.value;
+        if (selected <= 0){
+            return;
+        }
+        else{
+            dropBox.value = (parseInt(selected) - 1);
+            getAnnouncement();
+        }
+    }
+
+    function previousAnnouncement(){
+        var selected = dropBox.value;
+        if (selected >= (Announcements.length - 1)){
+            return;
+        }
+        else{
+            dropBox.value = (parseInt(selected) + 1);
+            getAnnouncement();
+        }  
+    }
+
+    function createAnnouncement() {
+        var selected = dropBox.value;
+        if (selected == 0){
+            var count = dropBox.options.length;
+            var newOption = document.createElement("option");
+            Announcements.push(textArea.value);
+            var now = new Date();
+            newOption.text = now.toLocaleDateString() + ", " + now.toLocaleTimeString([], {hour: '2-digit',minute: '2-digit'});
+            newOption.value = count;
+            dropBox.appendChild(newOption);
+        }
+        else{
+            Announcements[selected] = textArea.value;
+        }
+    }
+
+    function getAnnouncement() {
+        var selected = dropBox.value;
+        textArea.value = Announcements[selected];
+    }
+</script>
