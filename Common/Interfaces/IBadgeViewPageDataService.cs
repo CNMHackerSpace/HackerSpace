@@ -29,5 +29,12 @@ namespace Server.Services
         /// <param name="badgeId">The badge ID.</param>
         /// <returns>A list of evaluator email addresses.</returns>
         Task<List<string>> GetEvaluatorEmailsAsync(Guid badgeId);
+
+        /// <summary>
+        /// Gets all badges owned by a specific user.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>A list of badges for the given user.</returns>
+        Task<List<Badge>> GetBadgesForUserAsync(string userId);
     }
 }
