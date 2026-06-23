@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="QRCoder" Version="1.8.0" />
         <ProjectReference Include="..\WebClient\WebClient.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.2" />

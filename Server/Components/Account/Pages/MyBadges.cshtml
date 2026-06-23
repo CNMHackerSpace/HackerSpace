@@ -1,0 +1,21 @@
+@page
+@model MyBadgesModel
+
+<h2>My Badges</h2>
+
+@if (Model.Badges.Count == 0)
+{
+    <p>You haven't earned any badges yet.</p>
+}
+else
+{
+    <div class="badge-container">
+        @foreach (var badge in Model.Badges)
+        {
+            <div class="badge-card">
+                <h3>@badge.Title</h3>
+                <p>@badge.Description</p>
+            </div>
+        }
+    </div>
+}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2025. All rights reserved.
+// Copyright (c) 2025. All rights reserved.
 
 using System.ComponentModel.DataAnnotations;
 
@@ -45,5 +45,31 @@ namespace Common.Models
         /// Gets or sets the list of submissions associated with the badge.
         /// </summary>
         public List<Submission> Submissions { get; set; } = new List<Submission>();
+
+        /// <summary>
+        /// A compact representation of a badge linked to a user.
+        /// </summary>
+        public class BadgeSummary
+        {
+            /// <summary>
+            /// Internal integer id for the compact badge representation.
+            /// </summary>
+            public int Id { get; set; }
+
+            /// <summary>
+            /// Name of the badge.
+            /// </summary>
+            public string Name { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Short description for the compact badge.
+            /// </summary>
+            public string Description { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Id of the user this badge is linked to.
+            /// </summary>
+            public string UserId { get; set; } = string.Empty;
+        }
     }
 }
