@@ -51,6 +51,7 @@
     align-items: center;
     line-height: 3rem;
     width: 100%;
+    padding-left: 1rem;
 }
 
 .nav-item ::deep a.active {
