@@ -95,8 +95,6 @@ else
             {
                 mySuggestions = await suggestService.GetSuggestionsByUserIdAsync(idClaim.Value);
             }
-    
-            applications = await dataService.GetBadgeApplicationsAsync();
         }
     }
 
@@ -182,26 +180,4 @@ else
 
         return text[..maxLength] + "...";
     }
-}
-}
-
-<h3>Badge Applications</h3>
-
-@if (applications == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <div class="application-list">
-        @foreach (var app in applications)
-        {
-            <div class="application-card">
-                <h4>@app.BadgeName</h4>
-                <p><strong>User:</strong> @app.UserName</p>
-                <p><strong>Status:</strong> @app.Status</p>
-                <p><small>@app.DateSubmitted.ToShortDateString()</small></p>
-            </div>
-        }
-    </div>
 }
