@@ -16,8 +16,16 @@
 }
 
 .top-row {
-    height: 3.5rem;
+    height: 6rem;
     background-color: rgba(0, 0, 0, 0.4);
+    align-content: center;
+    justify-content: center;
+}
+
+.navbar ::deep .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .navbar-brand {
