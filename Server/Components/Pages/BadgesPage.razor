@@ -96,7 +96,7 @@ else
                 mySuggestions = await suggestService.GetSuggestionsByUserIdAsync(idClaim.Value);
             }
     
-            @* applications = await dataService.GetBadgeApplicationsAsync(); *@
+            applications = await dataService.GetBadgeApplicationsAsync();
         }
     }
 
@@ -186,7 +186,7 @@ else
 }
 
 <h3>Badge Applications</h3>
-@* 
+
 @if (applications == null)
 {
     <p>Loading...</p>
@@ -204,4 +204,4 @@ else
             </div>
         }
     </div>
-} *@
+}

@@ -56,7 +56,7 @@ namespace Common.Interfaces
         /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
         /// a <see cref="List{BadgeApplication}"/> of badge applications.
         /// </returns>
-        // public Task<List<BadgeApplication>> GetBadgeApplicationsAsync();
+        public Task<List<BadgeApplication>> GetBadgeApplicationsAsync();
     }
 
     /// <summary>
