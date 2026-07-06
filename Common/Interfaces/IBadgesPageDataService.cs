@@ -48,21 +48,5 @@ namespace Common.Interfaces
         /// <param name="id">The unique identifier of the badge to remove.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous remove operation.</returns>
         public Task RemoveAsync(Guid id);
-
-        /// <summary>
-        /// Asynchronously retrieves badge applications.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
-        /// a <see cref="List{BadgeApplication}"/> of badge applications.
-        /// </returns>
-        public Task<List<BadgeApplication>> GetBadgeApplicationsAsync();
-    }
-
-    /// <summary>
-    /// Represents an application for a badge.
-    /// </summary>
-    public sealed class BadgeApplication
-    {
     }
 }
